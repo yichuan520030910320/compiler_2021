@@ -4,8 +4,8 @@ import AST.ASTvisitor;
 import Utils.error.semanticerror;
 import Utils.position;
 
-public class stringtype extends Type{
-    public stringtype(position pos, String index_, int dim_) {
+public class Stringtype_ASTnode extends Type_ASTnode {
+    public Stringtype_ASTnode(position pos, String index_, int dim_) {
         super(pos, index_, dim_);
     }
     @Override
@@ -13,7 +13,7 @@ public class stringtype extends Type{
         return "string";
     }
     @Override
-    public void comparetype(Type t) {
+    public void comparetype(Type_ASTnode t) {
         if(!gettype().equals("string")){
             throw new semanticerror("string type don't match",pos);
         }

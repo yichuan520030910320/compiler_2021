@@ -4,20 +4,20 @@ import AST.ASTvisitor;
 import Utils.error.semanticerror;
 import Utils.position;
 
-public class booltype extends Type{
-    public booltype(position pos, String index_, int dim_) {
+public class Inttype_ASTnode extends Type_ASTnode {
+    public Inttype_ASTnode(position pos, String index_, int dim_) {
         super(pos, index_, dim_);
     }
 
     @Override
     public String gettype() {
-        return "bool";
+        return "int";
     }
 
     @Override
-    public void comparetype(Type t) {
-        if(!t.gettype().equals("bool")){
-            throw new semanticerror("bool  type can't match",pos);
+    public void comparetype(Type_ASTnode t) {
+        if(!gettype().equals("int")){
+            throw new semanticerror("int type don't match",pos);
         }
     }
 

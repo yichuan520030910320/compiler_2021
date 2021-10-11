@@ -1,20 +1,50 @@
 package AST;
 
-import AST.TYPEnode.arrytype;
-import AST.TYPEnode.booltype;
+import AST.EXPRnode.*;
+import AST.EXPRnode.CONSTEXPRnode.Constbool_ASTnode;
+import AST.EXPRnode.CONSTEXPRnode.Constint_ASTnode;
+import AST.EXPRnode.CONSTEXPRnode.Constnull_ASTnode;
+import AST.EXPRnode.CONSTEXPRnode.Conststring_ASTnode;
+import AST.TYPEnode.Arraytype_ASTnode;
+import AST.TYPEnode.Booltype_ASTnode;
 import AST.TYPEnode.*;
 
 public interface ASTvisitor {
 
-    void visit(arrytype it);
-    void visit(booltype it);
-    void visit(classtype it);
-    void visit(inttype it);
-    void visit(nulltype it);
-    void visit(stringtype it);
-    void visit(voidtype it);
+    void visit(Arraytype_ASTnode it);
+
+    void visit(Booltype_ASTnode it);
+
+    void visit(Classtype_ASTnode it);
+
+    void visit(Inttype_ASTnode it);
+
+    void visit(Nulltype_ASTnode it);
+
+    void visit(Stringtype_ASTnode it);
+
+    void visit(Voidtype_ASTnode it);
+
     void visit(Rootnode it);
 
+    void visit(BinaryExp_ASTnode it);
+
+    void visit(Constint_ASTnode it);
+
+    void visit(Constbool_ASTnode it);
+
+    void visit(UnaryExp_ASTnode it);
+
+    void visit(Conststring_ASTnode it);
+
+    void visit(Constnull_ASTnode it);
 
 
+    void visit(FuntioncallExp_ASTnode it);
+
+    void visit(IdExp_ASTnode it);
+
+    void visit(LambdaExp_ASTnode it);
+
+    void visit(NewExp_ASTnode it);
 }
