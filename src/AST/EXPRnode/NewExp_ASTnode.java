@@ -4,9 +4,22 @@ import AST.ASTvisitor;
 import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
-public class NewExp_ASTnode extends Expr_ASTnode{
-    public NewExp_ASTnode(position pos, Type_ASTnode type_, String index) {
-        super(pos, type_, index);
+import java.util.ArrayList;
+
+public class NewExp_ASTnode extends Expr_ASTnode {
+
+    ArrayList<Expr_ASTnode> newlist;
+    int dim;
+    Type_ASTnode type;
+
+
+    public NewExp_ASTnode(position pos, Type_ASTnode basictype_, String index, ArrayList<Expr_ASTnode> newlist_,
+                          int dim_,
+                          Type_ASTnode type_) {
+        super(pos, basictype_, index);
+        dim = dim_;
+        type = type_;
+        newlist = newlist_;
     }
 
     @Override

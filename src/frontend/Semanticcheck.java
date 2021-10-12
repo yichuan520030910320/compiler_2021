@@ -7,7 +7,9 @@ import AST.EXPRnode.CONSTEXPRnode.Constint_ASTnode;
 import AST.EXPRnode.CONSTEXPRnode.Constnull_ASTnode;
 import AST.EXPRnode.CONSTEXPRnode.Conststring_ASTnode;
 import AST.Rootnode;
+import AST.STATnode.*;
 import AST.TYPEnode.*;
+import AST.VALDECLnode.*;
 
 public class Semanticcheck implements ASTvisitor {
     @Override
@@ -97,6 +99,87 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(NewExp_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(MemberExp_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Suite_ASTnode it) {
+
+    }
+
+
+    @Override
+    public void visit(Singlevaluedel_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Fundecl_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Classdecl_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Paralist_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Thisexpr_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Whilestat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Valdeclstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Returnstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Ifstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Forstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Exprstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Continuestat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Breakstat_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Constructdel_ASTnode it) {
 
     }
 }

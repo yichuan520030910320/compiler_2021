@@ -5,9 +5,11 @@ import AST.EXPRnode.CONSTEXPRnode.Constbool_ASTnode;
 import AST.EXPRnode.CONSTEXPRnode.Constint_ASTnode;
 import AST.EXPRnode.CONSTEXPRnode.Constnull_ASTnode;
 import AST.EXPRnode.CONSTEXPRnode.Conststring_ASTnode;
+import AST.STATnode.*;
 import AST.TYPEnode.Arraytype_ASTnode;
 import AST.TYPEnode.Booltype_ASTnode;
 import AST.TYPEnode.*;
+import AST.VALDECLnode.*;
 
 public interface ASTvisitor {
 
@@ -47,4 +49,36 @@ public interface ASTvisitor {
     void visit(LambdaExp_ASTnode it);
 
     void visit(NewExp_ASTnode it);
+
+    void visit(MemberExp_ASTnode it);
+
+    void visit(Suite_ASTnode it);
+
+    void visit(Singlevaluedel_ASTnode it);
+
+    void visit(Fundecl_ASTnode it);
+
+    void visit(Classdecl_ASTnode it);
+
+    void visit(Paralist_ASTnode it);
+
+    void visit(Thisexpr_ASTnode it);
+
+    void visit(Whilestat_ASTnode it);
+
+    void visit(Valdeclstat_ASTnode it);
+
+    void visit(Returnstat_ASTnode it);
+
+    void visit(Ifstat_ASTnode it);
+
+    void visit(Forstat_ASTnode it);
+
+    void visit(Exprstat_ASTnode it);
+
+    void visit(Continuestat_ASTnode it);
+
+    void visit(Breakstat_ASTnode it);
+
+    void visit(Constructdel_ASTnode it);
 }

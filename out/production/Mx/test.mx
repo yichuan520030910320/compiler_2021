@@ -11,7 +11,7 @@ class S{
 
 void test(){
     int a = -1;
-    if(a){ ++a; } // expected error: condition cannot be int objects
+    if( a){ ++a; } // expected error: condition cannot be int objects
     while(++a){ ++a; } //expected error: condition cannot be non-bool expression
     while(a != 0){ ++a; } // accepted
 

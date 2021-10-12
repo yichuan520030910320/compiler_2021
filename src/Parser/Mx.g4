@@ -12,7 +12,7 @@ programunit:classdef                                       #programunit_class
 classdef:CLASS calssname=Identifier '{'(constructdeclar|fundeclar|vardeclarstat)* '}'';';
 constructdeclar:Identifier'('parameterlist? ')'suite;
 fundeclar:(Void|type) Identifier '(' parameterlist?')' suite;
-//parameterlist include the declaratiob of type (used in function declar)while the vardeclarlist have the symbol '=' to make assign while expressionlist is usually used in function call
+//parameterlist include the declaratiob of type (used in function declar) while the vardeclarlist have the symbol '=' to make assign   while expressionlist is usually used in function call
 parameterlist:type Identifier (',' type Identifier)*;
 vardeclarstat:vardeclarlist ';';
 vardeclarlist:type vardeclar (','vardeclar)*;
