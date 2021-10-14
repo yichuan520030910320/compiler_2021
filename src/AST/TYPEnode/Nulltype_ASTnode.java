@@ -5,7 +5,7 @@ import Utils.position;
 
 public class Nulltype_ASTnode extends Type_ASTnode {
     public Nulltype_ASTnode(position pos, String index_, int dim_) {
-        super(pos, index_, dim_);
+        super(pos, index_);
     }
     @Override
     public String gettype() {

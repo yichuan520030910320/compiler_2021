@@ -5,8 +5,8 @@ import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
 public class Thisexpr_ASTnode extends Expr_ASTnode{
-    public Thisexpr_ASTnode(position pos, Type_ASTnode type_, String typename_) {
-        super(pos, type_, typename_);
+    public Thisexpr_ASTnode(position pos, String typename_) {
+        super(pos, null, typename_);
     }
 
     @Override

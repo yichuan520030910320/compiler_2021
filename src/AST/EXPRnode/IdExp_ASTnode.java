@@ -5,7 +5,7 @@ import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
 public class IdExp_ASTnode extends Expr_ASTnode{
-    String id;
+    public String id;
     public IdExp_ASTnode(position pos, Type_ASTnode type_, String index,String id_) {
         super(pos, type_, index);
         id=id_;

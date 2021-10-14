@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class Whilestat_ASTnode extends Stat_ASTnode{
     Expr_ASTnode condition;
-    ArrayList<Stat_ASTnode> while_stats;
+    Stat_ASTnode while_stats;
     public Whilestat_ASTnode(position pos, Expr_ASTnode condition_,
-            ArrayList<Stat_ASTnode> while_stats_) {
+            Stat_ASTnode while_stats_) {
         super(pos);
         condition=condition_;
         while_stats=while_stats_;

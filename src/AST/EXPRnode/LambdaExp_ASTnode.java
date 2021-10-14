@@ -12,17 +12,17 @@ import Utils.position;
 
 import java.util.ArrayList;
 
-public class LambdaExp_ASTnode extends Expr_ASTnode {
-    Type_ASTnode type;
-    Paralist_ASTnode lambda_parslist;
-    Suite_ASTnode suite;
-    ArrayList<Expr_ASTnode> paralist;
+public class LambdaExp_ASTnode extends Expr_ASTnode {//如果函数调用列表没有参数，则paralist为大小为0 用size来判断
+    public Type_ASTnode type;
+    public Paralist_ASTnode lambda_parslist;
+    public Suite_ASTnode suite;
+    public ArrayList<Expr_ASTnode> paralist;
 
-    public LambdaExp_ASTnode(position pos, Type_ASTnode basictype_, String index, Type_ASTnode lambdareturn_type_,
+    public LambdaExp_ASTnode(position pos,  Type_ASTnode lambdareturn_type_,
                              Paralist_ASTnode lambdaparslist_,
                              Suite_ASTnode suite_,
                              ArrayList<Expr_ASTnode> paralist_) {
-        super(pos, basictype_, index);
+        super(pos, null,null);
         type=lambdareturn_type_;
         lambda_parslist=lambdaparslist_;
         suite=suite_;

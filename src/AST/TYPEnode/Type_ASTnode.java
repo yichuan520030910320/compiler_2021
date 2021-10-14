@@ -1,22 +1,24 @@
 package AST.TYPEnode;
+
 import AST.ASTnode;
 import Utils.position;
+
 abstract public class Type_ASTnode extends ASTnode {
-    public int dim;
-    public String index;
-    public int getDim (){return dim;}
+
+    public String typename;//typename
+
 
     public String gettype() {
         return null;
     }
 
-    public Type_ASTnode(position pos, String index_, int dim_){
+    public Type_ASTnode(position pos, String typename_) {
         super(pos);
-        this.dim=dim_;
-        this.index=index_;
-    }
-    public void comparetype(Type_ASTnode t){
 
+        this.typename = typename_;
+    }
+
+    public void comparetype(Type_ASTnode t) {
 
     }
 

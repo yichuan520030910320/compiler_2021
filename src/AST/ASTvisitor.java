@@ -35,7 +35,7 @@ public interface ASTvisitor {
 
     void visit(Constbool_ASTnode it);
 
-    void visit(UnaryExp_ASTnode it);
+    void visit(Front_UnaryExp_ASTnode it);
 
     void visit(Conststring_ASTnode it);
 
@@ -81,4 +81,8 @@ public interface ASTvisitor {
     void visit(Breakstat_ASTnode it);
 
     void visit(Constructdel_ASTnode it);
+
+    void visit(ArrayExp_ASTnode it);
+
+    void visit(Post_UnaryExp_ASTnode it);
 }

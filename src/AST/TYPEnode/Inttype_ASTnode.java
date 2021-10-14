@@ -5,8 +5,8 @@ import Utils.error.semanticerror;
 import Utils.position;
 
 public class Inttype_ASTnode extends Type_ASTnode {
-    public Inttype_ASTnode(position pos, String index_, int dim_) {
-        super(pos, index_, dim_);
+    public Inttype_ASTnode(position pos, String index_) {
+        super(pos, index_);
     }
 
     @Override

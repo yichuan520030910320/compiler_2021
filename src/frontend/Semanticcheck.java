@@ -68,7 +68,7 @@ public class Semanticcheck implements ASTvisitor {
     }
 
     @Override
-    public void visit(UnaryExp_ASTnode it) {
+    public void visit(Front_UnaryExp_ASTnode it) {
 
     }
 
@@ -180,6 +180,16 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(Constructdel_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(ArrayExp_ASTnode it) {
+
+    }
+
+    @Override
+    public void visit(Post_UnaryExp_ASTnode it) {
 
     }
 }

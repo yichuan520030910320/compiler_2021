@@ -5,8 +5,8 @@ import Utils.error.semanticerror;
 import Utils.position;
 
 public class Booltype_ASTnode extends Type_ASTnode {
-    public Booltype_ASTnode(position pos, String index_, int dim_) {
-        super(pos, index_, dim_);
+    public Booltype_ASTnode(position pos, String index_) {
+        super(pos, index_);
     }
 
     @Override

@@ -4,12 +4,12 @@ import AST.ASTvisitor;
 import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
-public class UnaryExp_ASTnode extends Expr_ASTnode {
+public class Front_UnaryExp_ASTnode extends Expr_ASTnode {
     Expr_ASTnode expr;
-    Binary_Enum op;
+    Single_Enum op;
 
-    public UnaryExp_ASTnode(position pos, Type_ASTnode type_, String index,Expr_ASTnode expr_,Binary_Enum op_) {
-        super(pos, type_, index);
+    public Front_UnaryExp_ASTnode(position pos,  Expr_ASTnode expr_, Single_Enum op_) {
+        super(pos, null,null);
         op=op_;
         expr=expr_;
     }

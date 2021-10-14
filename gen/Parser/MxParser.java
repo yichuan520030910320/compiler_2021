@@ -1356,35 +1356,6 @@ public class MxParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Expr_lambdaContext extends ExpressionContext {
-		public ParameterlistContext lambdapara;
-		public ExpressionlistContext lambdaexprelist;
-		public TerminalNode Lambda1() { return getToken(MxParser.Lambda1, 0); }
-		public TerminalNode Lambda2() { return getToken(MxParser.Lambda2, 0); }
-		public SuiteContext suite() {
-			return getRuleContext(SuiteContext.class,0);
-		}
-		public ExpressionlistContext expressionlist() {
-			return getRuleContext(ExpressionlistContext.class,0);
-		}
-		public ParameterlistContext parameterlist() {
-			return getRuleContext(ParameterlistContext.class,0);
-		}
-		public Expr_lambdaContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_lambda(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_lambda(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_lambda(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class Expr_constContext extends ExpressionContext {
 		public AllconstContext allconst() {
 			return getRuleContext(AllconstContext.class,0);
@@ -1401,51 +1372,6 @@ public class MxParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_const(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Expr_singleContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode Minus() { return getToken(MxParser.Minus, 0); }
-		public TerminalNode Plus() { return getToken(MxParser.Plus, 0); }
-		public TerminalNode SELFSUB() { return getToken(MxParser.SELFSUB, 0); }
-		public TerminalNode SELFPLUS() { return getToken(MxParser.SELFPLUS, 0); }
-		public Expr_singleContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_single(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_single(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_single(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Expr_memberContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode Dot() { return getToken(MxParser.Dot, 0); }
-		public TerminalNode Identifier() { return getToken(MxParser.Identifier, 0); }
-		public Expr_memberContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_member(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_member(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_member(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1611,6 +1537,102 @@ public class MxParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class Expr_lambdaContext extends ExpressionContext {
+		public ParameterlistContext lambdapara;
+		public ExpressionlistContext lambdaexprelist;
+		public TerminalNode Lambda1() { return getToken(MxParser.Lambda1, 0); }
+		public TerminalNode Lambda2() { return getToken(MxParser.Lambda2, 0); }
+		public SuiteContext suite() {
+			return getRuleContext(SuiteContext.class,0);
+		}
+		public ExpressionlistContext expressionlist() {
+			return getRuleContext(ExpressionlistContext.class,0);
+		}
+		public ParameterlistContext parameterlist() {
+			return getRuleContext(ParameterlistContext.class,0);
+		}
+		public Expr_lambdaContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_lambda(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_lambda(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_lambda(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_singleContext extends ExpressionContext {
+		public Token op;
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode Minus() { return getToken(MxParser.Minus, 0); }
+		public TerminalNode Plus() { return getToken(MxParser.Plus, 0); }
+		public TerminalNode SELFSUB() { return getToken(MxParser.SELFSUB, 0); }
+		public TerminalNode SELFPLUS() { return getToken(MxParser.SELFPLUS, 0); }
+		public Expr_singleContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_single(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_single(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_single(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_memberContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode Dot() { return getToken(MxParser.Dot, 0); }
+		public TerminalNode Identifier() { return getToken(MxParser.Identifier, 0); }
+		public Expr_memberContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_member(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_member(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_member(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_single_postContext extends ExpressionContext {
+		public Token op;
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode SELFPLUS() { return getToken(MxParser.SELFPLUS, 0); }
+		public TerminalNode SELFSUB() { return getToken(MxParser.SELFSUB, 0); }
+		public Expr_single_postContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).enterExpr_single_post(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MxListener ) ((MxListener)listener).exitExpr_single_post(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MxVisitor ) return ((MxVisitor<? extends T>)visitor).visitExpr_single_post(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 
 	public final ExpressionContext expression() throws RecognitionException {
 		return expression(0);
@@ -1663,9 +1685,10 @@ public class MxParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(174);
+				((Expr_singleContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==T__6 || _la==T__7) ) {
-				_errHandler.recoverInline(this);
+					((Expr_singleContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
 					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1683,9 +1706,10 @@ public class MxParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(176);
+				((Expr_singleContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==Plus || _la==Minus) ) {
-				_errHandler.recoverInline(this);
+					((Expr_singleContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
 					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1703,9 +1727,10 @@ public class MxParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(178);
+				((Expr_singleContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==SELFPLUS || _la==SELFSUB) ) {
-				_errHandler.recoverInline(this);
+					((Expr_singleContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
 					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1957,15 +1982,15 @@ public class MxParser extends Parser {
 						break;
 					case 8:
 						{
-						_localctx = new Expr_singleContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new Expr_single_postContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(222);
 						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
 						setState(223);
-						((Expr_singleContext)_localctx).op = _input.LT(1);
+						((Expr_single_postContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==SELFPLUS || _la==SELFSUB) ) {
-							((Expr_singleContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+							((Expr_single_postContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
 							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;

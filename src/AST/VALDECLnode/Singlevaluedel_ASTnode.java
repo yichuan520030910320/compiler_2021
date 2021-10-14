@@ -7,9 +7,9 @@ import Utils.position;
 
 public class Singlevaluedel_ASTnode extends Declare_ASTnode {
 
-    Type_ASTnode type;
-    String name;
-    Expr_ASTnode expression;
+    public Type_ASTnode type;
+    public String name;
+    public Expr_ASTnode expression;
 
     public Singlevaluedel_ASTnode(position pos,Type_ASTnode type_,String name_,Expr_ASTnode expression_) {
         super(pos);

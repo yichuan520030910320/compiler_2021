@@ -281,18 +281,6 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitExpr_new(MxParser.Expr_newContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code expr_lambda}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpr_lambda(MxParser.Expr_lambdaContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code expr_lambda}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpr_lambda(MxParser.Expr_lambdaContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code expr_const}
 	 * labeled alternative in {@link MxParser#expression}.
 	 * @param ctx the parse tree
@@ -304,30 +292,6 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr_const(MxParser.Expr_constContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code expr_single}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpr_single(MxParser.Expr_singleContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code expr_single}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpr_single(MxParser.Expr_singleContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code expr_member}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpr_member(MxParser.Expr_memberContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code expr_member}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpr_member(MxParser.Expr_memberContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code expr_idetifier}
 	 * labeled alternative in {@link MxParser#expression}.
@@ -412,6 +376,54 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr_array(MxParser.Expr_arrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expr_lambda}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_lambda(MxParser.Expr_lambdaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expr_lambda}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_lambda(MxParser.Expr_lambdaContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expr_single}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_single(MxParser.Expr_singleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expr_single}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_single(MxParser.Expr_singleContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expr_member}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_member(MxParser.Expr_memberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expr_member}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_member(MxParser.Expr_memberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expr_single_post}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_single_post(MxParser.Expr_single_postContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expr_single_post}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_single_post(MxParser.Expr_single_postContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxParser#expressionlist}.
 	 * @param ctx the parse tree

@@ -173,33 +173,12 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpr_new(MxParser.Expr_newContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code expr_lambda}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr_lambda(MxParser.Expr_lambdaContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code expr_const}
 	 * labeled alternative in {@link MxParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpr_const(MxParser.Expr_constContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code expr_single}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr_single(MxParser.Expr_singleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code expr_member}
-	 * labeled alternative in {@link MxParser#expression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr_member(MxParser.Expr_memberContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code expr_idetifier}
 	 * labeled alternative in {@link MxParser#expression}.
@@ -249,6 +228,34 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpr_array(MxParser.Expr_arrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code expr_lambda}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr_lambda(MxParser.Expr_lambdaContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code expr_single}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr_single(MxParser.Expr_singleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code expr_member}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr_member(MxParser.Expr_memberContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code expr_single_post}
+	 * labeled alternative in {@link MxParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExpr_single_post(MxParser.Expr_single_postContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxParser#expressionlist}.
 	 * @param ctx the parse tree

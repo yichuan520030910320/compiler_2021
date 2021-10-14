@@ -6,15 +6,12 @@ import Utils.position;
 
 public class Classtype_ASTnode extends Type_ASTnode {
     String classname;
-    public Classtype_ASTnode(position pos, String index_, int dim_, String classname_) {
-        super(pos, index_, dim_);
+    public Classtype_ASTnode(position pos, String index_,  String classname_) {
+        super(pos, index_);
         this.classname=classname_;
     }
 
-    @Override
-    public int getDim() {
-        return 0;
-    }
+
 
     @Override
     public String gettype() {
