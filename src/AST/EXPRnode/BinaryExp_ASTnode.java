@@ -8,8 +8,8 @@ public class BinaryExp_ASTnode extends Expr_ASTnode{
 public Expr_ASTnode lhs,rhs;
 public Binary_Enum op;
 
-    public BinaryExp_ASTnode(position pos, Expr_ASTnode tmp1,Expr_ASTnode tmp2,Binary_Enum op1) {
-        super(pos, null, null);
+    public BinaryExp_ASTnode(position pos, Type_ASTnode type_,Expr_ASTnode tmp1,Expr_ASTnode tmp2,Binary_Enum op1) {
+        super(pos, type_, null);
         lhs=tmp1;
         rhs=tmp2;
         op=op1;

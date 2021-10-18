@@ -15,6 +15,7 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(Arraytype_ASTnode it) {
 
+
     }
 
     @Override

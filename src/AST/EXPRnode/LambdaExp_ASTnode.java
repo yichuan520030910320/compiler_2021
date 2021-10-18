@@ -22,7 +22,7 @@ public class LambdaExp_ASTnode extends Expr_ASTnode {//如果函数调用列表�
                              Paralist_ASTnode lambdaparslist_,
                              Suite_ASTnode suite_,
                              ArrayList<Expr_ASTnode> paralist_) {
-        super(pos, null,null);
+        super(pos,null,null);
         type=lambdareturn_type_;
         lambda_parslist=lambdaparslist_;
         suite=suite_;

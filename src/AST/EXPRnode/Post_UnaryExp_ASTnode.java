@@ -7,8 +7,8 @@ import Utils.position;
 public class Post_UnaryExp_ASTnode extends Expr_ASTnode{
     Expr_ASTnode expr;
     Single_Enum op;
-    public Post_UnaryExp_ASTnode(position pos ,Expr_ASTnode expr_,Single_Enum op_) {
-        super(pos, null,null);
+    public Post_UnaryExp_ASTnode(position pos ,Type_ASTnode type_,Expr_ASTnode expr_,Single_Enum op_) {
+        super(pos, type_,null);
         expr=expr_;
         op=op_;
     }

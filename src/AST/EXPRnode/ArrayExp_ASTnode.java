@@ -12,7 +12,6 @@ public class ArrayExp_ASTnode extends Expr_ASTnode{
         arr=arr_;
         index=index_;
     }
-
     @Override
     public void accept(ASTvisitor visitor) {
         visitor.visit(this);

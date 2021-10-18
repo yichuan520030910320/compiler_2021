@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\mytest2.mx";
+        String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\mytest1.mx";
         InputStream input = new FileInputStream(name);
         try {
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));

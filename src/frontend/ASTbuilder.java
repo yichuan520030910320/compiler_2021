@@ -21,16 +21,20 @@ import java.util.ArrayList;
 public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     @Override
     public ASTnode visitAllconst(MxParser.AllconstContext ctx) {
+
         if (ctx.DecimalInteger() != null) {
-            return new Constint_ASTnode(new position(ctx.getStart()), null, ctx.getText());
+
+            return new Constint_ASTnode(new position(ctx.getStart()), new Inttype_ASTnode(null, "int"), ctx.getText());
         }
         if (ctx.STRINGCONST() != null) {
-            return new Conststring_ASTnode(new position(ctx.getStart()), null, ctx.getText());
+
+            return new Conststring_ASTnode(new position(ctx.getStart()), new Stringtype_ASTnode(null, "string"), ctx.getText());
         }
         if (ctx.Logicconst() != null) {
-            return new Constbool_ASTnode(new position(ctx.getStart()), null, ctx.getText());
+
+            return new Constbool_ASTnode(new position(ctx.getStart()), new Booltype_ASTnode(null, "bool"), ctx.getText());
         } else {
-            return new Constnull_ASTnode(new position(ctx.getStart()), null, ctx.getText());
+            return new Constnull_ASTnode(new position(ctx.getStart()), new Nulltype_ASTnode(null, "null", 0), ctx.getText());
         }
     }
 
@@ -106,12 +110,12 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitExpr_idetifier(MxParser.Expr_idetifierContext ctx) {
-        return new IdExp_ASTnode(new position(ctx.getStart()),null,null,ctx.getText());
+        return new IdExp_ASTnode(new position(ctx.getStart()), null, null, ctx.getText());
     }
 
     @Override
     public ASTnode visitExpr_this(MxParser.Expr_thisContext ctx) {
-        return new Thisexpr_ASTnode(new position(ctx.getStart()), null);
+        return new Thisexpr_ASTnode(new position(ctx.getStart()), null,null);
     }
 
     @Override
@@ -146,7 +150,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         }
         Expr_ASTnode lhs = (Expr_ASTnode) visit(ctx.operand1);
         Expr_ASTnode rhs = (Expr_ASTnode) visit(ctx.operand2);
-        return new BinaryExp_ASTnode(new position(ctx.getStart()), lhs, rhs, op);
+        return new BinaryExp_ASTnode(new position(ctx.getStart()),null, lhs, rhs, op);
     }
 
     @Override
@@ -165,7 +169,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder front");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), expr, op);
+        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), null,expr, op);
     }
 
     @Override
@@ -178,7 +182,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder post");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()), expr, op);
+        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()),null, expr, op);
     }
 
     @Override
@@ -186,7 +190,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         Binary_Enum op = Binary_Enum.EQUAL;
         Expr_ASTnode lhs = (Expr_ASTnode) visit(ctx.operand1);
         Expr_ASTnode rhs = (Expr_ASTnode) visit(ctx.operand2);
-        return new BinaryExp_ASTnode(new position(ctx.getStart()), lhs, rhs, op);
+        return new BinaryExp_ASTnode(new position(ctx.getStart()),null, lhs, rhs, op);
     }
 
     @Override
@@ -313,8 +317,8 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitStat_expr(MxParser.Stat_exprContext ctx) {
-        Expr_ASTnode expr=(Expr_ASTnode) visit(ctx.expression());
-        return new Exprstat_ASTnode(new position(ctx.getStart()),expr);
+        Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
+        return new Exprstat_ASTnode(new position(ctx.getStart()), expr);
 
     }
 
@@ -363,20 +367,20 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitClassdef(MxParser.ClassdefContext ctx) {
-        String classname=ctx.calssname.getText();
-        ArrayList<Constructdel_ASTnode> constructlist=new ArrayList<>();
-        ArrayList<Fundecl_ASTnode> funlist=new ArrayList<>();
-        ArrayList<Valdeclstat_ASTnode> valdecl=new ArrayList<>();
-        for (int i=0;i<ctx.constructdeclar().size();i++){
+        String classname = ctx.calssname.getText();
+        ArrayList<Constructdel_ASTnode> constructlist = new ArrayList<>();
+        ArrayList<Fundecl_ASTnode> funlist = new ArrayList<>();
+        ArrayList<Valdeclstat_ASTnode> valdecl = new ArrayList<>();
+        for (int i = 0; i < ctx.constructdeclar().size(); i++) {
             constructlist.add((Constructdel_ASTnode) visit(ctx.constructdeclar(i)));
         }
-        for (int i=0;i<ctx.fundeclar().size();i++){
+        for (int i = 0; i < ctx.fundeclar().size(); i++) {
             funlist.add((Fundecl_ASTnode) visit(ctx.fundeclar(i)));
         }
-        for(int i=0;i<ctx.vardeclarstat().size();i++){
+        for (int i = 0; i < ctx.vardeclarstat().size(); i++) {
             valdecl.add((Valdeclstat_ASTnode) visit(ctx.vardeclarstat(i)));
         }
-        return new Classdecl_ASTnode(new position(ctx.getStart()),classname,funlist,valdecl,constructlist);
+        return new Classdecl_ASTnode(new position(ctx.getStart()), classname, funlist, valdecl, constructlist);
     }
 
     @Override
@@ -396,8 +400,8 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitProgram(MxParser.ProgramContext ctx) {
-        Rootnode programroot=new Rootnode(new position(ctx.getStart()));
-        for(int i=0;i<ctx.programunit().size();i++){
+        Rootnode programroot = new Rootnode(new position(ctx.getStart()));
+        for (int i = 0; i < ctx.programunit().size(); i++) {
 
             programroot.list.add(visit(ctx.programunit(i)));
         }
