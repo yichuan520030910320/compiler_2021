@@ -8,7 +8,7 @@ import javax.swing.text.Position;
 
 public class Arraytype_ASTnode extends Type_ASTnode {
     public Type_ASTnode arraytype;
-    int dim;
+
 
     public Arraytype_ASTnode(Type_ASTnode t, position pos) {
         super(pos, t.typename);

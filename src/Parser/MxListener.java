@@ -435,18 +435,6 @@ public interface MxListener extends ParseTreeListener {
 	 */
 	void exitExpressionlist(MxParser.ExpressionlistContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code newarray}
-	 * labeled alternative in {@link MxParser#newtype}.
-	 * @param ctx the parse tree
-	 */
-	void enterNewarray(MxParser.NewarrayContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code newarray}
-	 * labeled alternative in {@link MxParser#newtype}.
-	 * @param ctx the parse tree
-	 */
-	void exitNewarray(MxParser.NewarrayContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code newerror}
 	 * labeled alternative in {@link MxParser#newtype}.
 	 * @param ctx the parse tree
@@ -458,6 +446,18 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNewerror(MxParser.NewerrorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code newarray}
+	 * labeled alternative in {@link MxParser#newtype}.
+	 * @param ctx the parse tree
+	 */
+	void enterNewarray(MxParser.NewarrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code newarray}
+	 * labeled alternative in {@link MxParser#newtype}.
+	 * @param ctx the parse tree
+	 */
+	void exitNewarray(MxParser.NewarrayContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code newclass}
 	 * labeled alternative in {@link MxParser#newtype}.

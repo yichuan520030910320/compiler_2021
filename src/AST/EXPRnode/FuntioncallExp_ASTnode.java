@@ -7,8 +7,8 @@ import Utils.position;
 import java.util.ArrayList;
 
 public class FuntioncallExp_ASTnode extends Expr_ASTnode{
-Expr_ASTnode funcname;
-ArrayList<Expr_ASTnode> paralist;
+public Expr_ASTnode funcname;
+public ArrayList<Expr_ASTnode> paralist;
 
     public FuntioncallExp_ASTnode(position pos, Type_ASTnode type_, String index,Expr_ASTnode funcname_,ArrayList<Expr_ASTnode> paralist_) {
 

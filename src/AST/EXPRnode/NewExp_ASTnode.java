@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class NewExp_ASTnode extends Expr_ASTnode {
 
-    ArrayList<Expr_ASTnode> newlist;
-    int dim;
-    Type_ASTnode type;
+    public ArrayList<Expr_ASTnode> newlist;
+    public int dim;
+    public Type_ASTnode type;
 
 
     public NewExp_ASTnode(position pos, Type_ASTnode basictype_, String index, ArrayList<Expr_ASTnode> newlist_,

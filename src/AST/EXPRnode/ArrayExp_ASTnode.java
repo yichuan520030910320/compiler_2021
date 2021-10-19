@@ -5,8 +5,8 @@ import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
 public class ArrayExp_ASTnode extends Expr_ASTnode{
-    Expr_ASTnode arr;
-    Expr_ASTnode index;
+    public Expr_ASTnode arr;
+    public Expr_ASTnode index;
     public ArrayExp_ASTnode(position pos, Type_ASTnode type_, String typename_,Expr_ASTnode arr_,Expr_ASTnode index_) {
         super(pos, type_, typename_);
         arr=arr_;

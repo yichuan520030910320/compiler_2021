@@ -6,6 +6,7 @@ import Utils.position;
 abstract public class Type_ASTnode extends ASTnode {
 
     public String typename;//typename
+    public int dim=0;
 
 
     public String gettype() {

@@ -55,9 +55,9 @@ expression
             |Identifier                                                                                                 #expr_idetifier
             ;
 expressionlist:expression (','expression)*;
-newtype:nonarray ('[' expression']')+('['']')*                      #newarray
-        |nonarray ('[' expression']')+('['']')+('[' expression']')+ #newerror
-        |nonarray '(' ')'                                           #newclass
+newtype:   nonarray ('[' expression']')+('['']')+('[' expression']')+ #newerror//设计成这样是为了防止被识别为 new int a[10][] [2] 把前面三个作为一个expr 后面作为数组的索引 其他乱七八糟的new的情况都被syntax干掉了 另外要注意这个要放在最上面不然还是被识别为原来一样的结果 这个可以在astbuilt的时候就被干掉
+          |nonarray ('[' expression']')+('['']')*                      #newarray
+         |nonarray '(' ')'                                           #newclass
         |nonarray                                                   #newclass
         ;
 basictype:STRING|BOOL|INT;
