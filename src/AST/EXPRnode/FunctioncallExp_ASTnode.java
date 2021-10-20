@@ -6,11 +6,11 @@ import Utils.position;
 
 import java.util.ArrayList;
 
-public class FuntioncallExp_ASTnode extends Expr_ASTnode{
+public class FunctioncallExp_ASTnode extends Expr_ASTnode{
 public Expr_ASTnode funcname;
 public ArrayList<Expr_ASTnode> paralist;
 
-    public FuntioncallExp_ASTnode(position pos, Type_ASTnode type_, String index,Expr_ASTnode funcname_,ArrayList<Expr_ASTnode> paralist_) {
+    public FunctioncallExp_ASTnode(position pos, Type_ASTnode type_, String index, Expr_ASTnode funcname_, ArrayList<Expr_ASTnode> paralist_) {
 
 
         super(pos, type_, index);

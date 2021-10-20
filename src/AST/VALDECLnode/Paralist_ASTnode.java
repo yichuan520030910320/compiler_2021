@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Paralist_ASTnode extends ASTnode {
 
-ArrayList<Singlevaluedel_ASTnode> paralist;
+public ArrayList<Singlevaluedel_ASTnode> paralist;
 //这里 singlevaluedef的expressin 为null
 
     public Paralist_ASTnode(position pos,ArrayList<Singlevaluedel_ASTnode> paralist_) {

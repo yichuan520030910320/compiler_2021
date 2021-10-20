@@ -2,13 +2,15 @@ package Utils;
 
 import AST.TYPEnode.Classtype_ASTnode;
 import AST.TYPEnode.Type_ASTnode;
+import AST.VALDECLnode.Classdecl_ASTnode;
+import AST.VALDECLnode.Fundecl_ASTnode;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class globalscope extends Scope {
     public Map<String, Classtype_ASTnode> classrecord;//classtype string
-
+    public Map<String, Classdecl_ASTnode> classdetailmap;//record the class and it's detail
 
     globalscope(Scope parentscope_) {
         super(parentscope_);
@@ -23,4 +25,30 @@ public class globalscope extends Scope {
         classrecord.put(classname, new Classtype_ASTnode(pos, classname, classname));
         return true;
     }
+
+    public Classdecl_ASTnode find_class_index(String idname,position pos){
+        if (classdetailmap.containsKey(idname)){
+            return classdetailmap.get(idname);
+        }return null;
+
+    }
+
+
+    public Type_ASTnode find_type(String idname, position pos) {
+        if (valdelmap.containsKey(idname)) {
+            return valdelmap.get(idname);
+        } else {
+            if (funcmap.containsKey(idname)) {
+                return funcmap.get(idname).returntype;
+            } else {
+                return classrecord.getOrDefault(idname, null);
+            }
+        }
+
+    }
+    public Fundecl_ASTnode getfundecl(String idname, position pos){
+
+        return funcmap.getOrDefault(idname, null);
+    }
+
 }

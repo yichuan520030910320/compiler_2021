@@ -42,7 +42,7 @@ public interface ASTvisitor {
     void visit(Constnull_ASTnode it);
 
 
-    void visit(FuntioncallExp_ASTnode it);
+    void visit(FunctioncallExp_ASTnode it);
 
     void visit(IdExp_ASTnode it);
 

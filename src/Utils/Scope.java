@@ -8,16 +8,67 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Scope {//basic scope
-    public Map<String, Fundecl_ASTnode> funcmap=new HashMap<>();
-    public Map<String, Type_ASTnode> valdelmap=new HashMap<>();
+    public Map<String, Fundecl_ASTnode> funcmap = new HashMap<>();
+    public Map<String, Type_ASTnode> valdelmap = new HashMap<>();
     public Scope parentscope;
     public Type_ASTnode funcreturntype;
     public Type_ASTnode classtype;
-    Scope(Scope parentscope_){
-        parentscope=parentscope_;
+
+    Scope(Scope parentscope_) {
+        parentscope = parentscope_;
     }
-    public boolean ifcontainvariable(String idname,position pos){
+
+    public boolean ifcontainvariable(String idname, position pos) {
         return valdelmap.containsKey(idname);
+    }
+
+    public Type_ASTnode gettype_invalmap(String name) {
+        return valdelmap.get(name);
+    }
+
+    public boolean ifcontainfunc(String idname, position pos) {
+        return funcmap.containsKey(idname);
+    }
+
+    //
+
+    public Type_ASTnode find_type(String idname, position pos) {
+        if (valdelmap.containsKey(idname)) {
+            return valdelmap.get(idname);
+        } else {
+            if (funcmap.containsKey(idname)) {
+                return funcmap.get(idname).returntype;
+            } else {
+                return parentscope.find_type(idname,pos);
+
+            }
+        }
+
+    }
+    public Type_ASTnode FinddefunScope(String idname,position pos){
+        if (valdelmap.containsKey(idname)) {
+            return valdelmap.get(idname);
+        } else {
+            if (funcmap.containsKey(idname)) {
+                return funcmap.get(idname).returntype;
+            } else {
+                return null;
+            }
+        }
+
+    }
+    public Fundecl_ASTnode getfundecl(String idname,position pos){
+
+        if (funcmap.containsKey(idname)){
+            return funcmap.get(idname);
+        }else {
+
+            return parentscope.getfundecl(idname,pos);
+        }
+    }
+
+    public Fundecl_ASTnode getfundecl_inclass(String idname,position pos){
+        return funcmap.getOrDefault(idname, null);
     }
 
 

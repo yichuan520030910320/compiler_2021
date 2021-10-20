@@ -81,7 +81,7 @@ public class Semanticcheck implements ASTvisitor {
                 it.type.typename = "int";
             }
             case EQUAL -> {
-                if (!it.lhs.isleft)throw new semanticerror(" binary rhs can't be assign ", it.pos);
+                if (!it.lhs.isleft) throw new semanticerror(" binary rhs can't be assign ", it.pos);
                 if (it.lhs.type.typename.equals("string") && it.rhs.type.typename.equals("null")) {
                     throw new semanticerror("error in binary ,can't assign string with null", it.pos);
                 }
@@ -141,14 +141,11 @@ public class Semanticcheck implements ASTvisitor {
                 if (!it.expr.type.typename.equals("bool")) {
                     throw new semanticerror("error in front expr,!..", it.pos);
                 }
-
             }
             case TILDE -> {
             }
         }
         it.type = it.expr.type;
-
-
     }
 
     @Override
@@ -163,14 +160,48 @@ public class Semanticcheck implements ASTvisitor {
     }
 
     @Override
-    public void visit(FuntioncallExp_ASTnode it) {
+    public void visit(FunctioncallExp_ASTnode it) {
+//特判string 等一些特殊的函数
+        Fundecl_ASTnode Function = null;
+        if (it.funcname instanceof MemberExp_ASTnode || it.funcname instanceof IdExp_ASTnode) {
+            it.funcname.accept(this);
+            if (it.funcname instanceof MemberExp_ASTnode) {
+                MemberExp_ASTnode mem = (MemberExp_ASTnode) it.funcname;
+                Function = currentscope.getfundecl_inclass(mem.index, it.pos);
+                if (Function == null) {
+                    throw new semanticerror("error in function call can't find fun declar", it.pos);
+                }
+            } else if (it.funcname instanceof IdExp_ASTnode) {
+                Function = currentscope.getfundecl(it.funcname.index, it.pos);
+                if (Function == null) {
+                    throw new semanticerror("error in function call can't find id declar", it.pos);
+                }
+            }
+        } else {
+            throw new semanticerror(" function call type wrong ", it.pos);
+        }
+
+        assert Function != null;
+        if (Function.paralist_infuction.paralist.size() != it.paralist.size()) {
+            throw new semanticerror("para size in funccall", it.pos);
+        }
+
+
+        //todo cope with the para
+        for (int i = 0; i < it.paralist.size(); i++) {
+            it.paralist.get(i).accept(this);
+        }
 
     }
 
     @Override
     public void visit(IdExp_ASTnode it) {
-        if (!Globalscope.ifcontainvariable(it.index,it.pos))throw new semanticerror("error in id don't be stated before", it.pos);
-
+        Type_ASTnode returntype = currentscope.find_type(it.index, it.pos);
+        if (returntype != null) {
+            it.type = returntype;
+        } else {
+            throw new semanticerror("error in id don't be stated before", it.pos);
+        }
     }
 
     @Override
@@ -185,7 +216,20 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(MemberExp_ASTnode it) {
-
+        String mem = it.member;
+        it.classcall.accept(this);
+        Type_ASTnode ittype = it.type;
+        if (ittype instanceof Classtype_ASTnode) {
+            Classdecl_ASTnode it_class_index = Globalscope.find_class_index(it.index, it.pos);
+            if (it_class_index == null) {
+                throw new semanticerror("error in memxipr 1", it.pos);
+            }
+            Type_ASTnode exprtype = it_class_index.classscope.FinddefunScope(it.member, it.pos);
+            if (exprtype == null) {
+                throw new semanticerror("can't find index in the classdef", it.pos);
+            }
+            it.type = exprtype;
+        }
     }
 
     @Override
@@ -276,7 +320,7 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(Post_UnaryExp_ASTnode it) {
-        if (!it.isleft)throw new semanticerror("postunaryexp can't be right type", it.pos);
+        if (!it.isleft) throw new semanticerror("postunaryexp can't be right type", it.pos);
         it.expr.accept(this);
         Single_Enum op = it.op;
         switch (op) {

@@ -212,14 +212,14 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         ArrayList<Expr_ASTnode> exprlist = new ArrayList<>();
         Expr_ASTnode exp1 = (Expr_ASTnode) visit(ctx.expression());
         if (ctx.expressionlist() == null) {
-            return new FuntioncallExp_ASTnode(new position(ctx.getStart()), null, null, exp1, null);
+            return new FunctioncallExp_ASTnode(new position(ctx.getStart()), null, ctx.getText(), exp1, null);
         }
 
         for (int i = 0; i < ctx.expressionlist().expression().size(); i++) {
             Expr_ASTnode tmpexpr = (Expr_ASTnode) visit(ctx.expressionlist().expression().get(i));
             exprlist.add(tmpexpr);
         }
-        return new FuntioncallExp_ASTnode(new position(ctx.getStart()), null, null, exp1, exprlist);
+        return new FunctioncallExp_ASTnode(new position(ctx.getStart()), null, ctx.getText(), exp1, exprlist);
     }
 
     @Override

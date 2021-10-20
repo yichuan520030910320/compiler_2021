@@ -6,11 +6,11 @@ import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
 public class Fundecl_ASTnode extends Declare_ASTnode {//先去判断isvoid 然后如果是void 则type=null
-    Type_ASTnode returntype;
-    String functionname;
-    Paralist_ASTnode paralist_infuction;
-    Suite_ASTnode suite;
-    boolean isvoid;
+    public Type_ASTnode returntype;
+    public String functionname;
+    public Paralist_ASTnode paralist_infuction;
+    public Suite_ASTnode suite;
+    public boolean isvoid;
 
     public Fundecl_ASTnode(position pos, Type_ASTnode returntype_,
                            String functionname_,
