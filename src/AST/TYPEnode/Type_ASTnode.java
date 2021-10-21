@@ -12,6 +12,9 @@ abstract public class Type_ASTnode extends ASTnode {
     public String gettype() {
         return null;
     }
+    public String  getbasictype(){
+        return typename;
+    }//used for array basic
 
     public Type_ASTnode(position pos, String typename_) {
         super(pos);

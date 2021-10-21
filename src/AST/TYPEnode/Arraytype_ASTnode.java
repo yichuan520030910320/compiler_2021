@@ -7,7 +7,7 @@ import Utils.position;
 import javax.swing.text.Position;
 
 public class Arraytype_ASTnode extends Type_ASTnode {
-    public Type_ASTnode arraytype;
+    public Type_ASTnode arraytype;//这个存储的是带有dim 基类存储的是basic类型的
 
 
     public Arraytype_ASTnode(Type_ASTnode t, position pos) {
@@ -19,6 +19,10 @@ public class Arraytype_ASTnode extends Type_ASTnode {
             arraytype = t;
             dim = 1;
         }
+    }
+    public Arraytype_ASTnode(Type_ASTnode t, position pos,int dim_){
+        super(pos, t.typename);
+        dim=dim_;
     }
 
     @Override

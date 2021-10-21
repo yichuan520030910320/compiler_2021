@@ -54,7 +54,7 @@ public interface ASTvisitor {
 
     void visit(Suite_ASTnode it);
 
-    void visit(Singlevaluedel_ASTnode it);
+    void visit(Singlevaluedecl_ASTnode it);
 
     void visit(Fundecl_ASTnode it);
 
@@ -80,7 +80,7 @@ public interface ASTvisitor {
 
     void visit(Breakstat_ASTnode it);
 
-    void visit(Constructdel_ASTnode it);
+    void visit(Constructdecl_ASTnode it);
 
     void visit(ArrayExp_ASTnode it);
 

@@ -5,7 +5,7 @@ import Utils.error.semanticerror;
 import Utils.position;
 
 public class Classtype_ASTnode extends Type_ASTnode {
-    String classname;
+    public String classname;
     public Classtype_ASTnode(position pos, String index_,  String classname_) {
         super(pos, index_);
         this.classname=classname_;

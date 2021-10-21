@@ -2,7 +2,9 @@ import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
 import Utils.error.error;
+import Utils.globalscope;
 import frontend.ASTbuilder;
+import frontend.Semanticcheck;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -12,9 +14,11 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\mytest2.mx";
+        String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
         InputStream input = new FileInputStream(name);
         try {
+            globalscope gScope = new globalscope(null);
+
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new MxErrorListener());
@@ -22,9 +26,12 @@ public class Main {
             parser.removeErrorListeners();
             parser.addErrorListener(new MxErrorListener());
             ParseTree parseTreeRoot = parser.program();//only throw one error ?
-            ASTbuilder astBuilder = new ASTbuilder();
+            ASTbuilder astBuilder = new ASTbuilder(gScope);
             Rootnode ASTRoot;
             ASTRoot = (Rootnode) astBuilder.visit(parseTreeRoot);
+            Semanticcheck semanticchecker=new Semanticcheck(gScope);
+            semanticchecker.visit(ASTRoot);
+
             System.out.println("you can debug here");
 
         } catch (error er) {

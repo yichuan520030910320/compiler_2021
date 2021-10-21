@@ -7,8 +7,6 @@ public class Voidtype_ASTnode extends Type_ASTnode {
     public Voidtype_ASTnode(position pos, String index_) {
         super(pos, index_);
     }
-
-
     @Override
     public String gettype() {
         return "void";

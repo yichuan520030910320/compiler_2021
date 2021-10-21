@@ -5,8 +5,8 @@ import AST.EXPRnode.Expr_ASTnode;
 import Utils.position;
 
 public class Returnstat_ASTnode extends Stat_ASTnode{
-    boolean isvoid;
-    Expr_ASTnode renturnexpr;
+    public boolean isvoid;
+    public Expr_ASTnode renturnexpr;
 
     public Returnstat_ASTnode(position pos,boolean isvoid_,Expr_ASTnode expr) {
         super(pos);

@@ -13,7 +13,7 @@ import Utils.position;
 import java.util.ArrayList;
 
 public class LambdaExp_ASTnode extends Expr_ASTnode {//如果函数调用列表没有参数，则paralist为大小为0 用size来判断
-    public Type_ASTnode type;
+    public Type_ASTnode typeinlambda;
     public Paralist_ASTnode lambda_parslist;
     public Suite_ASTnode suite;
     public ArrayList<Expr_ASTnode> paralist;
@@ -23,7 +23,7 @@ public class LambdaExp_ASTnode extends Expr_ASTnode {//如果函数调用列表�
                              Suite_ASTnode suite_,
                              ArrayList<Expr_ASTnode> paralist_) {
         super(pos,null,null);
-        type=lambdareturn_type_;
+        typeinlambda=lambdareturn_type_;
         lambda_parslist=lambdaparslist_;
         suite=suite_;
         paralist=paralist_;

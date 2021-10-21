@@ -13,12 +13,19 @@ import AST.VALDECLnode.*;
 import Parser.MxBaseVisitor;
 import Parser.MxParser;
 import Utils.error.semanticerror;
+import Utils.globalscope;
 import Utils.position;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 
 public class ASTbuilder extends MxBaseVisitor<ASTnode> {
+    public globalscope Gscope;
+
+    public ASTbuilder(globalscope Gscope_) {
+        Gscope = Gscope_;
+    }
+
     @Override
     public ASTnode visitAllconst(MxParser.AllconstContext ctx) {
 
@@ -99,7 +106,8 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
                 dim++;
             }
         }
-        return new NewExp_ASTnode(new position(ctx.getStart()), basictype, null, list, dim, basictype);
+        Arraytype_ASTnode array_type = new Arraytype_ASTnode(basictype, new position(ctx.getStart()), dim);
+        return new NewExp_ASTnode(new position(ctx.getStart()), basictype, null, list, dim, array_type);
     }
 
 
@@ -115,7 +123,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitExpr_this(MxParser.Expr_thisContext ctx) {
-        return new Thisexpr_ASTnode(new position(ctx.getStart()), null,null);
+        return new Thisexpr_ASTnode(new position(ctx.getStart()), null, null);
     }
 
     @Override
@@ -150,7 +158,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         }
         Expr_ASTnode lhs = (Expr_ASTnode) visit(ctx.operand1);
         Expr_ASTnode rhs = (Expr_ASTnode) visit(ctx.operand2);
-        return new BinaryExp_ASTnode(new position(ctx.getStart()),null, lhs, rhs, op);
+        return new BinaryExp_ASTnode(new position(ctx.getStart()), null, lhs, rhs, op);
     }
 
     @Override
@@ -169,7 +177,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder front");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), null,expr, op);
+        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
     }
 
     @Override
@@ -182,7 +190,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder post");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()),null, expr, op);
+        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
     }
 
     @Override
@@ -190,7 +198,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         Binary_Enum op = Binary_Enum.EQUAL;
         Expr_ASTnode lhs = (Expr_ASTnode) visit(ctx.operand1);
         Expr_ASTnode rhs = (Expr_ASTnode) visit(ctx.operand2);
-        return new BinaryExp_ASTnode(new position(ctx.getStart()),null, lhs, rhs, op);
+        return new BinaryExp_ASTnode(new position(ctx.getStart()), null, lhs, rhs, op);
     }
 
     @Override
@@ -242,15 +250,15 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         if (ctx.expression() != null) {
             expr = (Expr_ASTnode) visit(ctx.expression());
         }
-        return new Singlevaluedel_ASTnode(new position(ctx.getStart()), null, id, expr);
+        return new Singlevaluedecl_ASTnode(new position(ctx.getStart()), null, id, expr);
     }
 
     @Override
     public ASTnode visitVardeclarlist(MxParser.VardeclarlistContext ctx) {
         Type_ASTnode type = (Type_ASTnode) visit(ctx.type());
-        ArrayList<Singlevaluedel_ASTnode> vardellist = new ArrayList<>();
+        ArrayList<Singlevaluedecl_ASTnode> vardellist = new ArrayList<>();
         for (int i = 0; i < ctx.vardeclar().size(); i++) {
-            Singlevaluedel_ASTnode tmpexpr = (Singlevaluedel_ASTnode) visit(ctx.vardeclar().get(i));
+            Singlevaluedecl_ASTnode tmpexpr = (Singlevaluedecl_ASTnode) visit(ctx.vardeclar().get(i));
             tmpexpr.type = type;
             vardellist.add(tmpexpr);
         }
@@ -264,10 +272,10 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitParameterlist(MxParser.ParameterlistContext ctx) {
-        ArrayList<Singlevaluedel_ASTnode> paralist = new ArrayList<>();
+        ArrayList<Singlevaluedecl_ASTnode> paralist = new ArrayList<>();
         for (int i = 0; i < ctx.Identifier().size(); i++) {
             Type_ASTnode tmptype = (Type_ASTnode) visit(ctx.type(i));
-            Singlevaluedel_ASTnode tempsingle = new Singlevaluedel_ASTnode(new position(ctx.getStart()), tmptype, ctx.Identifier().get(i).getText(), null);
+            Singlevaluedecl_ASTnode tempsingle = new Singlevaluedecl_ASTnode(new position(ctx.getStart()), tmptype, ctx.Identifier().get(i).getText(), null);
             paralist.add(tempsingle);
         }
         return new Paralist_ASTnode(new position(ctx.getStart()), paralist);
@@ -352,13 +360,13 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         String classname = ctx.Identifier().getText();
         Paralist_ASTnode constructparalist = ctx.parameterlist() == null ? null : (Paralist_ASTnode) visit(ctx.parameterlist());
         Suite_ASTnode suite = (Suite_ASTnode) visit(ctx.suite());
-        return new Constructdel_ASTnode(new position(ctx.getStart()), classname, constructparalist, suite);
+        return new Constructdecl_ASTnode(new position(ctx.getStart()), classname, constructparalist, suite);
     }
 
     @Override
     public ASTnode visitFundeclar(MxParser.FundeclarContext ctx) {
         boolean isvoid = ctx.Void() == null;
-        Type_ASTnode type = ctx.type() == null ? null : (Type_ASTnode) visit(ctx.type());
+        Type_ASTnode type = ctx.type() == null ? new Voidtype_ASTnode(new position(ctx.getStart()), "void") : (Type_ASTnode) visit(ctx.type());
         String functionname = ctx.Identifier().getText();
         Paralist_ASTnode funcparalist = ctx.parameterlist() == null ? null : (Paralist_ASTnode) visit(ctx.parameterlist());
         Suite_ASTnode suite = (Suite_ASTnode) visit(ctx.suite());
@@ -368,11 +376,11 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     @Override
     public ASTnode visitClassdef(MxParser.ClassdefContext ctx) {
         String classname = ctx.calssname.getText();
-        ArrayList<Constructdel_ASTnode> constructlist = new ArrayList<>();
+        ArrayList<Constructdecl_ASTnode> constructlist = new ArrayList<>();
         ArrayList<Fundecl_ASTnode> funlist = new ArrayList<>();
         ArrayList<Valdeclstat_ASTnode> valdecl = new ArrayList<>();
         for (int i = 0; i < ctx.constructdeclar().size(); i++) {
-            constructlist.add((Constructdel_ASTnode) visit(ctx.constructdeclar(i)));
+            constructlist.add((Constructdecl_ASTnode) visit(ctx.constructdeclar(i)));
         }
         for (int i = 0; i < ctx.fundeclar().size(); i++) {
             funlist.add((Fundecl_ASTnode) visit(ctx.fundeclar(i)));

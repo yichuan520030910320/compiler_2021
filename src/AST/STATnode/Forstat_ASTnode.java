@@ -6,24 +6,24 @@ import Utils.position;
 
 import java.util.ArrayList;
 
-public class Forstat_ASTnode extends Stat_ASTnode{
-    Expr_ASTnode initexpr;
-    Valdeclstat_ASTnode initvaldecl;
-    Expr_ASTnode condition;
-    Expr_ASTnode incr;
-    Stat_ASTnode suite_in_for;
+public class Forstat_ASTnode extends Stat_ASTnode {
+    public Expr_ASTnode initexpr;
+    public Valdeclstat_ASTnode initvaldecl;
+    public Expr_ASTnode condition;
+    public Expr_ASTnode incr;
+    public Stat_ASTnode suite_in_for;
 
-    public Forstat_ASTnode(position pos,Expr_ASTnode initexpr_,
-            Valdeclstat_ASTnode initvaldecl_,
-            Expr_ASTnode condition_,
-            Expr_ASTnode incr_,
-            Stat_ASTnode suite_in_for_) {
+    public Forstat_ASTnode(position pos, Expr_ASTnode initexpr_,
+                           Valdeclstat_ASTnode initvaldecl_,
+                           Expr_ASTnode condition_,
+                           Expr_ASTnode incr_,
+                           Stat_ASTnode suite_in_for_) {
         super(pos);
-        initexpr=initexpr_;
-        initvaldecl=initvaldecl_;
-        condition=condition_;
-        incr=incr_;
-        suite_in_for=suite_in_for_;
+        initexpr = initexpr_;
+        initvaldecl = initvaldecl_;
+        condition = condition_;
+        incr = incr_;
+        suite_in_for = suite_in_for_;
     }
 
     @Override
