@@ -119,11 +119,14 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode fundecl5 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "toString", para5, null, false);
         Globalscope.funcmap.put("toString", fundecl5);
 
+        boolean hasmain=false;
+
 
         // 下面收集各个fun
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Fundecl_ASTnode) {
                 if (((Fundecl_ASTnode) it.list.get(i)).functionname.equals("main")){
+                    hasmain=true;
                     if (!((Fundecl_ASTnode) it.list.get(i)).returntype.typename.equals("int")){
                         throw new semanticerror("error for main return ",it.pos);
                         //basic 12
@@ -136,6 +139,9 @@ public class Semanticcheck implements ASTvisitor {
                     Globalscope.insertfunc(((Fundecl_ASTnode) it.list.get(i)).functionname, (Fundecl_ASTnode) it.list.get(i));
                 } else throw new semanticerror("function declare the same in root", it.list.get(i).pos);
             }
+        }
+        if (!hasmain){
+            throw new semanticerror("no main fuction my bro", it.pos);
         }
 
 
