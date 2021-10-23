@@ -22,6 +22,7 @@ public class Classdecl_ASTnode extends Declare_ASTnode {
         functionlist = functionlist_;
         valdecllist = valdecllist_;
         constructerlist = constructerlist_;
+        classscope=new Scope(null);
 
     }
 

@@ -1,12 +1,14 @@
 package AST.TYPEnode;
 
 import AST.ASTnode;
+import AST.ASTvisitor;
 import Utils.position;
 
-abstract public class Type_ASTnode extends ASTnode {
+ public class Type_ASTnode extends ASTnode {
 
     public String typename;//typename
     public int dim=0;
+
 
 
     public String gettype() {
@@ -22,8 +24,14 @@ abstract public class Type_ASTnode extends ASTnode {
         this.typename = typename_;
     }
 
+
+
     public void comparetype(Type_ASTnode t) {
 
     }
 
-}
+     @Override
+     public void accept(ASTvisitor visitor) {
+
+     }
+ }

@@ -16,6 +16,7 @@ public class globalscope extends Scope {
     public globalscope(Scope parentscope_) {
         super(parentscope_);
         classrecord = new HashMap<>();
+        classdetailmap=new HashMap<>();
 
     }
 
@@ -63,6 +64,12 @@ public class globalscope extends Scope {
     }
     public void insertclass(String classname,Classdecl_ASTnode classdecl){
         classdetailmap.put(classname,classdecl);
+    }
+    public boolean ifcontainfunname(String classname){
+        return funcmap.containsKey(classname);
+    }
+    public void insertfunc(String classname,Fundecl_ASTnode func){
+        funcmap.put(classname,func);
     }
 
 }

@@ -34,8 +34,7 @@ statement
 
 expression
             :'(' expression ')'                                                                                         #expr_parenexpr
-            |<assoc=right> operand1=expression '=' operand2=expression                                                  #expr_assign
-            |expression op=(SELFPLUS|SELFSUB)                                                                           #expr_single_post
+              |expression op=(SELFPLUS|SELFSUB)                                                                           #expr_single_post
             |NEW newtype                                                                                                #expr_new
             |expression '.' Identifier                                                                                  #expr_member
             |expression '(' expressionlist? ')'                                                                         #expr_function
@@ -45,12 +44,13 @@ expression
             |<assoc=right>  op=('--'|'++') expression                                                                      #expr_single
             |operand1=expression op=('*'|'/'|'%') operand2=expression                                                   #expr_binary
             |operand1=expression op=('+'|'-') operand2=expression                                                       #expr_binary
+              |operand1=expression op=('=='|'!='|'>'|'>='|'<='|'<') operand2=expression                                   #expr_binary
             |operand1=expression op=('<<'|'>>') operand2=expression                                                     #expr_binary
             |operand1=expression op=('&&'|'||') operand2=expression                                                     #expr_binary
             |operand1=expression op=('&'|'|'|'^') operand2=expression                                                   #expr_binary
-            |operand1=expression op=('=='|'!='|'>'|'>='|'<='|'<') operand2=expression                                   #expr_binary
-            |Lambda1 ('(' lambdapara=parameterlist? ')')? Lambda2 suite '(' (lambdaexprelist=expressionlist)? ')'       #expr_lambda//todo
+            |Lambda1 ('(' lambdapara=parameterlist? ')')? Lambda2 suite '(' (lambdaexprelist=expressionlist)? ')'       #expr_lambda
             |THIS                                                                                                       #expr_this
+             |<assoc=right> operand1=expression '=' operand2=expression                                                  #expr_assign
             |allconst                                                            #expr_const
             |Identifier                                                                                                 #expr_idetifier
             ;

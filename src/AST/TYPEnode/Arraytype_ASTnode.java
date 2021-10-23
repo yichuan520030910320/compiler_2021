@@ -27,6 +27,8 @@ public class Arraytype_ASTnode extends Type_ASTnode {
 
     @Override
     public String gettype() {
+
+        if (dim==0) return  arraytype.gettype();
         return arraytype.gettype() + '[' + dim + ']';
     }
 

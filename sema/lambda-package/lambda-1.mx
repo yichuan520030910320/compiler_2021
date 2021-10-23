@@ -1,0 +1,14 @@
+/*
+Test Package: Sema_Local_Preview
+Test Target: Lambda-1
+Author: 17' zwx
+Verdict: Success
+Origin Package: Semantic Pretest
+*/
+
+int main(){
+    int d = [&]() -> { return 10; }();
+    return d;
+}
+
+

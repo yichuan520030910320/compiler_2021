@@ -107,6 +107,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             }
         }
         Arraytype_ASTnode array_type = new Arraytype_ASTnode(basictype, new position(ctx.getStart()), dim);
+        array_type.arraytype=basictype;
         return new NewExp_ASTnode(new position(ctx.getStart()), basictype, null, list, dim, array_type);
     }
 
@@ -118,7 +119,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitExpr_idetifier(MxParser.Expr_idetifierContext ctx) {
-        return new IdExp_ASTnode(new position(ctx.getStart()), null, null, ctx.getText());
+        return new IdExp_ASTnode(new position(ctx.getStart()), null, ctx.getText(), ctx.getText());
     }
 
     @Override
