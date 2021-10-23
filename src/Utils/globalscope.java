@@ -53,7 +53,7 @@ public class globalscope extends Scope {
         return funcmap.getOrDefault(idname, null);
     }
     public boolean checktype(Type_ASTnode type_instat,position pos){
-        if ((!classrecord.containsKey(type_instat.getbasictype())) && (!(type_instat.getbasictype().equals("bool") || type_instat.getbasictype().equals("int") || type_instat.getbasictype().equals("string")))) {
+        if ((!classrecord.containsKey(type_instat.getbasictype())) && (!(type_instat.getbasictype().equals("bool") || type_instat.getbasictype().equals("int") ||type_instat.getbasictype().equals("void")|| type_instat.getbasictype().equals("string")))) {
             throw new semanticerror("type not define in the global", pos);
         }
         else return true;

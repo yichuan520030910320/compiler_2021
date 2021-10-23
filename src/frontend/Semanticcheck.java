@@ -136,7 +136,8 @@ public class Semanticcheck implements ASTvisitor {
         //collect inner class
         for (int i = 0; i < it.list.size(); i++) {
 
-            if (it.list.get(i) instanceof Classdecl_ASTnode tmpclass) {
+            if (it.list.get(i) instanceof Classdecl_ASTnode ) {
+                Classdecl_ASTnode tmpclass= (Classdecl_ASTnode) it.list.get(i);
                 for (int j = 0; j < tmpclass.functionlist.size(); j++) {
                     Fundecl_ASTnode fun_inclass = tmpclass.functionlist.get(i);
                     if (tmpclass.classscope.funcmap.containsKey(fun_inclass.functionname)) {
@@ -315,7 +316,8 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode Function = null;
         if (it.funcname instanceof MemberExp_ASTnode || it.funcname instanceof IdExp_ASTnode) {
             it.funcname.accept(this);
-            if (it.funcname instanceof MemberExp_ASTnode mem) {
+            if (it.funcname instanceof MemberExp_ASTnode ) {
+                MemberExp_ASTnode mem= (MemberExp_ASTnode) it.funcname;
                 Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.index);
                 Scope classscope = class_mem.classscope;
                 Function = classscope.getfundecl_inclass(mem.index, it.pos);

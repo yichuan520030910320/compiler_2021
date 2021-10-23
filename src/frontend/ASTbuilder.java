@@ -85,7 +85,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public ASTnode visitNewclass(MxParser.NewclassContext ctx) {
         Type_ASTnode type = (Type_ASTnode) visit(ctx.nonarray());
 
-        return new NewExp_ASTnode(new position(ctx.getStart()), type, null, null, 0, null);
+        return new NewExp_ASTnode(new position(ctx.getStart()), type, null, null, 0, type);
     }
 
     @Override
@@ -261,6 +261,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         for (int i = 0; i < ctx.vardeclar().size(); i++) {
             Singlevaluedecl_ASTnode tmpexpr = (Singlevaluedecl_ASTnode) visit(ctx.vardeclar().get(i));
             tmpexpr.type = type;
+
             vardellist.add(tmpexpr);
         }
         return new Valdeclstat_ASTnode(new position(ctx.getStart()), vardellist, type);
