@@ -1,17 +1,11 @@
 /*
 Test Package: Sema_Local_Preview
 Test Target: Basic
-Author: 15' Bohui Fang
+Author: 14' Cheng wan
 Time: 2019-10-20
-Verdict: Success
+Verdict: Fail
+Comment: main function must return int value
 Origin Package: Semantic Extended
 */
-void AA() {}
-class B {};
-int main() {
-	int A;
-	B C = new B;
-	AA();
-	A = 10;
-	int bbc;
-}
+void main() {}
+

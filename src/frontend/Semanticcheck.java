@@ -123,6 +123,12 @@ public class Semanticcheck implements ASTvisitor {
         // 下面收集各个fun
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Fundecl_ASTnode) {
+                if (((Fundecl_ASTnode) it.list.get(i)).functionname.equals("main")){
+                    if (!((Fundecl_ASTnode) it.list.get(i)).returntype.typename.equals("int")){
+                        throw new semanticerror("error for main return ",it.pos);
+                        //basic 12
+                    }
+                }
                 if (!Globalscope.ifcontainfunname(((Fundecl_ASTnode) it.list.get(i)).functionname)) {
                     if (Globalscope.ifcontainclassname(((Fundecl_ASTnode) it.list.get(i)).functionname)) {
                         throw new semanticerror(" function declare the same as the class", it.list.get(i).pos);
@@ -206,7 +212,10 @@ public class Semanticcheck implements ASTvisitor {
         switch (op) {
             case ADD -> {
                 if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype())) && (!it.rhs.type.typename.equals("null"))) {
-                    throw new semanticerror(" error in binary not match compare in equal ", it.pos);
+
+                    System.out.println(it.lhs.type.gettype());
+                    System.out.println(it.rhs.type.gettype());
+                    throw new semanticerror(" error in binary not match compare in equal 00", it.pos);
                 }
 
                 if (!((it.lhs.type.typename.equals("int") && it.rhs.type.typename.equals("int")) || (it.lhs.type.typename.equals("string") && it.rhs.type.typename.equals("string")))) {
@@ -231,7 +240,9 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror("error in binary ,can't assign string with null", it.pos);
                 }
                 if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype())) && (!it.rhs.type.typename.equals("null"))) {
-                    throw new semanticerror(" error in binary not match compare in equal ", it.pos);
+                    System.out.println(it.lhs.type.gettype());
+                    System.out.println(it.rhs.type.gettype());
+                    throw new semanticerror(" error in binary not match compare in equal 01", it.pos);
                 }
             }
             case AND, OR -> {
@@ -311,18 +322,24 @@ public class Semanticcheck implements ASTvisitor {
     public void visit(FunctioncallExp_ASTnode it) {
 //特判string 等一些特殊的函数
         currentscope = new Scope(currentscope);
-
-
         Fundecl_ASTnode Function = null;
         if (it.funcname instanceof MemberExp_ASTnode || it.funcname instanceof IdExp_ASTnode) {
             it.funcname.accept(this);
             if (it.funcname instanceof MemberExp_ASTnode ) {
                 MemberExp_ASTnode mem= (MemberExp_ASTnode) it.funcname;
-                Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.index);
-                Scope classscope = class_mem.classscope;
-                Function = classscope.getfundecl_inclass(mem.index, it.pos);
-                if (Function == null) {
-                    throw new semanticerror("error in function call can't find fun declar", it.pos);
+                if (mem.classcall instanceof ArrayExp_ASTnode){
+                   if (!mem.member.equals("size")){
+                       throw new semanticerror("array call defeat", it.pos);
+                   }
+                   Function=new Fundecl_ASTnode(it.pos,new Inttype_ASTnode(it.pos,"int"),"size",null,null,false);
+                }
+                else {
+                    Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.index);
+                    Scope classscope = class_mem.classscope;
+                    Function = classscope.getfundecl_inclass(mem.index, it.pos);
+                    if (Function == null) {
+                        throw new semanticerror("error in function call can't find fun declar", it.pos);
+                    }
                 }
             } else if (it.funcname instanceof IdExp_ASTnode) {
                 Function = currentscope.getfundecl(it.funcname.index, it.pos);
@@ -333,17 +350,22 @@ public class Semanticcheck implements ASTvisitor {
         } else {
             throw new semanticerror(" function call type wrong ", it.pos);
         }
-
         assert Function != null;
+        if (Function.paralist_infuction!=null){
         if (Function.paralist_infuction.paralist.size() != it.paralist.size()) {
             throw new semanticerror("para size in funccall", it.pos);
+        }}
+        else {
+            if ( it.paralist!=null){
+                throw new semanticerror("eroor para size in funcall",it.pos);
+            }
         }
-
-
-        for (int i = 0; i < it.paralist.size(); i++) {
-            it.paralist.get(i).accept(this);
-            if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.typename)) {
-                throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
+        if (it.paralist!=null) {
+            for (int i = 0; i < it.paralist.size(); i++) {
+                it.paralist.get(i).accept(this);
+                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.typename)) {
+                    throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
+                }
             }
         }
         if (Function.returntype instanceof Arraytype_ASTnode){
@@ -417,6 +439,7 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror(" element must be int in new ", it.newlist.get(i).pos);
                 }
             }
+            it.type=it.type1;
         }
     }
 
@@ -544,8 +567,8 @@ public class Semanticcheck implements ASTvisitor {
     public void visit(Returnstat_ASTnode it) {
         if (!infun) throw new semanticerror("return must in functioon", it.pos);
         if (it.renturnexpr == null) {
-            if (currentscope.funcreturntype.gettype().equals("void")) {
-                throw new semanticerror("return none but noot void", it.pos);
+            if (!currentscope.funcreturntype.gettype().equals("void")) {
+                throw new semanticerror("return none but not void", it.pos);
             }
         } else {
             it.renturnexpr.accept(this);
