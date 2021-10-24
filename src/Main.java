@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 //        Scanner scanner = new Scanner(System.in);
 //        String name = scanner.nextLine();
-        int op = 1;
+        int op = 0;
         InputStream input = null;
         if (op == 1) {
             String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
