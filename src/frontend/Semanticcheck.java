@@ -19,17 +19,17 @@ import java.util.ArrayList;
 public class Semanticcheck implements ASTvisitor {
     public globalscope Globalscope;
     public Scope currentscope;
-    boolean infun = false, inclass = false,inconstructer=false;
+    boolean infun = false, inclass = false, inconstructer = false;
     int inloop = 0;
     String tempclassname;
 
-    public void getparent_returntype(position pos){
+    public void getparent_returntype(position pos) {
         if (infun) {
-            if (currentscope.parentscope.funcreturntype==null)return;
+            if (currentscope.parentscope.funcreturntype == null) return;
             currentscope.funcreturntype = new
                     Type_ASTnode(pos, currentscope.parentscope.funcreturntype.typename)
             ;
-            currentscope.funcreturntype.dim=currentscope.parentscope.funcreturntype.dim;
+            currentscope.funcreturntype.dim = currentscope.parentscope.funcreturntype.dim;
         }
     }
 
@@ -118,7 +118,7 @@ public class Semanticcheck implements ASTvisitor {
         Globalscope.funcmap.put("getString", fundecl3);
 
 
-       Fundecl_ASTnode fundecl4 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "getInt", null, null, false);
+        Fundecl_ASTnode fundecl4 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "getInt", null, null, false);
         Globalscope.funcmap.put("getInt", fundecl4);
 
         ArrayList<Singlevaluedecl_ASTnode> list5 = new ArrayList<>();
@@ -218,12 +218,12 @@ public class Semanticcheck implements ASTvisitor {
         it.rhs.accept(this);
 
         //处理出memberexp的类型 因为在memexpr里面不太好处理
-        if (it.lhs instanceof MemberExp_ASTnode){
-            String callindex=((MemberExp_ASTnode) it.lhs).classcall.index;
-            String classtype=currentscope.find_type(callindex, it.pos).typename;
+        if (it.lhs instanceof MemberExp_ASTnode) {
+            String callindex = ((MemberExp_ASTnode) it.lhs).classcall.index;
+            String classtype = currentscope.find_type(callindex, it.pos).typename;
             System.out.println(classtype);
-            Classdecl_ASTnode tmpclass=Globalscope.classdetailmap.get(classtype);
-            it.lhs.type=tmpclass.classscope.valdelmap.get(((MemberExp_ASTnode) it.lhs).member);
+            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(classtype);
+            it.lhs.type = tmpclass.classscope.valdelmap.get(((MemberExp_ASTnode) it.lhs).member);
         }
 
         Binary_Enum op = it.op;
@@ -253,17 +253,18 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case EQUAL -> {
-                if (it.lhs instanceof FunctioncallExp_ASTnode){
+                if (it.lhs instanceof FunctioncallExp_ASTnode) {
                     throw new semanticerror("function call can't be at left", it.pos);
 
                 }
-                if (it.lhs instanceof Conststring_ASTnode ||it.lhs instanceof Constbool_ASTnode||it.lhs instanceof Constint_ASTnode||it.lhs instanceof Constnull_ASTnode)throw new semanticerror(" lhs can't be constant obj", it.pos);
+                if (it.lhs instanceof Conststring_ASTnode || it.lhs instanceof Constbool_ASTnode || it.lhs instanceof Constint_ASTnode || it.lhs instanceof Constnull_ASTnode)
+                    throw new semanticerror(" lhs can't be constant obj", it.pos);
 
                 if (!it.lhs.isleft) throw new semanticerror(" binary rhs can't be assign ", it.pos);
                 if (it.lhs.type.typename.equals("string") && it.rhs.type.typename.equals("null")) {
                     throw new semanticerror("error in binary ,can't assign string with null", it.pos);
                 }
-                if (it.lhs.index!=null){
+                if (it.lhs.index != null) {
                     if (it.lhs.index.equals("true") || it.lhs.index.equals("false")) {
                         throw new semanticerror("true or false can't be assigned", it.pos);
                     }
@@ -355,13 +356,12 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode Function = null;
         if (it.funcname instanceof MemberExp_ASTnode || it.funcname instanceof IdExp_ASTnode) {
             it.funcname.accept(this);
-            if (it.funcname instanceof MemberExp_ASTnode)
-            {
+            if (it.funcname instanceof MemberExp_ASTnode) {
                 MemberExp_ASTnode mem = (MemberExp_ASTnode) it.funcname;
-                if (mem.classcall instanceof Thisexpr_ASTnode){
-                    Classdecl_ASTnode tmpclassdecl=Globalscope.classdetailmap.get(tempclassname);
-                    Function=tmpclassdecl.classscope.getfundecl_inclass(mem.member, it.pos);
-                    if (Function==null){
+                if (mem.classcall instanceof Thisexpr_ASTnode) {
+                    Classdecl_ASTnode tmpclassdecl = Globalscope.classdetailmap.get(tempclassname);
+                    Function = tmpclassdecl.classscope.getfundecl_inclass(mem.member, it.pos);
+                    if (Function == null) {
                         throw new semanticerror("no this function in class", it.pos);
                     }
 
@@ -379,7 +379,7 @@ public class Semanticcheck implements ASTvisitor {
                     }
                     Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }//array
-                else if (mem.classcall instanceof IdExp_ASTnode){
+                else if (mem.classcall instanceof IdExp_ASTnode) {
                     // call    class Array {}  Array a a.size()
                     Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.classcall.type.typename);
                     Scope classscope = class_mem.classscope;
@@ -387,25 +387,20 @@ public class Semanticcheck implements ASTvisitor {
                     if (Function == null) {
                         throw new semanticerror("error in function call can't find fun declar1", it.pos);
                     }
-                }
-                else if (((MemberExp_ASTnode) it.funcname).classcall instanceof NewExp_ASTnode){
+                } else if (((MemberExp_ASTnode) it.funcname).classcall instanceof NewExp_ASTnode) {
                     //for (new C).func() + (new C).func();
-                    String classname=((MemberExp_ASTnode) it.funcname).classcall.type.typename;
-                    Classdecl_ASTnode class_mem=Globalscope.classdetailmap.get(classname);
-                    Function=class_mem.classscope.funcmap.get(((MemberExp_ASTnode) it.funcname).member);
-                }
-
-
-                else {//maybe useless?
-                    Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.index);
+                    String classname = ((MemberExp_ASTnode) it.funcname).classcall.type.typename;
+                    Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(classname);
+                    Function = class_mem.classscope.funcmap.get(((MemberExp_ASTnode) it.funcname).member);
+                } else {//maybe useless?
+                    Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.classcall.type.typename);
                     Scope classscope = class_mem.classscope;
-                    Function = classscope.getfundecl_inclass(mem.index, it.pos);
+                    Function = classscope.getfundecl_inclass(((MemberExp_ASTnode) it.funcname).member, it.pos);
                     if (Function == null) {
                         throw new semanticerror("error in function call can't find fun declar2", it.pos);
                     }
                 }
-            } else if (it.funcname instanceof IdExp_ASTnode)
-            {
+            } else if (it.funcname instanceof IdExp_ASTnode) {
                 Function = currentscope.getfundecl(it.funcname.index, it.pos);
                 if (Function == null) {
                     throw new semanticerror("error in function call can't find id declar", it.pos);
@@ -427,7 +422,9 @@ public class Semanticcheck implements ASTvisitor {
         if (it.paralist != null) {
             for (int i = 0; i < it.paralist.size(); i++) {
                 it.paralist.get(i).accept(this);
-                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.typename)) {
+                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.gettype())) {
+                    System.out.println(it.paralist.get(i).type.gettype());
+                    System.out.println(Function.paralist_infuction.paralist.get(i).type.gettype());
                     throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
                 }
             }
@@ -511,24 +508,19 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(MemberExp_ASTnode it) {
         it.classcall.accept(this);
-        Classdecl_ASTnode classdetailed=Globalscope.classdetailmap.get(it.classcall.index);
+        Classdecl_ASTnode classdetailed = Globalscope.classdetailmap.get(it.classcall.index);
 //        Type_ASTnode ittype=classdetailed.classscope.valdelmap.get(it.member);
-        Type_ASTnode ittype=it.type;
+        Type_ASTnode ittype = it.type;
+        if (it.classcall.type != null) {
+            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(it.classcall.type.typename);
+
+            it.type = new Type_ASTnode(it.pos, tmpclass.classscope.find_type(it.member, it.pos).typename);
+
+            it.type.dim = tmpclass.classscope.find_type(it.member, it.pos).dim;
+        }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+//below is useless?
         if (ittype instanceof Classtype_ASTnode) {
             Classdecl_ASTnode it_class_index = Globalscope.find_class_index(it.index, it.pos);
             if (it_class_index == null) {
@@ -562,7 +554,7 @@ public class Semanticcheck implements ASTvisitor {
                 if (!it.type.gettype().equals(((NewExp_ASTnode) it.expression).type1.gettype())) {
                     throw new semanticerror("type don't fit in single define1", it.pos);
                 }
-            } else if ((!it.type.gettype().equals(it.expression.type.gettype()))&&(!(it.expression instanceof Constnull_ASTnode))) {
+            } else if ((!it.type.gettype().equals(it.expression.type.gettype())) && (!(it.expression instanceof Constnull_ASTnode))) {
                 throw new semanticerror("type don't fit in single define2", it.pos);
             }
         }
@@ -602,9 +594,10 @@ public class Semanticcheck implements ASTvisitor {
     public void visit(Classdecl_ASTnode it) {
         currentscope = new Scope(currentscope);
         getparent_returntype(it.pos);
-        currentscope.classtype=new Classtype_ASTnode(it.pos,it.classname,it.classname);
+        currentscope.classtype = new Classtype_ASTnode(it.pos, it.classname, it.classname);
         inclass = true;
-        tempclassname= it.classname;;
+        tempclassname = it.classname;
+        ;
         for (int i = 0; i < it.valdecllist.size(); i++) {
             it.valdecllist.get(i).accept(this);
         }
@@ -612,9 +605,9 @@ public class Semanticcheck implements ASTvisitor {
         //收集类里面所有的变量 放入clssscope 里面
         for (int i = 0; i < it.valdecllist.size(); i++) {
             for (int j = 0; j < it.valdecllist.get(i).vardecllist.size(); j++) {
-                it.classscope.valdelmap.put(it.valdecllist.get(i).vardecllist.get(j).name,it.valdecllist.get(i).type_instat);
+                it.classscope.valdelmap.put(it.valdecllist.get(i).vardecllist.get(j).name, it.valdecllist.get(i).type_instat);
             }
-            }
+        }
 
 
         for (int i = 0; i < it.functionlist.size(); i++) {
@@ -622,11 +615,11 @@ public class Semanticcheck implements ASTvisitor {
         }
 
         for (int i = 0; i < it.constructerlist.size(); i++) {
-            inconstructer=true;
+            inconstructer = true;
             it.constructerlist.get(i).accept(this);
-            inconstructer=false;
+            inconstructer = false;
         }
-        tempclassname=null;
+        tempclassname = null;
         inclass = false;
         currentscope = currentscope.parentscope;
     }
@@ -652,7 +645,7 @@ public class Semanticcheck implements ASTvisitor {
             throw new semanticerror("while condition must be bool", it.pos);
         }
         inloop++;
-        if (it.while_stats!=null)  it.while_stats.accept(this);
+        if (it.while_stats != null) it.while_stats.accept(this);
 
         inloop--;
     }
@@ -669,7 +662,7 @@ public class Semanticcheck implements ASTvisitor {
     public void visit(Returnstat_ASTnode it) {
         if (!infun) throw new semanticerror("return must in functioon", it.pos);
         if (it.renturnexpr == null) {
-            if ((!inconstructer)&&!currentscope.funcreturntype.gettype().equals("void")) {
+            if ((!inconstructer) && !currentscope.funcreturntype.gettype().equals("void")) {
                 throw new semanticerror("return none but not void", it.pos);
             }
         } else {
@@ -688,7 +681,7 @@ public class Semanticcheck implements ASTvisitor {
         if (!it.condition.type.gettype().equals("bool")) {
             throw new semanticerror("if condition must be bool", it.pos);
         }
-        if (it.thenstat!=null){
+        if (it.thenstat != null) {
             currentscope = new Scope(currentscope);
             getparent_returntype(it.pos);
             it.thenstat.accept(this);
@@ -718,7 +711,7 @@ public class Semanticcheck implements ASTvisitor {
 
         inloop++;
 
-        if (it.suite_in_for!=null)it.suite_in_for.accept(this);
+        if (it.suite_in_for != null) it.suite_in_for.accept(this);
         inloop--;
         currentscope = currentscope.parentscope;
     }
@@ -747,7 +740,7 @@ public class Semanticcheck implements ASTvisitor {
         if (it.classname.equals(currentscope.classtype.typename)) {
             currentscope = new Scope(currentscope);
             getparent_returntype(it.pos);
-            if (it.paralist_infuction!=null) {
+            if (it.paralist_infuction != null) {
                 for (int i = 0; i < it.paralist_infuction.paralist.size(); i++) {
                     if (currentscope.valdelmap.containsKey(it.paralist_infuction.paralist.get(i).name)) {
                         throw new semanticerror(" construct def the same variable", it.paralist_infuction.paralist.get(i).pos);
