@@ -564,12 +564,13 @@ public class Semanticcheck implements ASTvisitor {
         currentscope.classtype=new Classtype_ASTnode(it.pos,it.classname,it.classname);
         inclass = true;
         tempclassname= it.classname;;
-        for (int i = 0; i < it.functionlist.size(); i++) {
-            it.functionlist.get(i).accept(this);
-        }
         for (int i = 0; i < it.valdecllist.size(); i++) {
             it.valdecllist.get(i).accept(this);
         }
+        for (int i = 0; i < it.functionlist.size(); i++) {
+            it.functionlist.get(i).accept(this);
+        }
+
         for (int i = 0; i < it.constructerlist.size(); i++) {
             it.constructerlist.get(i).accept(this);
         }

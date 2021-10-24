@@ -1,43 +1,45 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Symbol
-Author: 15' Nayun Xu
+Test Target: Classes
+Author: 14' Huichen Li
 Time: 2019-10-20
 Verdict: Success
+Modified Flag: True
+Origin ID: 610
 Origin Package: Semantic Extended
 */
-class A{
-	A(){}
-	B x;
-	string abc;
-	int aabc(int abc) {
-		return abc;
+class Cat{
+	void greet(){
+		println("MIAOMIAOMIAO");
 	}
 };
 
-class B {
-	B(){
-
-	}
-	void D() {
-
-	}
-	A x;
-	B y;
-	void t() {
-		this.D();
+class Lamb{
+	void greet(){
+		println("MIEMIEMIE");
 	}
 };
 
-class f{
-
+class Animals{
+	Cat c;
+	Lamb l;
+    Animals(){
+        c = new Cat;
+        l = new Lamb;
+    }
+	void greet(){
+		c.greet();
+		l.greet();
+	}
 };
 
-int main() {
-	int [  ] ff = new int[1 ];
-	f g;
-	int [  ][  ][ ] fg = new int[4][ ][	];
-	string String;
-	String = toString(getInt());
-	println(toString(String.length()));
+int main(){
+	Cat cat;
+	cat = new Cat;
+	Lamb lamb;
+	lamb = new Lamb;
+	Animals a = new Animals;
+	a.c = cat;
+	a.l = lamb;
+	a.greet();
 }
