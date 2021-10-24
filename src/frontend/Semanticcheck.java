@@ -392,10 +392,10 @@ public class Semanticcheck implements ASTvisitor {
 //                    }
                     Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }//array
-                else if (mem.classcall.type instanceof Arraytype_ASTnode){
+                else if (mem.classcall.type instanceof Arraytype_ASTnode&&mem.member.equals("size")){
                     //特判  也是array size相关的 misc 3 34
 
-                    Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
+                   Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }
                 else if (mem.classcall instanceof IdExp_ASTnode) {
                     // call    class Array {}  Array a a.size()
@@ -447,13 +447,14 @@ public class Semanticcheck implements ASTvisitor {
                 }
             }
         }
-        if (Function.returntype instanceof Arraytype_ASTnode) {
-            it.type = new Arraytype_ASTnode(Function.returntype, it.pos);
+//        if (Function.returntype instanceof Arraytype_ASTnode) {
+//            it.type = new Arraytype_ASTnode(Function.returntype, it.pos);
+//
+//        } else {
+//            it.type = new Classtype_ASTnode(it.pos, Function.returntype.typename, Function.returntype.typename);
+//        }
+        it.type=new Type_ASTnode(it.pos, Function.returntype.typename);
 
-        } else {
-            it.type = new Classtype_ASTnode(it.pos, Function.returntype.typename, Function.returntype.typename);
-        }
-        it.type.typename = Function.returntype.typename;
         it.type.dim = Function.returntype.dim;
         currentscope = currentscope.parentscope;
 
@@ -834,7 +835,7 @@ public class Semanticcheck implements ASTvisitor {
         }
 
 
-        if (it.arr.type instanceof Arraytype_ASTnode) {
+        if (it.arr.type.dim>0 ) {
             it.type = new Arraytype_ASTnode(it.arr.type, null);
             it.type.typename = it.arr.type.typename;
             it.type.dim = it.arr.type.dim - 1;
