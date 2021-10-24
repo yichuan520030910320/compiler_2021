@@ -45,7 +45,6 @@ public class Scope {//basic scope
                 return funcmap.get(idname).returntype;
             } else {
                 return parentscope.find_type(idname, pos);
-
             }
         }
 

@@ -22,9 +22,13 @@ import java.util.ArrayList;
 public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public globalscope Gscope;
 
+
+
     public ASTbuilder(globalscope Gscope_) {
         Gscope = Gscope_;
     }
+
+
 
     @Override
     public ASTnode visitAllconst(MxParser.AllconstContext ctx) {
@@ -287,6 +291,8 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public ASTnode visitSuite(MxParser.SuiteContext ctx) {
         ArrayList<Stat_ASTnode> stats = new ArrayList<>();
         for (int i = 0; i < ctx.statement().size(); i++) {
+            if (ctx.statement().get(i).getText().equals(";"))continue;;
+
             stats.add((Stat_ASTnode) visit(ctx.statement().get(i)));
         }
         return new Suite_ASTnode(new position(ctx.getStart()), stats);
