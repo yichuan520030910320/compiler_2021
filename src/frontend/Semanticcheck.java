@@ -20,6 +20,7 @@ public class Semanticcheck implements ASTvisitor {
     public globalscope Globalscope;
     public Scope currentscope;
     boolean infun = false, inclass = false, inconstructer = false;
+    int inlambda=0;
     int inloop = 0;
     String tempclassname;
 
@@ -379,10 +380,10 @@ public class Semanticcheck implements ASTvisitor {
                     Function = Globalscope.classdetailmap.get("string").classscope.funcmap.get(mem.member);
 
                 }//string
-                else if (mem.classcall instanceof ArrayExp_ASTnode) {
-                    if (!mem.member.equals("size")) {
-                        throw new semanticerror("array call defeat", it.pos);
-                    }
+                else if (mem.classcall instanceof ArrayExp_ASTnode&&mem.member.equals("size")) {
+//                    if (!mem.member.equals("size")) {
+//                        throw new semanticerror("array call defeat", it.pos);
+//                    }
                     Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }//array
                 else if (mem.classcall instanceof IdExp_ASTnode) {
@@ -463,17 +464,22 @@ public class Semanticcheck implements ASTvisitor {
 
         currentscope = new Scope(currentscope);
         getparent_returntype(it.pos);
+        it.type=it.typeinlambda;
         currentscope.funcreturntype = it.type;
-        infun = true;
-        for (int i = 0; i < it.lambda_parslist.paralist.size(); i++) {
-            if (currentscope.valdelmap.containsKey(it.lambda_parslist.paralist.get(i).name)) {
-                throw new semanticerror(" lambda contain the same", it.lambda_parslist.paralist.get(i).pos);
+
+        if (it.lambda_parslist!=null) {
+            for (int i = 0; i < it.lambda_parslist.paralist.size(); i++) {
+                if (currentscope.valdelmap.containsKey(it.lambda_parslist.paralist.get(i).name)) {
+                    throw new semanticerror(" lambda contain the same", it.lambda_parslist.paralist.get(i).pos);
+                }
+                currentscope.valdelmap.put(it.lambda_parslist.paralist.get(i).name, it.lambda_parslist.paralist.get(i).type);
             }
-            currentscope.valdelmap.put(it.lambda_parslist.paralist.get(i).name, it.lambda_parslist.paralist.get(i).type);
+            if (it.paralist.size() != it.lambda_parslist.paralist.size())
+                throw new semanticerror("paralist size don't fit to the define", it.pos);
+
         }
-        if (it.paralist.size() != it.lambda_parslist.paralist.size())
-            throw new semanticerror("paralist size don't fit to the define", it.pos);
-        for (int i = 0; i < it.suite.statlist.size(); i++) {
+        inlambda++;
+       for (int i = 0; i < it.suite.statlist.size(); i++) {
             if (it.suite.statlist.get(i) instanceof Returnstat_ASTnode) {
                 it.suite.statlist.get(i).accept(this);
                 it.type = ((Returnstat_ASTnode) it.suite.statlist.get(i)).renturnexpr.type;
@@ -488,7 +494,8 @@ public class Semanticcheck implements ASTvisitor {
                 throw new semanticerror("lambda don't match para type", it.lambda_parslist.paralist.get(i).pos);
             }
         }
-        infun = false;
+        inlambda--;
+
         currentscope = currentscope.parentscope;
 
     }
@@ -572,6 +579,8 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror("type don't fit in single define1", it.pos);
                 }
             } else if ((!it.type.gettype().equals(it.expression.type.gettype())) && (!(it.expression instanceof Constnull_ASTnode))) {
+                System.out.println(it.type.gettype());
+                System.out.println(it.expression.type.gettype());
                 throw new semanticerror("type don't fit in single define2", it.pos);
             }
         }
@@ -683,7 +692,7 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(Returnstat_ASTnode it) {
-        if (!infun) throw new semanticerror("return must in functioon", it.pos);
+        if ((!infun)&&(inlambda<=0)) throw new semanticerror("return must in functioon", it.pos);
         if (it.renturnexpr == null) {
             if ((!inconstructer) && !currentscope.funcreturntype.gettype().equals("void")) {
                 throw new semanticerror("return none but not void", it.pos);
@@ -695,6 +704,8 @@ public class Semanticcheck implements ASTvisitor {
 
         } else {
             it.renturnexpr.accept(this);
+            if (inlambda>0)return;
+
             if (!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype())) {
                 System.out.println(it.renturnexpr.type.gettype());
                 System.out.println(currentscope.funcreturntype.gettype());
