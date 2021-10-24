@@ -140,6 +140,9 @@ public class Semanticcheck implements ASTvisitor {
                         throw new semanticerror("error for main return ", it.pos);
                         //basic 12
                     }
+                    if (((Fundecl_ASTnode) it.list.get(i)).paralist_infuction!=null){
+                        throw new semanticerror(" main function should not have parameters.", it.pos);
+                    }
                 }
                 if (!Globalscope.ifcontainfunname(((Fundecl_ASTnode) it.list.get(i)).functionname)) {
                     if (Globalscope.ifcontainclassname(((Fundecl_ASTnode) it.list.get(i)).functionname)) {
@@ -260,6 +263,9 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case EQUAL -> {
+                if (it.lhs.type.dim==0&&(it.rhs.type instanceof Nulltype_ASTnode)&&(!(it.lhs.type instanceof Classtype_ASTnode))){
+                    throw new semanticerror(" null cannot be assigned to primitive type variable", it.pos);
+                }
                 if (it.lhs instanceof FunctioncallExp_ASTnode) {
                     throw new semanticerror("function call can't be at left", it.pos);
 
@@ -283,7 +289,7 @@ public class Semanticcheck implements ASTvisitor {
                 }
             }
             case AND, OR -> {
-                if (!it.lhs.type.typename.equals("bool") && it.rhs.type.typename.equals("bool")) {
+                if (!(it.lhs.type.typename.equals("bool") && it.rhs.type.typename.equals("bool"))) {
                     throw new semanticerror("error in binary bool && ||", it.pos);
                 }
                 it.type = new Booltype_ASTnode(it.pos, "bool");
@@ -386,6 +392,11 @@ public class Semanticcheck implements ASTvisitor {
 //                    }
                     Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }//array
+                else if (mem.classcall.type instanceof Arraytype_ASTnode){
+                    //特判  也是array size相关的 misc 3 34
+
+                    Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
+                }
                 else if (mem.classcall instanceof IdExp_ASTnode) {
                     // call    class Array {}  Array a a.size()
                     Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.classcall.type.typename);
@@ -525,7 +536,16 @@ public class Semanticcheck implements ASTvisitor {
         Classdecl_ASTnode classdetailed = Globalscope.classdetailmap.get(it.classcall.index);
 //        Type_ASTnode ittype=classdetailed.classscope.valdelmap.get(it.member);
         Type_ASTnode ittype = it.type;
-        if (it.classcall.type != null) {
+        if (it.classcall instanceof ArrayExp_ASTnode&&it.classcall.type.dim>0){
+            if (!it.member.equals("size")) throw new semanticerror("array function isn't size1?", it.pos);
+            it.type=new Inttype_ASTnode(it.pos,"int");
+        }
+        else if (it.classcall.type instanceof Arraytype_ASTnode&&it.classcall.type.dim>0){
+            if (!it.member.equals("size")) throw new semanticerror("array function isn't size2?", it.pos);
+            it.type=new Inttype_ASTnode(it.pos,"int");
+
+        }
+        else if (it.classcall.type != null) {
             Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(it.classcall.type.typename);
 
             it.type = new Type_ASTnode(it.pos, tmpclass.classscope.find_type(it.member, it.pos).typename);
@@ -544,7 +564,7 @@ public class Semanticcheck implements ASTvisitor {
         }
 
 
-//below is useless?
+//below is useless? yes!!!
         if (ittype instanceof Classtype_ASTnode) {
             Classdecl_ASTnode it_class_index = Globalscope.find_class_index(it.index, it.pos);
             if (it_class_index == null) {
