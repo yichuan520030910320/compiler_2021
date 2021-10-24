@@ -21,6 +21,15 @@ public class Semanticcheck implements ASTvisitor {
     boolean infun = false, inclass = false;
     int inloop = 0;
 
+    public void getparent_returntype(position pos){
+        if (infun) {
+            currentscope.funcreturntype = new
+                    Type_ASTnode(pos, currentscope.parentscope.funcreturntype.typename)
+            ;
+            currentscope.funcreturntype.dim=currentscope.parentscope.funcreturntype.dim;
+        }
+    }
+
     public Semanticcheck(globalscope gScope) {
         Globalscope = gScope;
     }
@@ -102,15 +111,11 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode fundecl2 = new Fundecl_ASTnode(null, new Voidtype_ASTnode(null, null), "printlnInt", para2, null, true);
         Globalscope.funcmap.put("printlnInt", fundecl2);
 
-        ArrayList<Singlevaluedecl_ASTnode> list3 = new ArrayList<>();
-        Paralist_ASTnode para3 = new Paralist_ASTnode(null, list3);
-        Fundecl_ASTnode fundecl3 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "getString", para3, null, false);
+        Fundecl_ASTnode fundecl3 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "getString", null, null, false);
         Globalscope.funcmap.put("getString", fundecl3);
 
 
-        ArrayList<Singlevaluedecl_ASTnode> list4 = new ArrayList<>();
-        Paralist_ASTnode para4 = new Paralist_ASTnode(null, list4);
-        Fundecl_ASTnode fundecl4 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "getInt", para4, null, false);
+       Fundecl_ASTnode fundecl4 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "getInt", null, null, false);
         Globalscope.funcmap.put("getInt", fundecl4);
 
         ArrayList<Singlevaluedecl_ASTnode> list5 = new ArrayList<>();
@@ -119,16 +124,16 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode fundecl5 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "toString", para5, null, false);
         Globalscope.funcmap.put("toString", fundecl5);
 
-        boolean hasmain=false;
+        boolean hasmain = false;
 
 
         // 下面收集各个fun
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Fundecl_ASTnode) {
-                if (((Fundecl_ASTnode) it.list.get(i)).functionname.equals("main")){
-                    hasmain=true;
-                    if (!((Fundecl_ASTnode) it.list.get(i)).returntype.typename.equals("int")){
-                        throw new semanticerror("error for main return ",it.pos);
+                if (((Fundecl_ASTnode) it.list.get(i)).functionname.equals("main")) {
+                    hasmain = true;
+                    if (!((Fundecl_ASTnode) it.list.get(i)).returntype.typename.equals("int")) {
+                        throw new semanticerror("error for main return ", it.pos);
                         //basic 12
                     }
                 }
@@ -140,7 +145,7 @@ public class Semanticcheck implements ASTvisitor {
                 } else throw new semanticerror("function declare the same in root", it.list.get(i).pos);
             }
         }
-        if (!hasmain){
+        if (!hasmain) {
             throw new semanticerror("no main fuction my bro", it.pos);
         }
 
@@ -148,8 +153,8 @@ public class Semanticcheck implements ASTvisitor {
         //collect inner class
         for (int i = 0; i < it.list.size(); i++) {
 
-            if (it.list.get(i) instanceof Classdecl_ASTnode ) {
-                Classdecl_ASTnode tmpclass= (Classdecl_ASTnode) it.list.get(i);
+            if (it.list.get(i) instanceof Classdecl_ASTnode) {
+                Classdecl_ASTnode tmpclass = (Classdecl_ASTnode) it.list.get(i);
                 for (int j = 0; j < tmpclass.functionlist.size(); j++) {
                     Fundecl_ASTnode fun_inclass = tmpclass.functionlist.get(i);
                     if (tmpclass.classscope.funcmap.containsKey(fun_inclass.functionname)) {
@@ -169,9 +174,7 @@ public class Semanticcheck implements ASTvisitor {
 
         Classdecl_ASTnode stringdecl = new Classdecl_ASTnode(null, "string", null, null, null);
         {
-            ArrayList<Singlevaluedecl_ASTnode> stringlist = new ArrayList<>();
-            Paralist_ASTnode stringpara = new Paralist_ASTnode(null, stringlist);
-            Fundecl_ASTnode stringfundecl = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "length", stringpara, null, false);
+            Fundecl_ASTnode stringfundecl = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "length", null, null, false);
             stringdecl.classscope.funcmap.put("length", stringfundecl);
 
             ArrayList<Singlevaluedecl_ASTnode> stringlist1 = new ArrayList<>();
@@ -183,10 +186,8 @@ public class Semanticcheck implements ASTvisitor {
             Fundecl_ASTnode stringfundecl1 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "substring", stringpara1, null, false);
             stringdecl.classscope.funcmap.put("substring", stringfundecl1);
 
-            ArrayList<Singlevaluedecl_ASTnode> stringlist2 = new ArrayList<>();
-            Paralist_ASTnode stringpara2 = new Paralist_ASTnode(null, stringlist2);
-            Fundecl_ASTnode stringfundecl2 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "parseInt", stringpara2, null, false);
-            stringdecl.classscope.funcmap.put("substring", stringfundecl2);
+            Fundecl_ASTnode stringfundecl2 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "parseInt", null, null, false);
+            stringdecl.classscope.funcmap.put("parseInt", stringfundecl2);
 
             ArrayList<Singlevaluedecl_ASTnode> stringlist3 = new ArrayList<>();
             Singlevaluedecl_ASTnode stringsingle3 = new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "pos", null);
@@ -244,6 +245,9 @@ public class Semanticcheck implements ASTvisitor {
                 if (!it.lhs.isleft) throw new semanticerror(" binary rhs can't be assign ", it.pos);
                 if (it.lhs.type.typename.equals("string") && it.rhs.type.typename.equals("null")) {
                     throw new semanticerror("error in binary ,can't assign string with null", it.pos);
+                }
+                if (it.rhs.index.equals("true") || it.rhs.index.equals("false")) {
+                    throw new semanticerror("true or false can't be assigned", it.pos);
                 }
                 if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype())) && (!it.rhs.type.typename.equals("null"))) {
                     System.out.println(it.lhs.type.gettype());
@@ -331,15 +335,20 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode Function = null;
         if (it.funcname instanceof MemberExp_ASTnode || it.funcname instanceof IdExp_ASTnode) {
             it.funcname.accept(this);
-            if (it.funcname instanceof MemberExp_ASTnode ) {
-                MemberExp_ASTnode mem= (MemberExp_ASTnode) it.funcname;
-                if (mem.classcall instanceof ArrayExp_ASTnode){
-                   if (!mem.member.equals("size")){
-                       throw new semanticerror("array call defeat", it.pos);
-                   }
-                   Function=new Fundecl_ASTnode(it.pos,new Inttype_ASTnode(it.pos,"int"),"size",null,null,false);
-                }
-                else {
+            if (it.funcname instanceof MemberExp_ASTnode) {
+                MemberExp_ASTnode mem = (MemberExp_ASTnode) it.funcname;
+                if (mem.classcall.type.typename.equals("string")) {
+                    if (!Globalscope.classdetailmap.get("string").classscope.funcmap.containsKey(mem.member)) {
+                        throw new semanticerror("string function call the wrong function", it.pos);
+                    }
+                    Function = Globalscope.classdetailmap.get("string").classscope.funcmap.get(mem.member);
+
+                } else if (mem.classcall instanceof ArrayExp_ASTnode) {
+                    if (!mem.member.equals("size")) {
+                        throw new semanticerror("array call defeat", it.pos);
+                    }
+                    Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
+                } else {
                     Classdecl_ASTnode class_mem = Globalscope.classdetailmap.get(mem.index);
                     Scope classscope = class_mem.classscope;
                     Function = classscope.getfundecl_inclass(mem.index, it.pos);
@@ -357,16 +366,16 @@ public class Semanticcheck implements ASTvisitor {
             throw new semanticerror(" function call type wrong ", it.pos);
         }
         assert Function != null;
-        if (Function.paralist_infuction!=null){
-        if (Function.paralist_infuction.paralist.size() != it.paralist.size()) {
-            throw new semanticerror("para size in funccall", it.pos);
-        }}
-        else {
-            if ( it.paralist!=null){
-                throw new semanticerror("eroor para size in funcall",it.pos);
+        if (Function.paralist_infuction != null) {
+            if (Function.paralist_infuction.paralist.size() != it.paralist.size()) {
+                throw new semanticerror("para size in funccall", it.pos);
+            }
+        } else {
+            if (it.paralist != null) {
+                throw new semanticerror("eroor para size in funcall", it.pos);
             }
         }
-        if (it.paralist!=null) {
+        if (it.paralist != null) {
             for (int i = 0; i < it.paralist.size(); i++) {
                 it.paralist.get(i).accept(this);
                 if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.typename)) {
@@ -374,11 +383,11 @@ public class Semanticcheck implements ASTvisitor {
                 }
             }
         }
-        if (Function.returntype instanceof Arraytype_ASTnode){
-            it.type=new Arraytype_ASTnode(Function.returntype,it.pos);
+        if (Function.returntype instanceof Arraytype_ASTnode) {
+            it.type = new Arraytype_ASTnode(Function.returntype, it.pos);
 
-        }else {
-            it.type=new Classtype_ASTnode(it.pos ,Function.returntype.typename,Function.returntype.typename);
+        } else {
+            it.type = new Classtype_ASTnode(it.pos, Function.returntype.typename, Function.returntype.typename);
         }
         it.type.typename = Function.returntype.typename;
         it.type.dim = Function.returntype.dim;
@@ -445,7 +454,7 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror(" element must be int in new ", it.newlist.get(i).pos);
                 }
             }
-            it.type=it.type1;
+            it.type = it.type1;
         }
     }
 
@@ -469,6 +478,8 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(Suite_ASTnode it) {
         currentscope = new Scope(currentscope);
+        getparent_returntype(it.pos);
+
         for (int i = 0; i < it.statlist.size(); i++) {
             it.statlist.get(i).accept(this);
         }
@@ -578,7 +589,9 @@ public class Semanticcheck implements ASTvisitor {
             }
         } else {
             it.renturnexpr.accept(this);
-              if (!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype())) {
+            if (!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype())) {
+                System.out.println(it.renturnexpr.type.gettype());
+                System.out.println(currentscope.funcreturntype.gettype());
                 throw new semanticerror("return type don't match", it.pos);
             }
         }
@@ -591,10 +604,15 @@ public class Semanticcheck implements ASTvisitor {
             throw new semanticerror("if condition must be bool", it.pos);
         }
         currentscope = new Scope(currentscope);
+        getparent_returntype(it.pos);
+
         it.thenstat.accept(this);
         currentscope = currentscope.parentscope;
         if (it.elsestat != null) {
             currentscope = new Scope(currentscope);
+            getparent_returntype(it.pos);
+            if (infun)currentscope.funcreturntype=currentscope.parentscope.funcreturntype;
+
             it.elsestat.accept(this);
             currentscope = currentscope.parentscope;
         }
@@ -603,6 +621,7 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(Forstat_ASTnode it) {
         currentscope = new Scope(currentscope);
+        getparent_returntype(it.pos);
         if (it.initexpr != null) it.initexpr.accept(this);
         if (it.initvaldecl != null) it.initvaldecl.accept(this);
         if (it.condition != null) {
@@ -638,6 +657,7 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(Constructdecl_ASTnode it) {
         currentscope = new Scope(currentscope);
+
         infun = true;
         if (it.classname.equals(currentscope.classtype.typename)) {
             for (int i = 0; i < it.paralist_infuction.paralist.size(); i++) {
@@ -663,14 +683,14 @@ public class Semanticcheck implements ASTvisitor {
         it.index.accept(this);
         if (!it.index.type.gettype().equals("int"))
             throw new semanticerror("index can't be not int in arrayexprnode", it.pos);
-if (it.arr instanceof NewExp_ASTnode){
-    it.type=new Arraytype_ASTnode(it.arr.type,it.pos);
-    it.type.typename=it.arr.type.typename;
-    it.type.dim=((NewExp_ASTnode) it.arr).dim-1;
-    return;
-    //fix for array-9.mx
+        if (it.arr instanceof NewExp_ASTnode) {
+            it.type = new Arraytype_ASTnode(it.arr.type, it.pos);
+            it.type.typename = it.arr.type.typename;
+            it.type.dim = ((NewExp_ASTnode) it.arr).dim - 1;
+            return;
+            //fix for array-9.mx
 
-}
+        }
 
 
         if (it.arr.type instanceof Arraytype_ASTnode) {

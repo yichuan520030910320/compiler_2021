@@ -12,7 +12,8 @@ import Utils.position;
 
 
     public String gettype() {
-        return null;
+        if (dim==0)return typename;
+        return typename+'[' + dim + ']';
     }
     public String  getbasictype(){
         return typename;
