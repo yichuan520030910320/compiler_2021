@@ -169,8 +169,13 @@ public class Semanticcheck implements ASTvisitor {
                     if (!Globalscope.checktype(tmpvaldecl.type_instat, tmpvaldecl.pos)) {
                         throw new semanticerror("type don't exist in Global in root check", tmpvaldecl.pos);
                     }
+                    for (int k = 0; k < tmpclass.valdecllist.get(j).vardecllist.size(); k++) {
+                        tmpclass.classscope.valdelmap.put(tmpclass.valdecllist.get(j).vardecllist.get(k).name, tmpclass.valdecllist.get(j).type_instat);
+                    }
+
 
                 }
+                Globalscope.classdetailmap.put(((Classdecl_ASTnode) it.list.get(i)).classname, tmpclass);
             }
         }//insert string todo
 
@@ -218,13 +223,14 @@ public class Semanticcheck implements ASTvisitor {
         it.rhs.accept(this);
 
         //处理出memberexp的类型 因为在memexpr里面不太好处理
-        if (it.lhs instanceof MemberExp_ASTnode) {
-            String callindex = ((MemberExp_ASTnode) it.lhs).classcall.index;
-            String classtype = currentscope.find_type(callindex, it.pos).typename;
-            System.out.println(classtype);
-            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(classtype);
-            it.lhs.type = tmpclass.classscope.valdelmap.get(((MemberExp_ASTnode) it.lhs).member);
-        }
+//        if (it.lhs instanceof MemberExp_ASTnode) {
+//
+//            String callindex = ((MemberExp_ASTnode) it.lhs).classcall.index;
+//            String classtype = currentscope.find_type(callindex, it.pos).typename;
+//            System.out.println(classtype);
+//            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(classtype);
+//            it.lhs.type = tmpclass.classscope.valdelmap.get(((MemberExp_ASTnode) it.lhs).member);
+//        }
 
         Binary_Enum op = it.op;
         switch (op) {
@@ -447,6 +453,7 @@ public class Semanticcheck implements ASTvisitor {
         if (returntype != null) {
             it.type = returntype;
         } else {
+
             throw new semanticerror("error in id don't be stated before", it.pos);
         }
     }
@@ -517,6 +524,16 @@ public class Semanticcheck implements ASTvisitor {
             it.type = new Type_ASTnode(it.pos, tmpclass.classscope.find_type(it.member, it.pos).typename);
 
             it.type.dim = tmpclass.classscope.find_type(it.member, it.pos).dim;
+        } else if (it.classcall instanceof Thisexpr_ASTnode) {
+            //this.x
+            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(tempclassname);
+            if (tmpclass.classscope.valdelmap.containsKey(it.member)) {
+                Type_ASTnode tmptype = tmpclass.classscope.valdelmap.get(it.member);
+                it.type = new Type_ASTnode(it.pos, tmptype.typename);
+
+                it.type.dim = tmptype.dim;
+            } else throw new semanticerror("no val in this in menm ", it.pos);
+
         }
 
 
@@ -597,7 +614,6 @@ public class Semanticcheck implements ASTvisitor {
         currentscope.classtype = new Classtype_ASTnode(it.pos, it.classname, it.classname);
         inclass = true;
         tempclassname = it.classname;
-        ;
         for (int i = 0; i < it.valdecllist.size(); i++) {
             it.valdecllist.get(i).accept(this);
         }
@@ -608,6 +624,8 @@ public class Semanticcheck implements ASTvisitor {
                 it.classscope.valdelmap.put(it.valdecllist.get(i).vardecllist.get(j).name, it.valdecllist.get(i).type_instat);
             }
         }
+        currentscope.funcmap = it.classscope.funcmap;
+        currentscope.valdelmap = it.classscope.valdelmap;
 
 
         for (int i = 0; i < it.functionlist.size(); i++) {
@@ -633,6 +651,9 @@ public class Semanticcheck implements ASTvisitor {
     public void visit(Thisexpr_ASTnode it) {
         if (inclass && infun) {
             it.type = currentscope.classtype;
+            if (it.type == null) {
+                it.type = new Type_ASTnode(it.pos, tempclassname);
+            }
         } else {
             throw new semanticerror("error in this", it.pos);
         }
@@ -645,8 +666,10 @@ public class Semanticcheck implements ASTvisitor {
             throw new semanticerror("while condition must be bool", it.pos);
         }
         inloop++;
+        currentscope = new Scope(currentscope);
+        getparent_returntype(it.pos);
         if (it.while_stats != null) it.while_stats.accept(this);
-
+        currentscope = currentscope.parentscope;
         inloop--;
     }
 
@@ -665,6 +688,11 @@ public class Semanticcheck implements ASTvisitor {
             if ((!inconstructer) && !currentscope.funcreturntype.gettype().equals("void")) {
                 throw new semanticerror("return none but not void", it.pos);
             }
+        } else if (it.renturnexpr instanceof Thisexpr_ASTnode) {
+            if (!currentscope.funcreturntype.gettype().equals(tempclassname)) {
+                throw new semanticerror("return this wrong", it.pos);
+            }
+
         } else {
             it.renturnexpr.accept(this);
             if (!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype())) {
