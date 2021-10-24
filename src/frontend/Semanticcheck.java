@@ -239,7 +239,7 @@ public class Semanticcheck implements ASTvisitor {
         Binary_Enum op = it.op;
         switch (op) {
             case ADD -> {
-                if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype())) && (!it.rhs.type.typename.equals("null"))) {
+                if ((!(it.rhs.type.typename.equals(it.lhs.type.typename)&&it.rhs.type.dim==it.lhs.type.dim)) && (!it.rhs.type.typename.equals("null"))) {
 
                     System.out.println(it.lhs.type.gettype());
                     System.out.println(it.rhs.type.gettype());
@@ -282,7 +282,7 @@ public class Semanticcheck implements ASTvisitor {
                         throw new semanticerror("true or false can't be assigned", it.pos);
                     }
                 }
-                if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype())) && (!it.rhs.type.typename.equals("null"))) {
+                if ((!(it.lhs.type.typename.equals(it.rhs.type.typename)&&it.lhs.type.dim==it.rhs.type.dim)) && (!it.rhs.type.typename.equals("null"))) {
                     System.out.println(it.lhs.type.gettype());
                     System.out.println(it.rhs.type.gettype());
                     throw new semanticerror(" error in binary not match compare in equal 01", it.pos);
@@ -296,7 +296,7 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case EQUALEQUAL, NOT_EQUAL -> {
-                if (!it.lhs.type.gettype().equals(it.rhs.type.gettype())) {
+                if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype()))&&(!(it.rhs.type instanceof Nulltype_ASTnode))) {
                     System.out.println(it.lhs.type.gettype());
                     System.out.println(it.rhs.type.gettype());
                     throw new semanticerror("error in binary not match compare in 1 ", it.pos);
@@ -440,11 +440,17 @@ public class Semanticcheck implements ASTvisitor {
         if (it.paralist != null) {
             for (int i = 0; i < it.paralist.size(); i++) {
                 it.paralist.get(i).accept(this);
-                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.gettype())) {
-                    System.out.println(it.paralist.get(i).type.gettype());
-                    System.out.println(Function.paralist_infuction.paralist.get(i).type.gettype());
+                Type_ASTnode type_asTnode=it.paralist.get(i).type;
+                Type_ASTnode type_asTnode1=Function.paralist_infuction.paralist.get(i).type;
+                if (!(type_asTnode.typename.equals(type_asTnode1.typename)&&type_asTnode.dim==type_asTnode1.dim)){
                     throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
+
                 }
+//                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.gettype())) {
+//                    System.out.println(it.paralist.get(i).type.gettype());
+//                    System.out.println(Function.paralist_infuction.paralist.get(i).type.gettype());
+//                    throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
+//                }
             }
         }
 //        if (Function.returntype instanceof Arraytype_ASTnode) {
@@ -599,7 +605,7 @@ public class Semanticcheck implements ASTvisitor {
                 if (!it.type.gettype().equals(((NewExp_ASTnode) it.expression).type1.gettype())) {
                     throw new semanticerror("type don't fit in single define1", it.pos);
                 }
-            } else if ((!it.type.gettype().equals(it.expression.type.gettype())) && (!(it.expression instanceof Constnull_ASTnode))) {
+            } else if ((!(it.type.dim==it.expression.type.dim&&it.type.typename.equals(it.expression.type.typename))) && (!(it.expression instanceof Constnull_ASTnode))) {
                 System.out.println(it.type.gettype());
                 System.out.println(it.expression.type.gettype());
                 throw new semanticerror("type don't fit in single define2", it.pos);
@@ -727,7 +733,7 @@ public class Semanticcheck implements ASTvisitor {
             it.renturnexpr.accept(this);
             if (inlambda>0)return;
 
-            if (!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype())) {
+            if ((!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype()))&&(! (it.renturnexpr.type instanceof Nulltype_ASTnode))) {
                 System.out.println(it.renturnexpr.type.gettype());
                 System.out.println(currentscope.funcreturntype.gettype());
                 throw new semanticerror("return type don't match", it.pos);
@@ -835,7 +841,7 @@ public class Semanticcheck implements ASTvisitor {
         }
 
 
-        if (it.arr.type.dim>0 ) {
+        if (it.arr.type.dim>0 ||it.arr.type instanceof Arraytype_ASTnode) {
             it.type = new Arraytype_ASTnode(it.arr.type, null);
             it.type.typename = it.arr.type.typename;
             it.type.dim = it.arr.type.dim - 1;

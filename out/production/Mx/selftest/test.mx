@@ -1,117 +1,92 @@
 /*
 Test Package: Sema_Local_Preview
 Test Target: Misc
-Author: 15' Zhekai Zhang
-Time: 2019-10-20
+Author: 16' Zhou Fan
+Time: 2019-11-11
 Verdict: Success
-Origin Package: Semantic Extended
+Origin Package: Semantic Pretest
 */
-int countA;
-int countB;
-int countC;
-C something;
-
-class A
-{
-	A a;
-	B b;
-	A()
-	{
-		idx = countA++;
-		if(idx % 2 == 0)
-		{
-			a = new A;
-			if(countB % 2 == 0)
-				b = new B;
-			else
-				b = null;
-		}
-		else
-			a = null;
-		c = new C[2][];
-		c[0] = (new C[6][6][6][6])[2][3][3];
-		c[1] = null;
-		if(c.size() != 2)
-			println("Oops!");
-	}
-	C[] getc0()
-	{
-		return c[0];
-	}
-	C[][] c;
-	int idx;
-};
-
-class B
-{
-	int idx;
-	C c;
-	B()
-	{
-		idx = countB++;
-		c = (new A).getc0()[0].Me().Me();
-	}
-};
-
-class C
-{
-	int idx;
-	C()
-	{
-		this.idx = countC++;
-		str = toString(idx);
-		something = Me();
-	}
-	C Me() { return this; }
-	string str;
-};
-
-void count()
-{
-	countA = 0;
-	countB = 0;
-	countC = 0;
-	B b = new B;
-	println(toString(countA) + " " + toString(countB) + " " + toString(countC));
-	countA = 1;
-	countB = 1;
-	countC = 1;
-	b = new B;
-	print(toString(countA-1) + " " + toString(countB-1) + " " + toString(countC-1));
-	print("\n");
-	println(toString(something.Me().str.substring(1, something.str.length()-1).parseInt()));
-	string temp = toString(something.str.ord(42 & 21));
-	if(temp < something.str)
-		println(something.str + ">" + temp);
-	else
-		println(something.str + "<=" + temp);
+void bad_func_0() {
+    int i;
+    for (i = 0; i <= 10; i = i + 1) {
+        println("aha");
+        string i = "what's this?";
+        println(i);
+    }
 }
 
-///////////////////////////////////
+// actually not that bad
+void bad_func_1(int x, int s, int t) {
+    if (s == t) {
+        println("x is: " + toString(x));
+        return;
+    }
+    int m = (s + t) >> 1;
+    bad_func_1(x << 1, s, m);
+    bad_func_1(x << 1 | 1, m + 1, t);
+}
 
-int main()
-{
-	{{{;};{}}};
-	int i;
-	for(i=0;;i++)
-		if(((i ^ 891 & 759) == 666) == !false)
-		{
-			println(toString(i));
-			int i = 0;
-			println(toString(i));
-			{
-				int i = 1;
-				println(toString(i));
-			}
-			count();
-			break;
-		}
-	while(true)
-	{
-		if(i % 2 == 0)
-			continue;
-		print(toString(i)+",");
-	}
-	println("");
-	return 0;
+void bad_func_2() {
+    int[][][][] arr = new int[2][3][][];
+    int n = arr.size();
+    print("\"\"\"\n");
+    bool NULL = false;
+    bool Null;
+    bool var____sad___23___;
+    int THIS;
+    int This;
+    int False = -223;
+    string True = "false";
+    string Class;
+    string Void;
+    string String;
+}
+
+class E {
+    int x;
+    E() {
+       this.x = - -7;
+    }
+    E getSelf() {
+        return this;
+    }
+};
+
+void bad_func_3() {
+    while (true && false || !true) {
+        continue;
+        break;
+        return;
+    }
+    E e = new E;
+    println(toString(e.getSelf().getSelf().getSelf().getSelf().x));
+}
+
+void bad_func_4() {
+    int a = getInt();
+    toString(a);
+    while (true) {
+        string a = getString();
+        println(toString(a.ord(3)));
+        int l = ~~a.length();
+        while (true) {
+            int a;
+            toString(a);
+            while ("asd" + "sad" >= "fads") {
+                bool[][] a = new bool[3][3];
+                a.size();
+                if (a != null) {} else {}
+                if (a[1][2]) println("wow");
+            }
+        }
+    }
+}
+
+int main() {
+    int a = 1;
+    if (true) {
+        toString(a);
+        string a;
+        a.parseInt();
+    }
 }
