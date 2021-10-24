@@ -388,7 +388,7 @@ public class Semanticcheck implements ASTvisitor {
                         throw new semanticerror("error in function call can't find fun declar1", it.pos);
                     }
                 }
-                if (((MemberExp_ASTnode) it.funcname).classcall instanceof NewExp_ASTnode){
+                else if (((MemberExp_ASTnode) it.funcname).classcall instanceof NewExp_ASTnode){
                     //for (new C).func() + (new C).func();
                     String classname=((MemberExp_ASTnode) it.funcname).classcall.type.typename;
                     Classdecl_ASTnode class_mem=Globalscope.classdetailmap.get(classname);

@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import AST.*;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -17,9 +18,14 @@ public class Main {
     public static void main(String[] args) throws Exception {
 //        Scanner scanner = new Scanner(System.in);
 //        String name = scanner.nextLine();
-//     String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
-//        InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        int op = 0;
+        InputStream input = null;
+        if (op == 1) {
+            String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+            input = new FileInputStream(name);
+        } else {
+            input = System.in;
+        }
         try {
             globalscope gScope = new globalscope(null);
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
@@ -32,7 +38,7 @@ public class Main {
             ASTbuilder astBuilder = new ASTbuilder(gScope);
             Rootnode ASTRoot;
             ASTRoot = (Rootnode) astBuilder.visit(parseTreeRoot);
-            Semanticcheck semanticchecker=new Semanticcheck(gScope);
+            Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
 
             System.out.println("you can debug here");
@@ -43,7 +49,6 @@ public class Main {
             System.err.println(er.toString());
             System.out.println("Fail");
             throw new RuntimeException();
-
 
 
         }
