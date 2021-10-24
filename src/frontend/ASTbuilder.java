@@ -178,7 +178,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder front");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
+        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             default -> System.out.println("single expression miss the op in astbuilder post");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
-        return new Front_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
+        return new Post_UnaryExp_ASTnode(new position(ctx.getStart()), null, expr, op);
     }
 
     @Override

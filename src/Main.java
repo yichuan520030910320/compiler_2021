@@ -17,9 +17,9 @@ public class Main {
     public static void main(String[] args) throws Exception {
 //        Scanner scanner = new Scanner(System.in);
 //        String name = scanner.nextLine();
-//     String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
-//        InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+     String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+        InputStream input = new FileInputStream(name);
+       // InputStream input = System.in;
         try {
             globalscope gScope = new globalscope(null);
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
