@@ -44,8 +44,8 @@ expression
             |<assoc=right>  op=('--'|'++') expression                                                                      #expr_single
             |operand1=expression op=('*'|'/'|'%') operand2=expression                                                   #expr_binary
             |operand1=expression op=('+'|'-') operand2=expression                                                       #expr_binary
-            |operand1=expression op=('=='|'!='|'>'|'>='|'<='|'<') operand2=expression                                   #expr_binary
             |operand1=expression op=('<<'|'>>') operand2=expression                                                     #expr_binary
+                        |operand1=expression op=('=='|'!='|'>'|'>='|'<='|'<') operand2=expression                                   #expr_binary
             |operand1=expression op=('&&'|'||') operand2=expression                                                     #expr_binary
             |operand1=expression op=('&'|'|'|'^') operand2=expression                                                   #expr_binary
             |Lambda1 ('(' lambdapara=parameterlist? ')')? Lambda2 suite '(' (lambdaexprelist=expressionlist)? ')'       #expr_lambda

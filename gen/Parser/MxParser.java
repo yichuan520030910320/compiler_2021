@@ -1490,14 +1490,14 @@ public class MxParser extends Parser {
 		public TerminalNode MOD() { return getToken(MxParser.MOD, 0); }
 		public TerminalNode Plus() { return getToken(MxParser.Plus, 0); }
 		public TerminalNode Minus() { return getToken(MxParser.Minus, 0); }
+		public TerminalNode LeftShift() { return getToken(MxParser.LeftShift, 0); }
+		public TerminalNode RightShift() { return getToken(MxParser.RightShift, 0); }
 		public TerminalNode Equal() { return getToken(MxParser.Equal, 0); }
 		public TerminalNode NotEqual() { return getToken(MxParser.NotEqual, 0); }
 		public TerminalNode Greater() { return getToken(MxParser.Greater, 0); }
 		public TerminalNode GreaterEqual() { return getToken(MxParser.GreaterEqual, 0); }
 		public TerminalNode LessEqual() { return getToken(MxParser.LessEqual, 0); }
 		public TerminalNode Less() { return getToken(MxParser.Less, 0); }
-		public TerminalNode LeftShift() { return getToken(MxParser.LeftShift, 0); }
-		public TerminalNode RightShift() { return getToken(MxParser.RightShift, 0); }
 		public Expr_binaryContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1889,7 +1889,7 @@ public class MxParser extends Parser {
 						setState(208);
 						((Expr_binaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Less) | (1L << LessEqual) | (1L << Greater) | (1L << GreaterEqual) | (1L << Equal) | (1L << NotEqual))) != 0)) ) {
+						if ( !(_la==LeftShift || _la==RightShift) ) {
 							((Expr_binaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1911,7 +1911,7 @@ public class MxParser extends Parser {
 						setState(211);
 						((Expr_binaryContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==LeftShift || _la==RightShift) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Less) | (1L << LessEqual) | (1L << Greater) | (1L << GreaterEqual) | (1L << Equal) | (1L << NotEqual))) != 0)) ) {
 							((Expr_binaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2771,15 +2771,15 @@ public class MxParser extends Parser {
 		"\13\17\3\17\3\17\3\17\3\17\3\17\5\17\u012a\n\17\3\20\3\20\3\21\3\21\5"+
 		"\21\u0130\n\21\3\22\3\22\3\22\5\22\u0135\n\22\3\22\3\22\3\22\7\22\u013a"+
 		"\n\22\f\22\16\22\u013d\13\22\3\23\3\23\3\23\2\4\30\"\24\2\4\6\b\n\f\16"+
-		"\20\22\24\26\30\32\34\36 \"$\2\f\3\2\t\n\3\2%&\3\2*+\3\2\')\4\2\37\"\61"+
-		"\62\3\2#$\3\2\13\f\3\2\r\17\3\2\20\22\4\2\36\36\668\2\u016e\2)\3\2\2\2"+
-		"\4\60\3\2\2\2\6\62\3\2\2\2\b@\3\2\2\2\nJ\3\2\2\2\fT\3\2\2\2\16_\3\2\2"+
-		"\2\20b\3\2\2\2\22k\3\2\2\2\24p\3\2\2\2\26\u00a7\3\2\2\2\30\u00c9\3\2\2"+
-		"\2\32\u00f5\3\2\2\2\34\u0129\3\2\2\2\36\u012b\3\2\2\2 \u012f\3\2\2\2\""+
-		"\u0134\3\2\2\2$\u013e\3\2\2\2&(\5\4\3\2\'&\3\2\2\2(+\3\2\2\2)\'\3\2\2"+
-		"\2)*\3\2\2\2*\3\3\2\2\2+)\3\2\2\2,\61\5\6\4\2-\61\5\16\b\2.\61\5\n\6\2"+
-		"/\61\7.\2\2\60,\3\2\2\2\60-\3\2\2\2\60.\3\2\2\2\60/\3\2\2\2\61\5\3\2\2"+
-		"\2\62\63\7\34\2\2\63\64\79\2\2\64:\7\3\2\2\659\5\b\5\2\669\5\n\6\2\67"+
+		"\20\22\24\26\30\32\34\36 \"$\2\f\3\2\t\n\3\2%&\3\2*+\3\2\')\3\2#$\4\2"+
+		"\37\"\61\62\3\2\13\f\3\2\r\17\3\2\20\22\4\2\36\36\668\2\u016e\2)\3\2\2"+
+		"\2\4\60\3\2\2\2\6\62\3\2\2\2\b@\3\2\2\2\nJ\3\2\2\2\fT\3\2\2\2\16_\3\2"+
+		"\2\2\20b\3\2\2\2\22k\3\2\2\2\24p\3\2\2\2\26\u00a7\3\2\2\2\30\u00c9\3\2"+
+		"\2\2\32\u00f5\3\2\2\2\34\u0129\3\2\2\2\36\u012b\3\2\2\2 \u012f\3\2\2\2"+
+		"\"\u0134\3\2\2\2$\u013e\3\2\2\2&(\5\4\3\2\'&\3\2\2\2(+\3\2\2\2)\'\3\2"+
+		"\2\2)*\3\2\2\2*\3\3\2\2\2+)\3\2\2\2,\61\5\6\4\2-\61\5\16\b\2.\61\5\n\6"+
+		"\2/\61\7.\2\2\60,\3\2\2\2\60-\3\2\2\2\60.\3\2\2\2\60/\3\2\2\2\61\5\3\2"+
+		"\2\2\62\63\7\34\2\2\63\64\79\2\2\64:\7\3\2\2\659\5\b\5\2\669\5\n\6\2\67"+
 		"9\5\16\b\28\65\3\2\2\28\66\3\2\2\28\67\3\2\2\29<\3\2\2\2:8\3\2\2\2:;\3"+
 		"\2\2\2;=\3\2\2\2<:\3\2\2\2=>\7\4\2\2>?\7.\2\2?\7\3\2\2\2@A\79\2\2AC\7"+
 		"\5\2\2BD\5\f\7\2CB\3\2\2\2CD\3\2\2\2DE\3\2\2\2EF\7\6\2\2FG\5\24\13\2G"+

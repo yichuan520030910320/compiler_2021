@@ -442,7 +442,7 @@ public class Semanticcheck implements ASTvisitor {
                 it.paralist.get(i).accept(this);
                 Type_ASTnode type_asTnode=it.paralist.get(i).type;
                 Type_ASTnode type_asTnode1=Function.paralist_infuction.paralist.get(i).type;
-                if (!(type_asTnode.typename.equals(type_asTnode1.typename)&&type_asTnode.dim==type_asTnode1.dim)){
+                if ((!(type_asTnode.typename.equals(type_asTnode1.typename)&&type_asTnode.dim==type_asTnode1.dim))&&(!(type_asTnode instanceof Nulltype_ASTnode))){
                     throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
 
                 }
