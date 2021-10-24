@@ -296,7 +296,7 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case EQUALEQUAL, NOT_EQUAL -> {
-                if ((!it.lhs.type.gettype().equals(it.rhs.type.gettype()))&&(!(it.rhs.type instanceof Nulltype_ASTnode))) {
+                if ((!(it.lhs.type.typename.equals(it.rhs.type.typename)&&it.lhs.type.dim==it.rhs.type.dim))&&(!(it.rhs.type instanceof Nulltype_ASTnode))) {
                     System.out.println(it.lhs.type.gettype());
                     System.out.println(it.rhs.type.gettype());
                     throw new semanticerror("error in binary not match compare in 1 ", it.pos);
@@ -305,7 +305,7 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case GREATER, GREATEREQUAL, LESSER, LESSEREQUAL -> {
-                if (!it.lhs.type.gettype().equals(it.rhs.type.gettype())) {
+                if ((!(it.lhs.type.typename.equals(it.rhs.type.typename)&&it.lhs.type.dim==it.rhs.type.dim))) {
                     throw new semanticerror("error in binary not match compare in 2", it.pos);
                 }
                 if (it.lhs.type.typename.equals("bool") && it.rhs.type.typename.equals("bool")) {
@@ -446,19 +446,9 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
 
                 }
-//                if (!it.paralist.get(i).type.gettype().equals(Function.paralist_infuction.paralist.get(i).type.gettype())) {
-//                    System.out.println(it.paralist.get(i).type.gettype());
-//                    System.out.println(Function.paralist_infuction.paralist.get(i).type.gettype());
-//                    throw new semanticerror("para type mismatch in funccall", it.paralist.get(i).pos);
-//                }
             }
         }
-//        if (Function.returntype instanceof Arraytype_ASTnode) {
-//            it.type = new Arraytype_ASTnode(Function.returntype, it.pos);
-//
-//        } else {
-//            it.type = new Classtype_ASTnode(it.pos, Function.returntype.typename, Function.returntype.typename);
-//        }
+
         it.type=new Type_ASTnode(it.pos, Function.returntype.typename);
 
         it.type.dim = Function.returntype.dim;
@@ -732,6 +722,7 @@ public class Semanticcheck implements ASTvisitor {
         } else {
             it.renturnexpr.accept(this);
             if (inlambda>0)return;
+//            if (!(it.renturnexpr.type.typename.equals(currentscope.funcreturntype.typename)&&it.renturnexpr.type.dim==currentscope.funcreturntype.dim))
 
             if ((!it.renturnexpr.type.gettype().equals(currentscope.funcreturntype.gettype()))&&(! (it.renturnexpr.type instanceof Nulltype_ASTnode))) {
                 System.out.println(it.renturnexpr.type.gettype());
