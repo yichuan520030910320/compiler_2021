@@ -226,15 +226,7 @@ public class Semanticcheck implements ASTvisitor {
         it.lhs.accept(this);
         it.rhs.accept(this);
 
-        //处理出memberexp的类型 因为在memexpr里面不太好处理
-//        if (it.lhs instanceof MemberExp_ASTnode) {
-//
-//            String callindex = ((MemberExp_ASTnode) it.lhs).classcall.index;
-//            String classtype = currentscope.find_type(callindex, it.pos).typename;
-//            System.out.println(classtype);
-//            Classdecl_ASTnode tmpclass = Globalscope.classdetailmap.get(classtype);
-//            it.lhs.type = tmpclass.classscope.valdelmap.get(((MemberExp_ASTnode) it.lhs).member);
-//        }
+
 
         Binary_Enum op = it.op;
         switch (op) {
@@ -308,7 +300,7 @@ public class Semanticcheck implements ASTvisitor {
                 if ((!(it.lhs.type.typename.equals(it.rhs.type.typename)&&it.lhs.type.dim==it.rhs.type.dim))) {
                     throw new semanticerror("error in binary not match compare in 2", it.pos);
                 }
-                if (it.lhs.type.typename.equals("bool") && it.rhs.type.typename.equals("bool")) {
+                if (it.lhs.type.typename.equals("bool") ) {
                     throw new semanticerror("error in binary bool < >", it.pos);
                 }
                 it.type = new Booltype_ASTnode(it.pos, "bool");
@@ -387,9 +379,7 @@ public class Semanticcheck implements ASTvisitor {
 
                 }//string
                 else if (mem.classcall instanceof ArrayExp_ASTnode&&mem.member.equals("size")) {
-//                    if (!mem.member.equals("size")) {
-//                        throw new semanticerror("array call defeat", it.pos);
-//                    }
+
                     Function = new Fundecl_ASTnode(it.pos, new Inttype_ASTnode(it.pos, "int"), "size", null, null, false);
                 }//array
                 else if (mem.classcall.type instanceof Arraytype_ASTnode&&mem.member.equals("size")){
@@ -530,8 +520,6 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(MemberExp_ASTnode it) {
         it.classcall.accept(this);
-        Classdecl_ASTnode classdetailed = Globalscope.classdetailmap.get(it.classcall.index);
-//        Type_ASTnode ittype=classdetailed.classscope.valdelmap.get(it.member);
         Type_ASTnode ittype = it.type;
         if (it.classcall instanceof ArrayExp_ASTnode&&it.classcall.type.dim>0){
             if (!it.member.equals("size")) throw new semanticerror("array function isn't size1?", it.pos);
@@ -850,7 +838,7 @@ public class Semanticcheck implements ASTvisitor {
         if (!it.expr.isleft) throw new semanticerror("postunaryexp can't be right type", it.pos);
         Single_Enum op = it.op;
         switch (op) {
-            case SELFPLUS, SELFSUB, ADD, SUB -> {
+            case SELFPLUS, SELFSUB, ADD, SUB ,TILDE-> {
                 if (!it.expr.type.typename.equals("int")) {
                     throw new semanticerror("error in front expr ++..", it.pos);
                 }
@@ -861,8 +849,7 @@ public class Semanticcheck implements ASTvisitor {
                     throw new semanticerror("error in front expr,!..", it.pos);
                 }
             }
-            case TILDE -> {
-            }
+
         }
         it.type = it.expr.type;
     }

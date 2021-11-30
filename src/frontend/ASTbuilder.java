@@ -265,7 +265,6 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
         for (int i = 0; i < ctx.vardeclar().size(); i++) {
             Singlevaluedecl_ASTnode tmpexpr = (Singlevaluedecl_ASTnode) visit(ctx.vardeclar().get(i));
             tmpexpr.type = type;
-
             vardellist.add(tmpexpr);
         }
         return new Valdeclstat_ASTnode(new position(ctx.getStart()), vardellist, type);
