@@ -5,8 +5,12 @@ import AST.TYPEnode.Type_ASTnode;
 import Utils.position;
 
 public class Conststring_ASTnode extends Constexpr_ASTnode{
-    public Conststring_ASTnode(position pos, Type_ASTnode type_, String typename_) {
-        super(pos, type_, typename_);
+    public Conststring_ASTnode(position pos, Type_ASTnode type_, String index) {
+
+
+
+        super(pos, type_,index.substring(1,index.length()-2));
+
     }
 
     @Override

@@ -2,7 +2,7 @@ package IR.Instru;
 
 import IR.IRbasicblock.IRbasicblock;
 
-abstract  class BaseInstru {
+public abstract  class BaseInstru {
     public BaseInstru PreInstru;
     public BaseInstru NxtInstru;
     public IRbasicblock Current_Basicblock;

@@ -38,6 +38,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             return new Constint_ASTnode(new position(ctx.getStart()), new Inttype_ASTnode(null, "int"), ctx.getText());
         }
         if (ctx.STRINGCONST() != null) {
+            //System.out.println(ctx.getText());
 
             return new Conststring_ASTnode(new position(ctx.getStart()), new Stringtype_ASTnode(null, "string"), ctx.getText());
         }
@@ -168,7 +169,6 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitExpr_single(MxParser.Expr_singleContext ctx) {//代表前置的运算符
-
         Single_Enum op = null;
         String singleop = ctx.op.getText();
         switch (singleop) {
@@ -178,7 +178,6 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             case "-" -> op = Single_Enum.SUB;
             case "!" -> op = Single_Enum.NOT;
             case "~" -> op = Single_Enum.TILDE;
-
             default -> System.out.println("single expression miss the op in astbuilder front");
         }
         Expr_ASTnode expr = (Expr_ASTnode) visit(ctx.expression());
@@ -417,7 +416,6 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public ASTnode visitProgram(MxParser.ProgramContext ctx) {
         Rootnode programroot = new Rootnode(new position(ctx.getStart()));
         for (int i = 0; i < ctx.programunit().size(); i++) {
-
             programroot.list.add(visit(ctx.programunit(i)));
         }
         return programroot;

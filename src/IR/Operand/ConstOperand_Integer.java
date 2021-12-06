@@ -3,12 +3,14 @@ package IR.Operand;
 import IR.TypeSystem.Typesystem;
 
 public class ConstOperand_Integer extends BaseOperand{
-    public ConstOperand_Integer(Typesystem typesystem) {
+    public int value;
+    public ConstOperand_Integer(Typesystem typesystem,int value_) {
         super(typesystem);
+        value=value_;
     }
 
     @Override
     public String toString() {
-        return null;
+        return String.valueOf(value);
     }
 }
