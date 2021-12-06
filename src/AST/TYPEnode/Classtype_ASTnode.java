@@ -1,7 +1,7 @@
 package AST.TYPEnode;
 
 import AST.ASTvisitor;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 import Utils.position;
 
 public class Classtype_ASTnode extends Type_ASTnode {
@@ -21,7 +21,7 @@ public class Classtype_ASTnode extends Type_ASTnode {
     @Override
     public void comparetype(Type_ASTnode t) {
         if(!t.gettype().equals(classname)){
-            throw new semanticerror(" class type don't match",pos);
+            throw new SemanticError(" class type don't match",pos);
         }
     }
 

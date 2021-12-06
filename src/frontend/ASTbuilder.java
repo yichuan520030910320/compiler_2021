@@ -12,7 +12,7 @@ import AST.TYPEnode.*;
 import AST.VALDECLnode.*;
 import Parser.MxBaseVisitor;
 import Parser.MxParser;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 import Utils.globalscope;
 import Utils.position;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -94,7 +94,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitNewerror(MxParser.NewerrorContext ctx) {
-        throw new semanticerror(" can't new this type of array", new position(ctx.getStart()));
+        throw new SemanticError(" can't new this type of array", new position(ctx.getStart()));
     }
 
     @Override

@@ -4,7 +4,7 @@ import AST.TYPEnode.Classtype_ASTnode;
 import AST.TYPEnode.Type_ASTnode;
 import AST.VALDECLnode.Classdecl_ASTnode;
 import AST.VALDECLnode.Fundecl_ASTnode;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class globalscope extends Scope {
     }
     public boolean checktype(Type_ASTnode type_instat,position pos){
         if ((!classrecord.containsKey(type_instat.getbasictype())) && (!(type_instat.getbasictype().equals("bool") || type_instat.getbasictype().equals("int") ||type_instat.getbasictype().equals("void")|| type_instat.getbasictype().equals("string")))) {
-            throw new semanticerror("type not define in the global", pos);
+            throw new SemanticError("type not define in the global", pos);
         }
         else return true;
     }

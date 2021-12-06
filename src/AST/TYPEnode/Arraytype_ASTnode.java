@@ -1,10 +1,8 @@
 package AST.TYPEnode;
 
 import AST.ASTvisitor;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 import Utils.position;
-
-import javax.swing.text.Position;
 
 public class Arraytype_ASTnode extends Type_ASTnode {
     public Type_ASTnode arraytype;//这个存储的是带有dim 基类存储的是basic类型的
@@ -36,7 +34,7 @@ public class Arraytype_ASTnode extends Type_ASTnode {
     @Override
     public void comparetype(Type_ASTnode t) {
         if (!t.gettype().equals(gettype())) {
-            throw new semanticerror("array type don't match", pos);
+            throw new SemanticError("array type don't match", pos);
         }
     }
 

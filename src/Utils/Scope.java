@@ -1,9 +1,8 @@
 package Utils;
 
-import AST.STATnode.Valdeclstat_ASTnode;
 import AST.TYPEnode.Type_ASTnode;
 import AST.VALDECLnode.Fundecl_ASTnode;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +88,7 @@ public class Scope {//basic scope
 
     public void defval(String valname, Type_ASTnode type, position pos) {
         if (valdelmap.containsKey(valname)) {
-            throw new semanticerror("already exist yhe value in the scope", pos);
+            throw new SemanticError("already exist yhe value in the scope", pos);
         }
         valdelmap.put(valname, type);
     }

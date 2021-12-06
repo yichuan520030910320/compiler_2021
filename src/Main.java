@@ -1,7 +1,7 @@
 import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
-import Utils.error.error;
+import Utils.error.Error;
 import Utils.globalscope;
 import frontend.ASTbuilder;
 import frontend.Semanticcheck;
@@ -12,7 +12,6 @@ import AST.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -45,7 +44,7 @@ public class Main {
 
             System.out.println("Success");
 
-        } catch (error er) {
+        } catch (Error er) {
             System.err.println(er.toString());
             System.out.println("Fail");
             throw new RuntimeException();

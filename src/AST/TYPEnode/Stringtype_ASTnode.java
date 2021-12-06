@@ -1,7 +1,7 @@
 package AST.TYPEnode;
 
 import AST.ASTvisitor;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 import Utils.position;
 
 public class Stringtype_ASTnode extends Type_ASTnode {
@@ -15,7 +15,7 @@ public class Stringtype_ASTnode extends Type_ASTnode {
     @Override
     public void comparetype(Type_ASTnode t) {
         if(!gettype().equals("string")){
-            throw new semanticerror("string type don't match",pos);
+            throw new SemanticError("string type don't match",pos);
         }
     }
 

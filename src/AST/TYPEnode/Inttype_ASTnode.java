@@ -1,7 +1,7 @@
 package AST.TYPEnode;
 
 import AST.ASTvisitor;
-import Utils.error.semanticerror;
+import Utils.error.SemanticError;
 import Utils.position;
 
 public class Inttype_ASTnode extends Type_ASTnode {
@@ -17,7 +17,7 @@ public class Inttype_ASTnode extends Type_ASTnode {
     @Override
     public void comparetype(Type_ASTnode t) {
         if(!gettype().equals("int")){
-            throw new semanticerror("int type don't match",pos);
+            throw new SemanticError("int type don't match",pos);
         }
     }
 
