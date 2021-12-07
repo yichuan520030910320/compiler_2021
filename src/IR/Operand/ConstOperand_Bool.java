@@ -13,4 +13,9 @@ public class ConstOperand_Bool extends BaseOperand{
     public String toString() {
         return String.valueOf(bool_value);
     }
+
+    @Override
+    public String unit_output() {
+        return type.toString()+" "+String.valueOf(bool_value);
+    }
 }

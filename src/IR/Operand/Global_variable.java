@@ -13,4 +13,9 @@ public class Global_variable extends BaseOperand{
     public String toString() {
         return null;
     }
+
+    @Override
+    public String unit_output() {
+        return null;
+    }
 }

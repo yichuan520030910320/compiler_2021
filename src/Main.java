@@ -33,16 +33,15 @@ public class Main {
             MxParser parser = new MxParser(new CommonTokenStream(lexer));
             parser.removeErrorListeners();
             parser.addErrorListener(new MxErrorListener());
-            ParseTree parseTreeRoot = parser.program();//only throw one error ?
+            ParseTree parseTreeRoot = parser.program();
             ASTbuilder astBuilder = new ASTbuilder(gScope);
             Rootnode ASTRoot;
             ASTRoot = (Rootnode) astBuilder.visit(parseTreeRoot);
             Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
 
-            System.out.println("you can debug here");
 
-            System.out.println("Success");
+            System.out.println("Semantic Success");
 
         } catch (Error er) {
             System.err.println(er.toString());
@@ -51,6 +50,5 @@ public class Main {
 
 
         }
-        System.out.println(" good you at least finish it!!");
     }
 }

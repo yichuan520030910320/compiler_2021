@@ -13,4 +13,9 @@ public class ConstOperand_Integer extends BaseOperand{
     public String toString() {
         return String.valueOf(value);
     }
+
+    @Override
+    public String unit_output() {
+        return type.toString()+" "+String.valueOf(value);
+    }
 }

@@ -38,7 +38,6 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
             return new Constint_ASTnode(new position(ctx.getStart()), new Inttype_ASTnode(null, "int"), ctx.getText());
         }
         if (ctx.STRINGCONST() != null) {
-            //System.out.println(ctx.getText());
 
             return new Conststring_ASTnode(new position(ctx.getStart()), new Stringtype_ASTnode(null, "string"), ctx.getText());
         }
