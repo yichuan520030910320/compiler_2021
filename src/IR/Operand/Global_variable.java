@@ -3,10 +3,11 @@ package IR.Operand;
 import IR.TypeSystem.Typesystem;
 
 public class Global_variable extends BaseOperand{
-    BaseOperand initoprand;
+    BaseOperand initoperand;
     String GlobalVariableName;
-    public Global_variable(Typesystem typesystem) {
+    public Global_variable(Typesystem typesystem,String GlobalVariableName_) {
         super(typesystem);
+        GlobalVariableName=GlobalVariableName_;
     }
 
     @Override
