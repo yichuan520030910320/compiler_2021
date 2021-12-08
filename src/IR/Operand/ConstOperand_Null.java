@@ -9,11 +9,11 @@ public class ConstOperand_Null extends BaseOperand{
 
     @Override
     public String toString() {
-        return null;
+        return "null";
     }
 
     @Override
     public String unit_output() {
-        return null;
+        return "null";
     }
 }

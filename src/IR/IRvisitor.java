@@ -18,4 +18,6 @@ public interface IRvisitor {
     void visit(RetInstruction it);
 
     void visit(StoreInstruction it);
+
+    void visit(AllocateInstruction it);
 }

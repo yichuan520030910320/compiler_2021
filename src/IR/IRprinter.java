@@ -42,4 +42,9 @@ public class IRprinter implements IRvisitor{
     public void visit(StoreInstruction it) {
 
     }
+
+    @Override
+    public void visit(AllocateInstruction it) {
+
+    }
 }

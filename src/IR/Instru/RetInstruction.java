@@ -5,6 +5,7 @@ import IR.IRvisitor;
 import IR.Operand.BaseOperand;
 import IR.Operand.Register;
 import IR.TypeSystem.Typesystem;
+import IR.TypeSystem.VoidType;
 
 public class RetInstruction extends BaseInstru{
     public BaseOperand Ret_Operand;
@@ -24,6 +25,8 @@ public class RetInstruction extends BaseInstru{
 
     @Override
     public String toString() {
-        return "ret "+Ret_Operand.unit_output();
+
+        if (Ret_Type instanceof VoidType)return  "ret void";
+         else return "ret "+Ret_Operand.unit_output();
     }
 }

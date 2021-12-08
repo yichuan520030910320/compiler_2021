@@ -1,3 +1,4 @@
+import IR.IRbuilder;
 import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
@@ -15,8 +16,8 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-//        Scanner scanner = new Scanner(System.in);
-//        String name = scanner.nextLine();
+
+        //chose the read option
         int op = 1;
         InputStream input = null;
         if (op == 1) {
@@ -26,7 +27,8 @@ public class Main {
             input = System.in;
         }
         try {
-            globalscope gScope = new globalscope(null);
+
+            //lexer and parser
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new MxErrorListener());
@@ -34,11 +36,24 @@ public class Main {
             parser.removeErrorListeners();
             parser.addErrorListener(new MxErrorListener());
             ParseTree parseTreeRoot = parser.program();
+
+            //from paser_tree to ast_tree
+            globalscope gScope = new globalscope(null);
             ASTbuilder astBuilder = new ASTbuilder(gScope);
             Rootnode ASTRoot;
             ASTRoot = (Rootnode) astBuilder.visit(parseTreeRoot);
+
+            //semantic check
             Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
+
+            //ir builder
+            IRbuilder irbuilder = new IRbuilder(gScope);
+            ASTRoot.accept(irbuilder);
+
+            //print llvm
+
+
 
 
             System.out.println("Semantic Success");
