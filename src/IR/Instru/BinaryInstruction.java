@@ -9,8 +9,8 @@ public class BinaryInstruction extends BaseInstru{
     public BaseOperand result_operand;
     public BaseOperand operand1;
     public BaseOperand operand2;
-    public Binary_IRInstruction op;
-    public BinaryInstruction(IRbasicblock iRbasicblock,BaseOperand result_operand_,BaseOperand operand1_,BaseOperand operand2_,Binary_IRInstruction op_) {
+    public Enum_Binary_IRInstruction op;
+    public BinaryInstruction(IRbasicblock iRbasicblock, BaseOperand result_operand_, BaseOperand operand1_, BaseOperand operand2_, Enum_Binary_IRInstruction op_) {
         super(iRbasicblock);
         result_operand=result_operand_;
         operand1=operand1_;
@@ -29,6 +29,6 @@ public class BinaryInstruction extends BaseInstru{
 //eg %add.0 = add i32 9, %c.0
     @Override
     public String toString() {
-        return "%"+result_operand.unit_output()+" = "+op.name()+" "+operand1.unit_output()+", "+operand2.unit_output();
+        return result_operand.toString()+" = "+op.name()+" "+operand1.unit_output()+", "+operand2.unit_output();
     }
 }

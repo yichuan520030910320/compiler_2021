@@ -11,7 +11,7 @@ public class Register extends BaseOperand{
 
     @Override
     public String toString() {
-        return null;
+        return "%"+RegName;
     }
 
     @Override

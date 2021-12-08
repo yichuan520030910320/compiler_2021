@@ -29,6 +29,6 @@ public class LoadInstruction extends BaseInstru {
 //eg : %c.0 = load i32, i32* %c$addr.0
     @Override
     public String toString() {
-        return "%"+destination_register.unit_output()+" = load "+destination_register.type.toString()+", "+source_pointer.unit_output();
+        return destination_register.toString()+" = load "+destination_register.type.toString()+", "+source_pointer.unit_output();
     }
 }

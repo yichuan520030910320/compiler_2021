@@ -17,6 +17,6 @@ public class Global_variable extends BaseOperand{
 
     @Override
     public String unit_output() {
-        return null;
+        return "@"+GlobalVariableName;
     }
 }

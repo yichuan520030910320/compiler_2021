@@ -10,6 +10,6 @@ public class IRmodule {
     public Map<String, IRfunction> Module_Function_Map=new HashMap<>();
     public Map<String, Global_variable> Global_variable_map=new HashMap<>();
     public IRmodule(){
-        
+
     }
 }
