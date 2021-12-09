@@ -21,7 +21,6 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
     public HashSet<IRbasicblock> pre_basicblock;
     //jump to where
     public HashSet<IRbasicblock> nxt_basic_block;
-
     public IRbasicblock(String blockname_, IRfunction irfunction_) {
         blockname = blockname_;
         iRfunction = irfunction_;
@@ -30,6 +29,7 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
         pre_basicblock=new LinkedHashSet<>();
         nxt_basic_block=new LinkedHashSet<>();
     }
+
     @Override
     public String toString() {
         return blockname;

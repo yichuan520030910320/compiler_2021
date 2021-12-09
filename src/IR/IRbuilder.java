@@ -45,58 +45,58 @@ public class IRbuilder implements ASTvisitor {
         FunctionType builtin_functiontype;
 
         //void print(string str);
-        builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)),"str_0"));
-        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"print",true);
-        module_in_irbuilder.Module_Function_Map.put("print",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("print",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str_0"));
+        builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "print", true);
+        module_in_irbuilder.Module_Function_Map.put("print", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("print", builtinfunction);
 
         //void println(string str);
-        builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)),"str_0"));
-        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"println",true);
-        module_in_irbuilder.Module_Function_Map.put("println",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("println",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str_0"));
+        builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "println", true);
+        module_in_irbuilder.Module_Function_Map.put("println", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("println", builtinfunction);
 
         //void printInt(int n);
-        builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"n_0"));
-        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"printInt",true);
-        module_in_irbuilder.Module_Function_Map.put("printInt",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("printInt",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "n_0"));
+        builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "printInt", true);
+        module_in_irbuilder.Module_Function_Map.put("printInt", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("printInt", builtinfunction);
 
         //void printlnInt(int n);
-        builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"n_0"));
-        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"printlnInt",true);
-        module_in_irbuilder.Module_Function_Map.put("printlnInt",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("printlnInt",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "n_0"));
+        builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "printlnInt", true);
+        module_in_irbuilder.Module_Function_Map.put("printlnInt", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("printlnInt", builtinfunction);
 
         //string getString();
-        builtin_para=new ArrayList<>();
-        builtin_functiontype=new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"getString",true);
-        module_in_irbuilder.Module_Function_Map.put("getString",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("getString",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "getString", true);
+        module_in_irbuilder.Module_Function_Map.put("getString", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("getString", builtinfunction);
 
         //int getInt();
-        builtin_para=new ArrayList<>();
-        builtin_functiontype=new FunctionType(new IntegerType(IntegerSubType.i32),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"getInt",true);
-        module_in_irbuilder.Module_Function_Map.put("getInt",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("getInt",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "getInt", true);
+        module_in_irbuilder.Module_Function_Map.put("getInt", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("getInt", builtinfunction);
 
         //string toString(int i);
-        builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"i_0"));
-        builtin_functiontype=new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)),builtin_para);
-        builtinfunction=new IRfunction(builtin_functiontype,"toString",true);
-        module_in_irbuilder.Module_Function_Map.put("toString",builtinfunction);
-        module_in_irbuilder.External_Function_Map.put("toString",builtinfunction);
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "i_0"));
+        builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "toString", true);
+        module_in_irbuilder.Module_Function_Map.put("toString", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("toString", builtinfunction);
 
     }
 
@@ -146,46 +146,86 @@ public class IRbuilder implements ASTvisitor {
         IRfunction collect_function;
         ArrayList<Parament> collect_function_para;
         FunctionType collect_function_type;
-        for (int i = 0; i <it.list.size() ; i++) {
-            if (it.list.get(i) instanceof Fundecl_ASTnode){
+        for (int i = 0; i < it.list.size(); i++) {
+            if (it.list.get(i) instanceof Fundecl_ASTnode) {
                 //get the ast functiondecl
-                Fundecl_ASTnode functiondecl= (Fundecl_ASTnode) it.list.get(i);
+                Fundecl_ASTnode functiondecl = (Fundecl_ASTnode) it.list.get(i);
                 //build the type translator
-                ASTtype_to_IRtype type_translator=new ASTtype_to_IRtype(module_in_irbuilder);
+                ASTtype_to_IRtype type_translator = new ASTtype_to_IRtype(module_in_irbuilder);
                 //add function paramentlist
-                collect_function_para=new ArrayList<>();
-                if (functiondecl.paralist_infuction!=null) {
+                collect_function_para = new ArrayList<>();
+                if (functiondecl.paralist_infuction != null) {
                     for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
-                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type),functiondecl.paralist_infuction.paralist.get(i).name));
+                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(i).name));
                     }
                 }
                 //add type
-                collect_function_type=new FunctionType(type_translator.asttype_to_irtype(functiondecl.returntype),collect_function_para);
+                collect_function_type = new FunctionType(type_translator.asttype_to_irtype(functiondecl.returntype), collect_function_para);
                 // build function
-                collect_function=new IRfunction(collect_function_type,functiondecl.functionname,false);
-                module_in_irbuilder.Module_Function_Map.put(functiondecl.functionname,collect_function);
-                module_in_irbuilder.Internal_Function_Map.put(functiondecl.functionname,collect_function);
+                collect_function = new IRfunction(collect_function_type, functiondecl.functionname, false);
+                module_in_irbuilder.Module_Function_Map.put(functiondecl.functionname, collect_function);
+                module_in_irbuilder.Internal_Function_Map.put(functiondecl.functionname, collect_function);
             }
         }
         //visit class
-        for (int i = 0; i <it.list.size() ; i++) {
-            if (it.list.get(i) instanceof Classdecl_ASTnode){
+        for (int i = 0; i < it.list.size(); i++) {
+            if (it.list.get(i) instanceof Classdecl_ASTnode) {
                 it.list.get(i).accept(this);
             }
         }
         //visit function
-        for (int i = 0; i <it.list.size() ; i++) {
-            if (it.list.get(i) instanceof Fundecl_ASTnode){
+        for (int i = 0; i < it.list.size(); i++) {
+            if (it.list.get(i) instanceof Fundecl_ASTnode) {
                 it.list.get(i).accept(this);
             }
         }
-
 
 
     }
 
     @Override
     public void visit(BinaryExp_ASTnode it) {
+        it.lhs.accept(this);
+        it.rhs.accept(this);
+        if (it.op == Binary_Enum.ADD) {
+
+        } else if (it.op == Binary_Enum.SUB) {
+
+        } else if (it.op == Binary_Enum.MUL) {
+
+        } else if (it.op == Binary_Enum.DIV) {
+
+        } else if (it.op == Binary_Enum.MOD) {
+
+        } else if (it.op == Binary_Enum.EQUAL) {
+
+        } else if (it.op == Binary_Enum.LEFT_SHIFT) {
+
+        } else if (it.op == Binary_Enum.RIGHT_SHIFT) {
+
+        } else if (it.op == Binary_Enum.Bitwise_or) {
+
+        } else if (it.op == Binary_Enum.Bitwise_and) {
+
+        } else if (it.op == Binary_Enum.Bitwise_xor) {
+
+        } else if (it.op == Binary_Enum.EQUALEQUAL) {
+
+        } else if (it.op == Binary_Enum.NOT_EQUAL) {
+
+        } else if (it.op == Binary_Enum.GREATER) {
+
+        } else if (it.op == Binary_Enum.GREATEREQUAL) {
+
+        } else if (it.op == Binary_Enum.LESSER) {
+
+        } else if (it.op == Binary_Enum.LESSEREQUAL) {
+
+        } else if (it.op == Binary_Enum.AND) {
+
+        } else if (it.op == Binary_Enum.OR) {
+
+        }
 
     }
 
@@ -228,10 +268,13 @@ public class IRbuilder implements ASTvisitor {
                 para_list_.add(it.paralist.get(i).ir_operand);
             }
             Register callreg;
-            if (!function.isvoid)
+            if (!function.isvoid) {
                 callreg = new Register(irfunction.function_type.returntype, "call_" + function.functionname);
+                current_function.renaming_add(callreg);
+            }
             else callreg = null;
             current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock, callreg, para_list_, irfunction));
+
             it.ir_operand = callreg;
         } else if (it.funcname instanceof MemberExp_ASTnode) {
 
