@@ -46,7 +46,7 @@ public class IRbuilder implements ASTvisitor {
 
         //void print(string str);
         builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8))));
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)),"str_0"));
         builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
         builtinfunction=new IRfunction(builtin_functiontype,"print",true);
         module_in_irbuilder.Module_Function_Map.put("print",builtinfunction);
@@ -54,7 +54,7 @@ public class IRbuilder implements ASTvisitor {
 
         //void println(string str);
         builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8))));
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)),"str_0"));
         builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
         builtinfunction=new IRfunction(builtin_functiontype,"println",true);
         module_in_irbuilder.Module_Function_Map.put("println",builtinfunction);
@@ -62,7 +62,7 @@ public class IRbuilder implements ASTvisitor {
 
         //void printInt(int n);
         builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"n_0"));
         builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
         builtinfunction=new IRfunction(builtin_functiontype,"printInt",true);
         module_in_irbuilder.Module_Function_Map.put("printInt",builtinfunction);
@@ -70,7 +70,7 @@ public class IRbuilder implements ASTvisitor {
 
         //void printlnInt(int n);
         builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"n_0"));
         builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
         builtinfunction=new IRfunction(builtin_functiontype,"printlnInt",true);
         module_in_irbuilder.Module_Function_Map.put("printlnInt",builtinfunction);
@@ -92,7 +92,7 @@ public class IRbuilder implements ASTvisitor {
 
         //string toString(int i);
         builtin_para=new ArrayList<>();
-        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32),"i_0"));
         builtin_functiontype=new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)),builtin_para);
         builtinfunction=new IRfunction(builtin_functiontype,"toString",true);
         module_in_irbuilder.Module_Function_Map.put("toString",builtinfunction);
@@ -156,7 +156,7 @@ public class IRbuilder implements ASTvisitor {
                 collect_function_para=new ArrayList<>();
                 if (functiondecl.paralist_infuction!=null) {
                     for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
-                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type)));
+                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type),functiondecl.paralist_infuction.paralist.get(i).name));
                     }
                 }
                 //add type
@@ -164,6 +164,7 @@ public class IRbuilder implements ASTvisitor {
                 // build function
                 collect_function=new IRfunction(collect_function_type,functiondecl.functionname,false);
                 module_in_irbuilder.Module_Function_Map.put(functiondecl.functionname,collect_function);
+                module_in_irbuilder.Internal_Function_Map.put(functiondecl.functionname,collect_function);
             }
         }
         //visit class

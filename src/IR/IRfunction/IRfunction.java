@@ -38,10 +38,22 @@ public class IRfunction extends BaseUser {
             return_reg= new Register(new PointerType(function_type.returntype), "return_register_infunction");
             entry_block.link_in_basicblock.add(new AllocateInstruction(entry_block, function_type.returntype,return_reg));
             Register eventual_returnval = new Register(function_type.returntype, "returnval");
-            return_block.link_in_basicblock.add(new LoadInstruction(return_block, eventual_returnval, eventual_returnval));
+            return_block.link_in_basicblock.add(new LoadInstruction(return_block, eventual_returnval, return_reg));
             return_block.link_in_basicblock.add(new RetInstruction(return_block, eventual_returnval, function_type.returntype));
         }
         block_list.add(entry_block);
+    }
+    //used for declare in irprinter
+    public String name_and_para(){
+        StringBuilder name_para=new StringBuilder();
+        name_para.append(functionname);
+name_para.append("(");
+        for (int i = 0; i <function_type.parament_list.size() ; i++) {
+            name_para.append(function_type.parament_list.get(i).unit_output());
+            if (!(i==function_type.parament_list.size()-1))name_para.append(",");
+        }
+        name_para.append(")");
+        return name_para.toString();
     }
 
     public void accept(IRvisitor visitor) {

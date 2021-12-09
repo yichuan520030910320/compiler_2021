@@ -13,8 +13,11 @@ public class IRmodule {
 
 
 
-    //only used to print the head external function
+    //only used to print the head external function  for irprinter
     public Map<String,IRfunction> External_Function_Map=new HashMap<>();
+    //only used to print the nxt internal function   for irprinter
+    public Map<String, IRfunction> Internal_Function_Map=new HashMap<>();
+
     public IRmodule(){
 
     }

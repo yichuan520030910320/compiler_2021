@@ -33,7 +33,7 @@ public class CallInstruction extends BaseInstru {
     public void accept(IRvisitor visitor) {
         visitor.visit(this);
     }
-
+// only for     call void @printInt(i32 1) and when the call stand for operand I display in anotherway
     @Override
     public String toString() {
         StringBuilder result_string=new StringBuilder();
@@ -42,7 +42,7 @@ public class CallInstruction extends BaseInstru {
         result_string.append("@").append(call_fuction.functionname).append("(");
         if (paralist!=null){
             for (int i = 0; i <paralist.size() ; i++) {
-                result_string.append(paralist.get(i).toString());
+                result_string.append(paralist.get(i).unit_output());
                 if (i!=paralist.size()-1)result_string.append(", ");
             }
         }

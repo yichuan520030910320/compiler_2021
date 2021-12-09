@@ -25,6 +25,6 @@ public class StoreInstruction extends BaseInstru {
 //store i32 9, i32* %c$addr.0
     @Override
     public String toString() {
-        return "store "+dest_operand.unit_output()+", "+source_operand.unit_output();
+        return "store "+source_operand.unit_output()+", "+dest_operand.unit_output();
     }
 }
