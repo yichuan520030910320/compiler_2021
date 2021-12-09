@@ -1,6 +1,7 @@
 package IR.IRfunction;
 
 import IR.IRbasicblock.IRbasicblock;
+import IR.IRvisitor;
 import IR.Instru.AllocateInstruction;
 import IR.Instru.LoadInstruction;
 import IR.Instru.RetInstruction;
@@ -41,6 +42,10 @@ public class IRfunction extends BaseUser {
             return_block.link_in_basicblock.add(new RetInstruction(return_block, eventual_returnval, function_type.returntype));
         }
         block_list.add(entry_block);
+    }
+
+    public void accept(IRvisitor visitor) {
+        visitor.visit(this);
     }
 
 }

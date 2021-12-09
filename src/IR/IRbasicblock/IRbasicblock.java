@@ -1,6 +1,7 @@
 package IR.IRbasicblock;
 
 import IR.IRfunction.IRfunction;
+import IR.IRvisitor;
 import IR.Instru.BaseInstru;
 import IR.Operand.BaseUser;
 
@@ -32,5 +33,9 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
     @Override
     public String toString() {
         return blockname;
+    }
+
+    public void accept(IRvisitor visitor) {
+        visitor.visit(this);
     }
 }

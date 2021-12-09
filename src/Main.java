@@ -1,4 +1,5 @@
 import IR.IRbuilder;
+import IR.IRprinter;
 import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
@@ -19,11 +20,13 @@ public class Main {
 
         //chose the read option
         int op = 1;
+        String name;
         InputStream input = null;
         if (op == 1) {
-            String name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+            name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
             input = new FileInputStream(name);
         } else {
+            name="online_judge";
             input = System.in;
         }
         try {
@@ -51,7 +54,10 @@ public class Main {
             IRbuilder irbuilder = new IRbuilder(gScope);
             ASTRoot.accept(irbuilder);
 
-            //print llvm
+            //print naive llvm
+            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
+            llvm_naive.visit(irbuilder.module_in_irbuilder);
+
 
 
 

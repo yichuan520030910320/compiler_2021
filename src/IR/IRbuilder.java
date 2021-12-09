@@ -17,9 +17,8 @@ import IR.Instru.BrInstruction;
 import IR.Instru.CallInstruction;
 import IR.Instru.StoreInstruction;
 import IR.Operand.*;
-import IR.TypeSystem.IntegerSubType;
-import IR.TypeSystem.IntegerType;
-import IR.TypeSystem.VoidType;
+import IR.TypeSystem.*;
+import IR.Utils.ASTtype_to_IRtype;
 import Utils.globalscope;
 
 import java.util.ArrayList;
@@ -38,9 +37,67 @@ public class IRbuilder implements ASTvisitor {
     public IRbuilder(globalscope semantic_globalscope_) {
 
         module_in_irbuilder = new IRmodule();
-        //todo add builtin
-
         semantic_globalscope = semantic_globalscope_;
+
+        //add build_in
+        IRfunction builtinfunction;
+        ArrayList<Parament> builtin_para;
+        FunctionType builtin_functiontype;
+
+        //void print(string str);
+        builtin_para=new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8))));
+        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"print",true);
+        module_in_irbuilder.Module_Function_Map.put("print",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("print",builtinfunction);
+
+        //void println(string str);
+        builtin_para=new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8))));
+        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"println",true);
+        module_in_irbuilder.Module_Function_Map.put("println",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("println",builtinfunction);
+
+        //void printInt(int n);
+        builtin_para=new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"printInt",true);
+        module_in_irbuilder.Module_Function_Map.put("printInt",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("printInt",builtinfunction);
+
+        //void printlnInt(int n);
+        builtin_para=new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_functiontype=new FunctionType(new VoidType(),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"printlnInt",true);
+        module_in_irbuilder.Module_Function_Map.put("printlnInt",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("printlnInt",builtinfunction);
+
+        //string getString();
+        builtin_para=new ArrayList<>();
+        builtin_functiontype=new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"getString",true);
+        module_in_irbuilder.Module_Function_Map.put("getString",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("getString",builtinfunction);
+
+        //int getInt();
+        builtin_para=new ArrayList<>();
+        builtin_functiontype=new FunctionType(new IntegerType(IntegerSubType.i32),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"getInt",true);
+        module_in_irbuilder.Module_Function_Map.put("getInt",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("getInt",builtinfunction);
+
+        //string toString(int i);
+        builtin_para=new ArrayList<>();
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32)));
+        builtin_functiontype=new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)),builtin_para);
+        builtinfunction=new IRfunction(builtin_functiontype,"toString",true);
+        module_in_irbuilder.Module_Function_Map.put("toString",builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("toString",builtinfunction);
+
     }
 
     @Override
@@ -80,6 +137,49 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Rootnode it) {
+        //collect class name
+
+
+        //collect the class inner function
+
+        //collect the function name information
+        IRfunction collect_function;
+        ArrayList<Parament> collect_function_para;
+        FunctionType collect_function_type;
+        for (int i = 0; i <it.list.size() ; i++) {
+            if (it.list.get(i) instanceof Fundecl_ASTnode){
+                //get the ast functiondecl
+                Fundecl_ASTnode functiondecl= (Fundecl_ASTnode) it.list.get(i);
+                //build the type translator
+                ASTtype_to_IRtype type_translator=new ASTtype_to_IRtype(module_in_irbuilder);
+                //add function paramentlist
+                collect_function_para=new ArrayList<>();
+                if (functiondecl.paralist_infuction!=null) {
+                    for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
+                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type)));
+                    }
+                }
+                //add type
+                collect_function_type=new FunctionType(type_translator.asttype_to_irtype(functiondecl.returntype),collect_function_para);
+                // build function
+                collect_function=new IRfunction(collect_function_type,functiondecl.functionname,false);
+                module_in_irbuilder.Module_Function_Map.put(functiondecl.functionname,collect_function);
+            }
+        }
+        //visit class
+        for (int i = 0; i <it.list.size() ; i++) {
+            if (it.list.get(i) instanceof Classdecl_ASTnode){
+                it.list.get(i).accept(this);
+            }
+        }
+        //visit function
+        for (int i = 0; i <it.list.size() ; i++) {
+            if (it.list.get(i) instanceof Fundecl_ASTnode){
+                it.list.get(i).accept(this);
+            }
+        }
+
+
 
     }
 
@@ -141,11 +241,12 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(IdExp_ASTnode it) {
 
+
     }
 
     @Override
     public void visit(LambdaExp_ASTnode it) {
-//nothinf to do
+//nothing to do
     }
 
     @Override
@@ -160,7 +261,9 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Suite_ASTnode it) {
-
+        for (int i = 0; i < it.statlist.size(); i++) {
+            it.statlist.get(i).accept(this);
+        }
     }
 
     @Override
@@ -225,6 +328,7 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Exprstat_ASTnode it) {
+        it.expr.accept(this);
 
     }
 

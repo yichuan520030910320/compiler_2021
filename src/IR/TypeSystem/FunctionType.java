@@ -1,11 +1,13 @@
 package IR.TypeSystem;
 
+import IR.Operand.Parament;
+
 import java.util.ArrayList;
 
 public class FunctionType extends Typesystem{
     public Typesystem returntype;
-    public ArrayList<Typesystem> parament_list;
-    public FunctionType(Typesystem returntype_,ArrayList<Typesystem> parament_list_){
+    public ArrayList<Parament> parament_list;
+    public FunctionType(Typesystem returntype_,ArrayList<Parament> parament_list_){
         returntype=returntype_;
         parament_list=parament_list_;
     }
