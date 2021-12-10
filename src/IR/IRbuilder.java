@@ -32,6 +32,7 @@ public class IRbuilder implements ASTvisitor {
     //scope from semantic
     public globalscope semantic_globalscope;
 
+
     public IRbuilder(globalscope semantic_globalscope_) {
 
         module_in_irbuilder = new IRmodule();
@@ -190,39 +191,39 @@ public class IRbuilder implements ASTvisitor {
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "add");
             current_function.renaming_add(tmpreg);
             //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.add));
-            it.ir_operand=tmpreg;
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.add));
+            it.ir_operand = tmpreg;
         } else if (it.op == Binary_Enum.SUB) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sub");
             current_function.renaming_add(tmpreg);
             //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.sub));
-            it.ir_operand=tmpreg;
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.sub));
+            it.ir_operand = tmpreg;
 
         } else if (it.op == Binary_Enum.MUL) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "mul");
             current_function.renaming_add(tmpreg);
             //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.mul));
-            it.ir_operand=tmpreg;
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.mul));
+            it.ir_operand = tmpreg;
 
         } else if (it.op == Binary_Enum.DIV) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sdiv");
             current_function.renaming_add(tmpreg);
             //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.sdiv));
-            it.ir_operand=tmpreg;
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.sdiv));
+            it.ir_operand = tmpreg;
 
         } else if (it.op == Binary_Enum.MOD) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "srem");
             current_function.renaming_add(tmpreg);
             //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.srem));
-            it.ir_operand=tmpreg;
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.srem));
+            it.ir_operand = tmpreg;
         } else if (it.op == Binary_Enum.EQUAL) {
 
         } else if (it.op == Binary_Enum.LEFT_SHIFT) {
@@ -270,9 +271,17 @@ public class IRbuilder implements ASTvisitor {
 
     }
 
+    /// the stringmap in module stand for it.val----->Globalvar(reg :const_string_## operand:it.val type:pointtype)
     @Override
     public void visit(Conststring_ASTnode it) {
-        //todo
+        Global_variable global_string = module_in_irbuilder.add_global_string(it.index);
+        Register tmp_const_str = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "const_string_pointer");
+        current_function.renaming_add(tmp_const_str);
+        ArrayList<BaseOperand> tmp_get_element_ptr_list = new ArrayList<>();
+        tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
+        tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
+        current_basicblock.link_in_basicblock.add(new GetElementPtrInstruction(current_basicblock, tmp_const_str, global_string, tmp_get_element_ptr_list));
+        it.ir_operand = tmp_const_str;
     }
 
     @Override

@@ -56,8 +56,8 @@ public class IRfunction extends BaseUser {
         if (add_index instanceof Register){
             if (reg_map.containsKey(((Register) add_index).RegName)){
                 int tmpcnt=reg_map.get(((Register) add_index).RegName);
-                ((Register) add_index).RegName=new String(((Register) add_index).RegName+String.valueOf(tmpcnt));
                 reg_map.replace(((Register) add_index).RegName,tmpcnt+1);
+                ((Register) add_index).RegName=new String(((Register) add_index).RegName+String.valueOf(tmpcnt));
 
             }else {
                 reg_map.put(((Register) add_index).RegName,0);
@@ -66,8 +66,8 @@ public class IRfunction extends BaseUser {
         else if (add_index instanceof IRbasicblock){
             if (basicblock_map.containsKey(((IRbasicblock) add_index).blockname)){
                 int tmpcnt=basicblock_map.get(((IRbasicblock) add_index).blockname);
-                ((IRbasicblock) add_index).blockname=((IRbasicblock) add_index).blockname+tmpcnt;
                 basicblock_map.replace(((IRbasicblock) add_index).blockname,tmpcnt+1);
+                ((IRbasicblock) add_index).blockname=((IRbasicblock) add_index).blockname+tmpcnt;
             }else {
                 basicblock_map.put(((IRbasicblock) add_index).blockname,0);
             }

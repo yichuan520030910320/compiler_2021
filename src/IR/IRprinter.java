@@ -4,6 +4,7 @@ import IR.IRbasicblock.IRbasicblock;
 import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
 import IR.Instru.*;
+import IR.Operand.Global_variable;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -90,6 +91,17 @@ public class IRprinter implements IRvisitor {
         f_println("source_filename = \"" + source_file + "\"");
         f_println("target datalayout = \"e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128\"\n" +
                 "target triple = \"x86_64-pc-linux-gnu\"");
+        f_println("");
+
+        for (Map.Entry<String, Global_variable> entry : it.string_map.entrySet()) {
+            StringBuilder tmp=new StringBuilder(entry.getKey().replace("\\", "\\5c").
+                    replace("\n", "\\0A").
+                    replace("\t", "\\09").
+                    replace("\"", "\\22").
+                    replace("\0", "\\00"));
+            tmp.append("\\00");
+            f_println(entry.getValue().toString()+" = private unnamed_addr constant ["+(entry.getKey().length()+1)+" x i8] c\""+tmp.toString()+"\", align 1");
+        }
         f_println("");
 
         for (Map.Entry<String, IRfunction> entry : it.External_Function_Map.entrySet()) {

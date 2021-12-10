@@ -7,8 +7,8 @@ import IR.TypeSystem.Typesystem;
 public class ConstOperand_String extends BaseOperand {
     String conststring;
 
-    public ConstOperand_String(Typesystem typesystem) {
-        super(typesystem);
+    public ConstOperand_String(Typesystem typesystem,String const_string_) {
+        super(typesystem);conststring=const_string_;
     }
 
     @Override
