@@ -14,7 +14,8 @@ declare i8* @getString()
 define dso_local i32 @main() {
 entrance_block0:
     %return_register_infunction = alloca i32
-    call void @printInt(i32 1)
+    %add = add i32 1, 2
+    call void @printInt(i32 %add)
     store i32 0, i32* %return_register_infunction
     br label %return_block0
 

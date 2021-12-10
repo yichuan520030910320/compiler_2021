@@ -779,8 +779,6 @@ public class Semanticcheck implements ASTvisitor {
 
     @Override
     public void visit(Constructdecl_ASTnode it) {
-
-
         infun = true;
         if (it.classname.equals(currentscope.classtype.typename)) {
             currentscope = new Scope(currentscope);
@@ -816,10 +814,7 @@ public class Semanticcheck implements ASTvisitor {
             it.type.dim = ((NewExp_ASTnode) it.arr).dim - 1;
             return;
             //fix for array-9.mx
-
         }
-
-
         if (it.arr.type.dim>0 ||it.arr.type instanceof Arraytype_ASTnode) {
             it.type = new Arraytype_ASTnode(it.arr.type, null);
             it.type.typename = it.arr.type.typename;
@@ -849,7 +844,6 @@ public class Semanticcheck implements ASTvisitor {
                     throw new SemanticError("error in front expr,!..", it.pos);
                 }
             }
-
         }
         it.type = it.expr.type;
     }

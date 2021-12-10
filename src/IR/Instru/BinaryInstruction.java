@@ -29,6 +29,6 @@ public class BinaryInstruction extends BaseInstru{
 //eg %add.0 = add i32 9, %c.0
     @Override
     public String toString() {
-        return result_operand.toString()+" = "+op.name()+" "+operand1.unit_output()+", "+operand2.unit_output();
+        return result_operand.toString()+" = "+op.name()+" "+operand1.type.toString()+" "+operand1.toString()+", "+operand2.toString();
     }
 }

@@ -29,4 +29,6 @@ public interface IRvisitor {
     void visit(IRfunction it);
 
     void visit(IRmodule it);
+
+    void visit(GetElementPtrInstruction it);
 }

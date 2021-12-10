@@ -27,8 +27,8 @@ public class IRfunction extends BaseUser {
     boolean is_builtin;
 
     //renaming map just for llvm
-    public HashMap<String, Integer> reg_map;
-    public HashMap<String, Integer> basicblock_map;
+    public HashMap<String, Integer> reg_map=new HashMap<>();
+    public HashMap<String, Integer> basicblock_map=new HashMap<>();
 
     public IRfunction(FunctionType function_type_, String functionname_, boolean is_builtin_) {
         function_type = function_type_;

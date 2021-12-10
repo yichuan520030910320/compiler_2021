@@ -13,9 +13,7 @@ import AST.VALDECLnode.*;
 import IR.IRbasicblock.IRbasicblock;
 import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
-import IR.Instru.BrInstruction;
-import IR.Instru.CallInstruction;
-import IR.Instru.StoreInstruction;
+import IR.Instru.*;
 import IR.Operand.*;
 import IR.TypeSystem.*;
 import IR.Utils.ASTtype_to_IRtype;
@@ -188,15 +186,43 @@ public class IRbuilder implements ASTvisitor {
         it.lhs.accept(this);
         it.rhs.accept(this);
         if (it.op == Binary_Enum.ADD) {
-
+            //create reg
+            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "add");
+            current_function.renaming_add(tmpreg);
+            //add instru
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.add));
+            it.ir_operand=tmpreg;
         } else if (it.op == Binary_Enum.SUB) {
+            //create reg
+            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sub");
+            current_function.renaming_add(tmpreg);
+            //add instru
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.sub));
+            it.ir_operand=tmpreg;
 
         } else if (it.op == Binary_Enum.MUL) {
+            //create reg
+            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "mul");
+            current_function.renaming_add(tmpreg);
+            //add instru
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.mul));
+            it.ir_operand=tmpreg;
 
         } else if (it.op == Binary_Enum.DIV) {
+            //create reg
+            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sdiv");
+            current_function.renaming_add(tmpreg);
+            //add instru
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.sdiv));
+            it.ir_operand=tmpreg;
 
         } else if (it.op == Binary_Enum.MOD) {
-
+            //create reg
+            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "srem");
+            current_function.renaming_add(tmpreg);
+            //add instru
+            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock,tmpreg,it.lhs.ir_operand,it.rhs.ir_operand, Enum_Binary_IRInstruction.srem));
+            it.ir_operand=tmpreg;
         } else if (it.op == Binary_Enum.EQUAL) {
 
         } else if (it.op == Binary_Enum.LEFT_SHIFT) {
@@ -271,8 +297,7 @@ public class IRbuilder implements ASTvisitor {
             if (!function.isvoid) {
                 callreg = new Register(irfunction.function_type.returntype, "call_" + function.functionname);
                 current_function.renaming_add(callreg);
-            }
-            else callreg = null;
+            } else callreg = null;
             current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock, callreg, para_list_, irfunction));
 
             it.ir_operand = callreg;

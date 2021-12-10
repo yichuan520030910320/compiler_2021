@@ -67,6 +67,11 @@ public class IRprinter implements IRvisitor {
     }
 
     @Override
+    public void visit(GetElementPtrInstruction it) {
+        f_println(tab+it.toString());
+    }
+
+    @Override
     public void visit(IRbasicblock it) {
         f_println(it.blockname+":");
         for (int i = 0; i <it.link_in_basicblock.size() ; i++) {
@@ -103,6 +108,8 @@ public class IRprinter implements IRvisitor {
         }
         file_print.close();
     }
+
+
 
     void f_println(String index) {
         file_print.println(index);
