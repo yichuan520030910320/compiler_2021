@@ -49,6 +49,7 @@ public class Main {
             //semantic check
             Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
+            System.out.println("Semantic Success");
 
             //ir builder
             IRbuilder irbuilder = new IRbuilder(gScope);
@@ -58,11 +59,11 @@ public class Main {
             IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
             llvm_naive.visit(irbuilder.module_in_irbuilder);
 
+            System.out.println("IRbuild Success");
 
 
 
 
-            System.out.println("Semantic Success");
 
         } catch (Error er) {
             System.err.println(er.toString());

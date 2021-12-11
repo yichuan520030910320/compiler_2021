@@ -145,12 +145,12 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Rootnode it) {
-        //collect class name
+        ///collect class name
 
 
-        //collect the class inner function
+        ///collect the class inner function
 
-        //collect the function name information
+        ///collect the function name information
         IRfunction collect_function;
         ArrayList<Parament> collect_function_para;
         FunctionType collect_function_type;
@@ -175,13 +175,33 @@ public class IRbuilder implements ASTvisitor {
                 module_in_irbuilder.Internal_Function_Map.put(functiondecl.functionname, collect_function);
             }
         }
-        //visit class
+
+        ///add init function
+        ArrayList<Parament> tmp=new ArrayList<>();
+        FunctionType global_init=new FunctionType(new VoidType(),tmp);
+        IRfunction GLOBAL__sub_I_main_mx=new IRfunction(global_init,"GLOBAL__sub_I_main.mx",false);
+        module_in_irbuilder.Module_Function_Map.put(GLOBAL__sub_I_main_mx.functionname,GLOBAL__sub_I_main_mx);
+        module_in_irbuilder.Internal_Function_Map.put(GLOBAL__sub_I_main_mx.functionname,GLOBAL__sub_I_main_mx);
+        //set the state
+        current_function=GLOBAL__sub_I_main_mx;
+        current_basicblock=GLOBAL__sub_I_main_mx.entry_block;
+        for (int i = 0; i <it.list.size() ; i++) {
+            if (it.list.get(i) instanceof Valdeclstat_ASTnode){
+                it.list.get(i).accept(this);
+            }
+        }
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
+        GLOBAL__sub_I_main_mx.block_list.add(GLOBAL__sub_I_main_mx.return_block);
+
+
+
+        ///visit class
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Classdecl_ASTnode) {
                 it.list.get(i).accept(this);
             }
         }
-        //visit function
+        ///visit function
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Fundecl_ASTnode) {
                 it.list.get(i).accept(this);
@@ -326,11 +346,11 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(IdExp_ASTnode it) {
         //naive type
-        Register id_reg=current_ir_scope.find_id_to_reg(it.index);
-        Register load_reg=new Register(type_trans.asttype_to_irtype(it.type),it.index);
+        BaseOperand id_reg = current_ir_scope.find_id_to_reg(it.index);
+        Register load_reg = new Register(type_trans.asttype_to_irtype(it.type), it.index);
         current_function.renaming_add(load_reg);
-        current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_reg,id_reg));
-        it.ir_operand=load_reg;
+        current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock, load_reg, id_reg));
+        it.ir_operand = load_reg;
     }
 
     @Override
@@ -359,14 +379,31 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Singlevaluedecl_ASTnode it) {
-        //naive just for int when the complex type it needs to bo modified
-        if (it.expression!=null)        it.expression.accept(this);
-        Register single_allocate = new Register(new PointerType(type_trans.asttype_to_irtype(it.type)), it.name + "_addr");
-        current_function.renaming_add(single_allocate);
-        current_ir_scope.id_map.put(it.name, single_allocate);
-        current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
-        if (it.expression != null) {
-            current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.expression.ir_operand,single_allocate));
+        //global variable is almost the same as the below just change the global variable into register
+        if (current_ir_scope.parent_scope == null)
+        {
+            if (it.expression != null) it.expression.accept(this);
+            Global_variable tmp_globalvar=new Global_variable(new PointerType(type_trans.asttype_to_irtype(it.type)),it.name);
+            module_in_irbuilder.Global_variable_map.put(it.name,tmp_globalvar);
+            current_function.renaming_add(tmp_globalvar);
+            current_ir_scope.id_map.put(it.name,tmp_globalvar);
+            if (it.expression != null) current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.expression.ir_operand,tmp_globalvar));
+            module_in_irbuilder.Global_variable_map.put(it.name,tmp_globalvar);
+        }
+        //local variable
+        else
+        { //naive just for int when the complex type it needs to bo modified
+            if (it.expression != null) it.expression.accept(this);
+            //allocate the ram and create the reg
+            Register single_allocate = new Register(new PointerType(type_trans.asttype_to_irtype(it.type)), it.name + "_addr");
+            current_function.renaming_add(single_allocate);
+            //add scope map : string---->addr reg
+            current_ir_scope.id_map.put(it.name, single_allocate);
+            //add two instructions
+            current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
+            if (it.expression != null) {
+                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
+            }
         }
     }
 
@@ -380,6 +417,8 @@ public class IRbuilder implements ASTvisitor {
             it.suite.statlist.get(i).accept(this);
         }
         Function.block_list.add(Function.return_block);
+        if (it.functionname.equals("main"))current_basicblock.link_in_basicblock.addFirst(new CallInstruction(current_basicblock,null,null,module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
+
         current_ir_scope = current_ir_scope.parent_scope;
     }
 

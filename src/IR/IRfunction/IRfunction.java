@@ -57,7 +57,7 @@ public class IRfunction extends BaseUser {
             if (reg_map.containsKey(((Register) add_index).RegName)){
                 int tmpcnt=reg_map.get(((Register) add_index).RegName);
                 reg_map.replace(((Register) add_index).RegName,tmpcnt+1);
-                ((Register) add_index).RegName=new String(((Register) add_index).RegName+String.valueOf(tmpcnt));
+                ((Register) add_index).RegName=new String(((Register) add_index).RegName+"_"+String.valueOf(tmpcnt));
 
             }else {
                 reg_map.put(((Register) add_index).RegName,0);

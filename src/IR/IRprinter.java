@@ -5,6 +5,7 @@ import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
 import IR.Instru.*;
 import IR.Operand.Global_variable;
+import IR.TypeSystem.PointerType;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class IRprinter implements IRvisitor {
     public PrintWriter file_print;
     public String source_file;
-    private String tab="    ";
+    private String tab = "    ";
 
     public IRprinter(String path, String src) throws FileNotFoundException {
         file_print = new PrintWriter(new FileOutputStream(path));
@@ -23,74 +24,74 @@ public class IRprinter implements IRvisitor {
 
     @Override
     public void visit(BinaryInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(BrInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
 
     }
 
     @Override
     public void visit(CallInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(CmpInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(LoadInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(PhiInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(RetInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(StoreInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(AllocateInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(GetElementPtrInstruction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
     public void visit(IRbasicblock it) {
-        StringBuilder tmp_output=new StringBuilder(it.blockname+":");
-        tmp_output.append(" ".repeat(60-it.blockname.length()));
-        if (it.pre_basicblock.size()!=0) {
+        StringBuilder tmp_output = new StringBuilder(it.blockname + ":");
+        tmp_output.append(" ".repeat(60 - it.blockname.length()));
+        if (it.pre_basicblock.size() != 0) {
             tmp_output.append("; preds = ");
             for (Object object : it.pre_basicblock) {
                 tmp_output.append(object).append(" ");
             }
         }
         f_println(tmp_output.toString());
-        for (int i = 0; i <it.link_in_basicblock.size() ; i++) {
+        for (int i = 0; i < it.link_in_basicblock.size(); i++) {
             it.link_in_basicblock.get(i).accept(this);
         }
     }
 
     @Override
     public void visit(IRfunction it) {
-        f_println(tab+it.toString());
+        f_println(tab + it.toString());
     }
 
     @Override
@@ -101,14 +102,21 @@ public class IRprinter implements IRvisitor {
                 "target triple = \"x86_64-pc-linux-gnu\"");
         f_println("");
 
+        //just for int need to be modiefied
+        for (Map.Entry<String, Global_variable> entry : it.Global_variable_map.entrySet()) {
+            f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType)entry.getValue().type).get_low_dim_type() + " " + 0);
+        }
+        f_println("");
+
+
         for (Map.Entry<String, Global_variable> entry : it.string_map.entrySet()) {
-            StringBuilder tmp=new StringBuilder(entry.getKey().replace("\\", "\\5c").
+            StringBuilder tmp = new StringBuilder(entry.getKey().replace("\\", "\\5c").
                     replace("\n", "\\0A").
                     replace("\t", "\\09").
                     replace("\"", "\\22").
                     replace("\0", "\\00"));
             tmp.append("\\00");
-            f_println(entry.getValue().toString()+" = private unnamed_addr constant ["+(entry.getKey().length()+1)+" x i8] c\""+tmp.toString()+"\", align 1");
+            f_println(entry.getValue().toString() + " = private unnamed_addr constant [" + (entry.getKey().length() + 1) + " x i8] c\"" + tmp.toString() + "\", align 1");
         }
         f_println("");
 
@@ -119,15 +127,16 @@ public class IRprinter implements IRvisitor {
 
         for (Map.Entry<String, IRfunction> entry : it.Internal_Function_Map.entrySet()) {
             f_println("define dso_local " + entry.getValue().function_type.returntype + " @" + entry.getValue().name_and_para() + " {");
-            IRfunction tmpirrunction=entry.getValue();
-            for (int i = 0; i <tmpirrunction.block_list.size() ; i++) {
+            IRfunction tmpirrunction = entry.getValue();
+            for (int i = 0; i < tmpirrunction.block_list.size(); i++) {
                 tmpirrunction.block_list.get(i).accept(this);
-                if (i!=tmpirrunction.block_list.size() -1)f_println("");
+                if (i != tmpirrunction.block_list.size() - 1) f_println("");
             }
             f_println("}");
         }
         file_print.close();
     }
+
     void f_println(String index) {
         file_print.println(index);
     }
