@@ -92,9 +92,4 @@ public class Scope {//basic scope
         }
         valdelmap.put(valname, type);
     }
-
-
-
-
-
 }

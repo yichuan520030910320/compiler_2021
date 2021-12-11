@@ -74,7 +74,15 @@ public class IRprinter implements IRvisitor {
 
     @Override
     public void visit(IRbasicblock it) {
-        f_println(it.blockname+":");
+        StringBuilder tmp_output=new StringBuilder(it.blockname+":");
+        tmp_output.append(" ".repeat(60-it.blockname.length()));
+        if (it.pre_basicblock.size()!=0) {
+            tmp_output.append("; preds = ");
+            for (Object object : it.pre_basicblock) {
+                tmp_output.append(object).append(" ");
+            }
+        }
+        f_println(tmp_output.toString());
         for (int i = 0; i <it.link_in_basicblock.size() ; i++) {
             it.link_in_basicblock.get(i).accept(this);
         }
@@ -120,9 +128,6 @@ public class IRprinter implements IRvisitor {
         }
         file_print.close();
     }
-
-
-
     void f_println(String index) {
         file_print.println(index);
     }

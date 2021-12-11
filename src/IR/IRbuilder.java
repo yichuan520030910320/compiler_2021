@@ -17,6 +17,7 @@ import IR.Instru.*;
 import IR.Operand.*;
 import IR.TypeSystem.*;
 import IR.Utils.ASTtype_to_IRtype;
+import IR.Utils.IR_scope;
 import Utils.globalscope;
 
 import java.util.ArrayList;
@@ -32,11 +33,19 @@ public class IRbuilder implements ASTvisitor {
     //scope from semantic
     public globalscope semantic_globalscope;
 
+    //current scope
+    public IR_scope current_ir_scope;
+
+    //transform
+    public ASTtype_to_IRtype type_trans;
+
 
     public IRbuilder(globalscope semantic_globalscope_) {
 
         module_in_irbuilder = new IRmodule();
         semantic_globalscope = semantic_globalscope_;
+        current_ir_scope = new IR_scope(null);
+        type_trans = new ASTtype_to_IRtype(module_in_irbuilder);
 
         //add build_in
         IRfunction builtinfunction;
@@ -101,37 +110,37 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Arraytype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Booltype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Classtype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Inttype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Nulltype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Stringtype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Voidtype_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
@@ -208,7 +217,6 @@ public class IRbuilder implements ASTvisitor {
             //add instru
             current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.mul));
             it.ir_operand = tmpreg;
-
         } else if (it.op == Binary_Enum.DIV) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sdiv");
@@ -216,7 +224,6 @@ public class IRbuilder implements ASTvisitor {
             //add instru
             current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.sdiv));
             it.ir_operand = tmpreg;
-
         } else if (it.op == Binary_Enum.MOD) {
             //create reg
             Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "srem");
@@ -318,8 +325,12 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(IdExp_ASTnode it) {
-
-
+        //naive type
+        Register id_reg=current_ir_scope.find_id_to_reg(it.index);
+        Register load_reg=new Register(type_trans.asttype_to_irtype(it.type),it.index);
+        current_function.renaming_add(load_reg);
+        current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_reg,id_reg));
+        it.ir_operand=load_reg;
     }
 
     @Override
@@ -339,18 +350,29 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Suite_ASTnode it) {
+        current_ir_scope = new IR_scope(current_ir_scope);
         for (int i = 0; i < it.statlist.size(); i++) {
             it.statlist.get(i).accept(this);
         }
+        current_ir_scope = current_ir_scope.parent_scope;
     }
 
     @Override
     public void visit(Singlevaluedecl_ASTnode it) {
-
+        //naive just for int when the complex type it needs to bo modified
+        if (it.expression!=null)        it.expression.accept(this);
+        Register single_allocate = new Register(new PointerType(type_trans.asttype_to_irtype(it.type)), it.name + "_addr");
+        current_function.renaming_add(single_allocate);
+        current_ir_scope.id_map.put(it.name, single_allocate);
+        current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
+        if (it.expression != null) {
+            current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.expression.ir_operand,single_allocate));
+        }
     }
 
     @Override
     public void visit(Fundecl_ASTnode it) {
+        current_ir_scope = new IR_scope(current_ir_scope);
         IRfunction Function = module_in_irbuilder.Module_Function_Map.get(it.functionname);
         current_function = Function;
         current_basicblock = Function.entry_block;
@@ -358,6 +380,7 @@ public class IRbuilder implements ASTvisitor {
             it.suite.statlist.get(i).accept(this);
         }
         Function.block_list.add(Function.return_block);
+        current_ir_scope = current_ir_scope.parent_scope;
     }
 
     @Override
@@ -382,6 +405,9 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Valdeclstat_ASTnode it) {
+        for (int i = 0; i < it.vardecllist.size(); i++) {
+            it.vardecllist.get(i).accept(this);
+        }
 
     }
 

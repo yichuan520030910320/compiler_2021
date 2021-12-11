@@ -42,7 +42,7 @@ public class IRfunction extends BaseUser {
         if (function_type.returntype instanceof VoidType) {
             return_block.link_in_basicblock.add(new RetInstruction(return_block, null, new VoidType()));
         } else {
-            return_reg = new Register(new PointerType(function_type.returntype), "return_register_infunction");
+            return_reg = new Register(new PointerType(function_type.returntype), "return_register_infunction_addr");
             entry_block.link_in_basicblock.add(new AllocateInstruction(entry_block, function_type.returntype, return_reg));
             Register eventual_returnval = new Register(function_type.returntype, "returnval");
             return_block.link_in_basicblock.add(new LoadInstruction(return_block, eventual_returnval, return_reg));
