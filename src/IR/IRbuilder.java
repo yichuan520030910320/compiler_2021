@@ -1,5 +1,6 @@
 package IR;
 
+import AST.ASTnode;
 import AST.ASTvisitor;
 import AST.EXPRnode.*;
 import AST.EXPRnode.CONSTEXPRnode.Constbool_ASTnode;
@@ -16,7 +17,7 @@ import IR.IRmodule.IRmodule;
 import IR.Instru.*;
 import IR.Operand.*;
 import IR.TypeSystem.*;
-import IR.Utils.ASTtype_to_IRtype;
+import IR.Utils.AST_to_IR_trans;
 import IR.Utils.IR_scope;
 import Utils.globalscope;
 
@@ -37,7 +38,7 @@ public class IRbuilder implements ASTvisitor {
     public IR_scope current_ir_scope;
 
     //transform
-    public ASTtype_to_IRtype type_trans;
+    public AST_to_IR_trans type_trans;
 
 
     public IRbuilder(globalscope semantic_globalscope_) {
@@ -45,7 +46,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder = new IRmodule();
         semantic_globalscope = semantic_globalscope_;
         current_ir_scope = new IR_scope(null);
-        type_trans = new ASTtype_to_IRtype(module_in_irbuilder);
+        type_trans = new AST_to_IR_trans(module_in_irbuilder);
 
         //add build_in
         IRfunction builtinfunction;
@@ -159,7 +160,7 @@ public class IRbuilder implements ASTvisitor {
                 //get the ast functiondecl
                 Fundecl_ASTnode functiondecl = (Fundecl_ASTnode) it.list.get(i);
                 //build the type translator
-                ASTtype_to_IRtype type_translator = new ASTtype_to_IRtype(module_in_irbuilder);
+                AST_to_IR_trans type_translator = new AST_to_IR_trans(module_in_irbuilder);
                 //add function paramentlist
                 collect_function_para = new ArrayList<>();
                 if (functiondecl.paralist_infuction != null) {
@@ -215,71 +216,37 @@ public class IRbuilder implements ASTvisitor {
     public void visit(BinaryExp_ASTnode it) {
         it.lhs.accept(this);
         it.rhs.accept(this);
-        if (it.op == Binary_Enum.ADD) {
-            //create reg
-            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "add");
-            current_function.renaming_add(tmpreg);
-            //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.add));
-            it.ir_operand = tmpreg;
-        } else if (it.op == Binary_Enum.SUB) {
-            //create reg
-            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sub");
-            current_function.renaming_add(tmpreg);
-            //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.sub));
-            it.ir_operand = tmpreg;
+        switch (it.op){
+            case EQUAL -> {
+            }
+            case ADD,SUB,MOD,DIV,MUL->{
+                set_binary_op(it.op,it);
+            }
+            case LEFT_SHIFT -> {
+            }
+            case RIGHT_SHIFT -> {
+            }
+            case AND -> {
+            }
+            case OR -> {
+            }
+            case Bitwise_or -> {
+            }
+            case Bitwise_and -> {
+            }
+            case Bitwise_xor -> {
+            }
+            case EQUALEQUAL,NOT_EQUAL,GREATEREQUAL,LESSER,LESSEREQUAL,GREATER -> {
+                Object op=type_trans.enum_trans(it.op);
+                Register tmpreg=new Register(new IntegerType(IntegerSubType.i1),op.toString());
+                current_function.renaming_add(tmpreg);
+                current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock,tmpreg, (Enum_Compare_IRInstruction) op,it.lhs.ir_operand,it.rhs.ir_operand));
+                it.ir_operand=tmpreg;
+            }
 
-        } else if (it.op == Binary_Enum.MUL) {
-            //create reg
-            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "mul");
-            current_function.renaming_add(tmpreg);
-            //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.mul));
-            it.ir_operand = tmpreg;
-        } else if (it.op == Binary_Enum.DIV) {
-            //create reg
-            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "sdiv");
-            current_function.renaming_add(tmpreg);
-            //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.sdiv));
-            it.ir_operand = tmpreg;
-        } else if (it.op == Binary_Enum.MOD) {
-            //create reg
-            Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), "srem");
-            current_function.renaming_add(tmpreg);
-            //add instru
-            current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, Enum_Binary_IRInstruction.srem));
-            it.ir_operand = tmpreg;
-        } else if (it.op == Binary_Enum.EQUAL) {
-
-        } else if (it.op == Binary_Enum.LEFT_SHIFT) {
-
-        } else if (it.op == Binary_Enum.RIGHT_SHIFT) {
-
-        } else if (it.op == Binary_Enum.Bitwise_or) {
-
-        } else if (it.op == Binary_Enum.Bitwise_and) {
-
-        } else if (it.op == Binary_Enum.Bitwise_xor) {
-
-        } else if (it.op == Binary_Enum.EQUALEQUAL) {
-
-        } else if (it.op == Binary_Enum.NOT_EQUAL) {
-
-        } else if (it.op == Binary_Enum.GREATER) {
-
-        } else if (it.op == Binary_Enum.GREATEREQUAL) {
-
-        } else if (it.op == Binary_Enum.LESSER) {
-
-        } else if (it.op == Binary_Enum.LESSEREQUAL) {
-
-        } else if (it.op == Binary_Enum.AND) {
-
-        } else if (it.op == Binary_Enum.OR) {
-
+            default -> throw new IllegalStateException("Unexpected value: " + it.op);
         }
+
 
     }
 
@@ -477,6 +444,8 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Ifstat_ASTnode it) {
+        it.condition.accept(this);
+        //todo split block
 
     }
 
@@ -513,5 +482,17 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(Post_UnaryExp_ASTnode it) {
 
+    }
+
+
+    //util function
+    void set_binary_op(Binary_Enum op_, BinaryExp_ASTnode it){
+        Object op=type_trans.enum_trans(op_);
+        //create reg
+        Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), op.toString());
+        current_function.renaming_add(tmpreg);
+        //add instru
+        current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, (Enum_Binary_IRInstruction) op));
+        it.ir_operand = tmpreg;
     }
 }
