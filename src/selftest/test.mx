@@ -1,8 +1,15 @@
+int k=9;
+int m=88;
+void calltest2(int l){
+printlnInt(l);
+}
 void calltest(int i){
+calltest2(i+1);
 printlnInt(i);
+
 }
 int main() {
-//printlnInt(1);
-calltest(7);
+printlnInt(1);
+calltest(k+m);
 	return 0;
 }

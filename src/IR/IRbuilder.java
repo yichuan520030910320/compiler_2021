@@ -164,7 +164,7 @@ public class IRbuilder implements ASTvisitor {
                 collect_function_para = new ArrayList<>();
                 if (functiondecl.paralist_infuction != null) {
                     for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
-                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(i).name+"_para"));
+                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(j).name+"_para"));
                     }
                 }
                 //add type
