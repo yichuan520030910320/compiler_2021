@@ -3,6 +3,7 @@ package IR.IRbasicblock;
 import IR.IRfunction.IRfunction;
 import IR.IRvisitor;
 import IR.Instru.BaseInstru;
+import IR.Instru.BrInstruction;
 import IR.Operand.BaseUser;
 
 import java.util.HashSet;
@@ -37,5 +38,9 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
 
     public void accept(IRvisitor visitor) {
         visitor.visit(this);
+    }
+
+    public boolean check_taiL_br(){
+        return link_in_basicblock.getLast() instanceof BrInstruction;
     }
 }

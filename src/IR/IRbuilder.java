@@ -164,7 +164,7 @@ public class IRbuilder implements ASTvisitor {
                 collect_function_para = new ArrayList<>();
                 if (functiondecl.paralist_infuction != null) {
                     for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
-                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(i).name));
+                        collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(i).name+"_para"));
                     }
                 }
                 //add type
@@ -330,7 +330,7 @@ public class IRbuilder implements ASTvisitor {
                 para_list_.add(it.paralist.get(i).ir_operand);
             }
             Register callreg;
-            if (!function.isvoid) {
+            if (!(function.returntype instanceof Voidtype_ASTnode)) {
                 callreg = new Register(irfunction.function_type.returntype, "call_" + function.functionname);
                 current_function.renaming_add(callreg);
             } else callreg = null;
@@ -413,9 +413,25 @@ public class IRbuilder implements ASTvisitor {
         IRfunction Function = module_in_irbuilder.Module_Function_Map.get(it.functionname);
         current_function = Function;
         current_basicblock = Function.entry_block;
+        if (it.paralist_infuction!=null){
+            for (int i = 0; i <it.paralist_infuction.paralist.size() ; i++) {
+                current_ir_scope.id_map.put(it.paralist_infuction.paralist.get(i).name+"_para",new Register(type_trans.asttype_to_irtype(it.paralist_infuction.paralist.get(i).type),it.paralist_infuction.paralist.get(i).name+"_para"));
+            }
+        }
+        if (it.paralist_infuction!=null){
+            for (int i = 0; i <it.paralist_infuction.paralist.size() ; i++) {
+                Singlevaluedecl_ASTnode tmp=it.paralist_infuction.paralist.get(i);
+                it.paralist_infuction.paralist.get(i).accept(this);
+                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,current_ir_scope.id_map.get(tmp.name+"_para"),current_ir_scope.id_map.get(tmp.name)));
+            }
+        }
         for (int i = 0; i < it.suite.statlist.size(); i++) {
             it.suite.statlist.get(i).accept(this);
         }
+
+        //add for the special condition such as void function without return
+        if (!current_basicblock.check_taiL_br()) current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,Function.return_block,null));
+
         Function.block_list.add(Function.return_block);
         if (it.functionname.equals("main"))current_basicblock.link_in_basicblock.addFirst(new CallInstruction(current_basicblock,null,null,module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
 
@@ -472,7 +488,6 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(Exprstat_ASTnode it) {
         it.expr.accept(this);
-
     }
 
     @Override

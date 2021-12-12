@@ -1,6 +1,8 @@
-int k=9;
-int p=k+88;
+void calltest(int i){
+printlnInt(i);
+}
 int main() {
-printlnInt(p);
+//printlnInt(1);
+calltest(7);
 	return 0;
 }
