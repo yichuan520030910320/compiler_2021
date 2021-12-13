@@ -4,6 +4,7 @@ import IR.IRbasicblock.IRbasicblock;
 import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
 import IR.Instru.*;
+import IR.Operand.ConstOperand_String;
 import IR.Operand.Global_variable;
 import IR.TypeSystem.PointerType;
 
@@ -104,6 +105,8 @@ public class IRprinter implements IRvisitor {
 
         //just for int need to be modiefied
         for (Map.Entry<String, Global_variable> entry : it.Global_variable_map.entrySet()) {
+            //don't print the string here print it in the next
+            if (entry.getValue().initoperand instanceof ConstOperand_String) continue;
             f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType)entry.getValue().type).get_low_dim_type() + " " + 0);
         }
         f_println("");

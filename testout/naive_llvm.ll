@@ -16,20 +16,9 @@ declare i8* @getString()
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
-    %b_addr = alloca i32
-    %c_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    store i32 9, i32* %c_addr
-    %c = load i32, i32* %c_addr
-    %c_0 = load i32, i32* %c_addr
-    %add = add i32 %c_0, 8
-    store i32 %add, i32* %c_addr
-    store i32 7, i32* %b_addr
-    %b = load i32, i32* %b_addr
-    %ashr = ashr i32 %b, 1
-    call void @printlnInt(i32 %ashr)
-    %c_1 = load i32, i32* %c_addr
-    call void @printlnInt(i32 %c_1)
+    %TILDE = xor i32 1, -1
+    call void @printInt(i32 %TILDE)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 

@@ -41,6 +41,7 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
     }
 
     public boolean check_taiL_br(){
-        return link_in_basicblock.getLast() instanceof BrInstruction;
+        if (link_in_basicblock.size()==0)return false;
+        return link_in_basicblock.getLast() instanceof BrInstruction ;
     }
 }
