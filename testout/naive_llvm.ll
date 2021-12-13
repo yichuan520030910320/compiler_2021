@@ -16,27 +16,23 @@ declare i8* @getString()
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
+    %b_addr = alloca i32
+    %c_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    %call_getInt = call i32 @getInt()
-    %m_addr = alloca i32
-    store i32 %call_getInt, i32* %m_addr
-    %m = load i32, i32* %m_addr
-    %sgt = icmp sgt i32 %m, 6
-    br i1 %sgt, label %then_basicblock, label %else_basicblock
-
-then_basicblock:                                             ; preds = entrance_block0 
-    call void @printlnInt(i32 2)
-    br label %if_end_basicblock
-
-else_basicblock:                                             ; preds = entrance_block0 
-    call void @printlnInt(i32 1)
-    br label %if_end_basicblock
-
-if_end_basicblock:                                           ; preds = then_basicblock else_basicblock 
+    store i32 9, i32* %c_addr
+    %c = load i32, i32* %c_addr
+    %c_0 = load i32, i32* %c_addr
+    %add = add i32 %c_0, 8
+    store i32 %add, i32* %c_addr
+    store i32 7, i32* %b_addr
+    %b = load i32, i32* %b_addr
+    call void @printlnInt(i32 %b)
+    %c_1 = load i32, i32* %c_addr
+    call void @printlnInt(i32 %c_1)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-return_block0:                                               ; preds = if_end_basicblock 
+return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

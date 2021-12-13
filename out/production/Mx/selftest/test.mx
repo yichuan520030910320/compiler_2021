@@ -1,7 +1,10 @@
 
 int main() {
-int m=getInt();
-if(m>6){ printlnInt(2);
-}else {printlnInt(1);}
+int c=9;
+c=c+8;
+int b=7;
+printlnInt(b);
+printlnInt(c);
+
 	return 0;
 }

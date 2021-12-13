@@ -218,6 +218,10 @@ public class IRbuilder implements ASTvisitor {
         it.rhs.accept(this);
         switch (it.op){
             case EQUAL -> {
+            //lhs just can be id
+            current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,current_ir_scope.find_id_to_reg(it.lhs.index)));
+            //it may not use :just for   --->foo(a=b+1) this seem weird
+            it.ir_operand=it.rhs.ir_operand;
             }
             case ADD,SUB,MOD,DIV,MUL->{
                 set_binary_op(it.op,it);
@@ -369,7 +373,7 @@ public class IRbuilder implements ASTvisitor {
             //add scope map : string---->addr reg
             current_ir_scope.id_map.put(it.name, single_allocate);
             //add two instructions
-            current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
+            current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
             if (it.expression != null) {
                 current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
             }
@@ -382,14 +386,11 @@ public class IRbuilder implements ASTvisitor {
         IRfunction Function = module_in_irbuilder.Module_Function_Map.get(it.functionname);
         current_function = Function;
         current_basicblock = Function.entry_block;
-        if (it.paralist_infuction!=null){
-            for (int i = 0; i <it.paralist_infuction.paralist.size() ; i++) {
-                current_ir_scope.id_map.put(it.paralist_infuction.paralist.get(i).name+"_para",new Register(type_trans.asttype_to_irtype(it.paralist_infuction.paralist.get(i).type),it.paralist_infuction.paralist.get(i).name+"_para"));
-            }
-        }
+        //first collect the xx_para and put it into the scope map the visit the paranode and allocate for space and sote the para value into it
         if (it.paralist_infuction!=null){
             for (int i = 0; i <it.paralist_infuction.paralist.size() ; i++) {
                 Singlevaluedecl_ASTnode tmp=it.paralist_infuction.paralist.get(i);
+                current_ir_scope.id_map.put(tmp.name+"_para",new Register(type_trans.asttype_to_irtype(tmp.type),tmp.name+"_para"));
                 it.paralist_infuction.paralist.get(i).accept(this);
                 current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,current_ir_scope.id_map.get(tmp.name+"_para"),current_ir_scope.id_map.get(tmp.name)));
             }
@@ -447,41 +448,78 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(Ifstat_ASTnode it) {
         it.condition.accept(this);
-        //declare for basicblock
-        IRbasicblock then_basicblock=new IRbasicblock("then_basicblock",current_function);
-        current_function.renaming_add(then_basicblock);
-        current_function.block_list.add(then_basicblock);
-        IRbasicblock else_basicblock=new IRbasicblock("else_basicblock",current_function);
-        current_function.renaming_add(else_basicblock);
-        current_function.block_list.add(else_basicblock);
-        IRbasicblock if_end_basicblock=new IRbasicblock("if_end_basicblock",current_function);
-        current_function.renaming_add(if_end_basicblock);
-        current_function.block_list.add(if_end_basicblock);
+        ///when there exist elsestate
+        if (it.elsestat!=null) {
+            //declare for basicblock
+            IRbasicblock then_basicblock = new IRbasicblock("then_basicblock", current_function);
+            current_function.renaming_add(then_basicblock);
+            current_function.block_list.add(then_basicblock);
 
-        // add for basicblock relationship
-        current_basicblock.nxt_basic_block.add(then_basicblock);
-        then_basicblock.pre_basicblock.add(current_basicblock);
-        then_basicblock.nxt_basic_block.add(if_end_basicblock);
-        if_end_basicblock.pre_basicblock.add(then_basicblock);
+            IRbasicblock else_basicblock = new IRbasicblock("else_basicblock", current_function);
+            current_function.renaming_add(else_basicblock);
+            current_function.block_list.add(else_basicblock);
 
-        current_basicblock.nxt_basic_block.add(else_basicblock);
-        else_basicblock.pre_basicblock.add(current_basicblock);
-        else_basicblock.nxt_basic_block.add(if_end_basicblock);
-        if_end_basicblock.pre_basicblock.add(else_basicblock);
+            IRbasicblock if_end_basicblock = new IRbasicblock("if_end_basicblock", current_function);
+            current_function.renaming_add(if_end_basicblock);
+            current_function.block_list.add(if_end_basicblock);
 
-        //add current br instruction
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,then_basicblock,else_basicblock));
+            // add for basicblock relationship
+            current_basicblock.nxt_basic_block.add(then_basicblock);
+            then_basicblock.pre_basicblock.add(current_basicblock);
+            then_basicblock.nxt_basic_block.add(if_end_basicblock);
+            if_end_basicblock.pre_basicblock.add(then_basicblock);
 
-        //add the br instruction for thenblock and elseblock
-        current_basicblock=then_basicblock;
-        it.thenstat.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,if_end_basicblock,null));
+            current_basicblock.nxt_basic_block.add(else_basicblock);
+            else_basicblock.pre_basicblock.add(current_basicblock);
+            else_basicblock.nxt_basic_block.add(if_end_basicblock);
+            if_end_basicblock.pre_basicblock.add(else_basicblock);
 
-        current_basicblock=else_basicblock;
-        it.elsestat.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,if_end_basicblock,null));
+            //add current br instruction
+            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, else_basicblock));
 
-        current_basicblock=if_end_basicblock;
+            //add the br instruction for thenblock and elseblock
+            current_basicblock = then_basicblock;
+            it.thenstat.accept(this);
+            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+
+            current_basicblock = else_basicblock;
+            it.elsestat.accept(this);
+            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+
+            current_basicblock = if_end_basicblock;
+        }
+        //without else stat
+        else{
+            //declare for basicblock
+            IRbasicblock then_basicblock = new IRbasicblock("single_then_basicblock", current_function);
+            current_function.renaming_add(then_basicblock);
+            current_function.block_list.add(then_basicblock);
+
+            IRbasicblock if_end_basicblock = new IRbasicblock("if_withoutelse_end_basicblock", current_function);
+            current_function.renaming_add(if_end_basicblock);
+            current_function.block_list.add(if_end_basicblock);
+
+            // add for basicblock relationship
+            current_basicblock.nxt_basic_block.add(then_basicblock);
+            current_basicblock.nxt_basic_block.add(if_end_basicblock);
+            then_basicblock.pre_basicblock.add(current_basicblock);
+            then_basicblock.nxt_basic_block.add(if_end_basicblock);
+            if_end_basicblock.pre_basicblock.add(then_basicblock);
+            if_end_basicblock.pre_basicblock.add(current_basicblock);
+
+            //add current br instruction
+            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, if_end_basicblock));
+
+            //add the br instruction for thenblock and elseblock
+            current_basicblock = then_basicblock;
+            it.thenstat.accept(this);
+            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+
+            current_basicblock = if_end_basicblock;
+
+
+
+        }
 
 
     }
