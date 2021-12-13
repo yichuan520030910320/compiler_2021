@@ -223,22 +223,13 @@ public class IRbuilder implements ASTvisitor {
             //it may not use :just for   --->foo(a=b+1) this seem weird
             it.ir_operand=it.rhs.ir_operand;
             }
-            case ADD,SUB,MOD,DIV,MUL->{
+            case ADD,SUB,MOD,DIV,MUL,LEFT_SHIFT,RIGHT_SHIFT,Bitwise_and,Bitwise_xor,Bitwise_or ->{
                 set_binary_op(it.op,it);
-            }
-            case LEFT_SHIFT -> {
-            }
-            case RIGHT_SHIFT -> {
             }
             case AND -> {
             }
             case OR -> {
-            }
-            case Bitwise_or -> {
-            }
-            case Bitwise_and -> {
-            }
-            case Bitwise_xor -> {
+
             }
             case EQUALEQUAL,NOT_EQUAL,GREATEREQUAL,LESSER,LESSEREQUAL,GREATER -> {
                 Object op=type_trans.enum_trans(it.op);

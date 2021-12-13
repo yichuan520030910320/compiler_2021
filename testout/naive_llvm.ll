@@ -26,7 +26,8 @@ entrance_block0:
     store i32 %add, i32* %c_addr
     store i32 7, i32* %b_addr
     %b = load i32, i32* %b_addr
-    call void @printlnInt(i32 %b)
+    %ashr = ashr i32 %b, 1
+    call void @printlnInt(i32 %ashr)
     %c_1 = load i32, i32* %c_addr
     call void @printlnInt(i32 %c_1)
     store i32 0, i32* %return_register_infunction_addr

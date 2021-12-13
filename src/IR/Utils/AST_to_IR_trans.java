@@ -36,7 +36,11 @@ public class AST_to_IR_trans {
         if (op== Binary_Enum.SUB) return Enum_Binary_IRInstruction.sub;
         if (op== Binary_Enum.MUL) return Enum_Binary_IRInstruction.mul;
         if (op== Binary_Enum.DIV) return Enum_Binary_IRInstruction.sdiv;
-        if (op== Binary_Enum.MOD) return Enum_Binary_IRInstruction.srem;
+        if (op== Binary_Enum.Bitwise_xor) return Enum_Binary_IRInstruction.xor;
+        if (op== Binary_Enum.Bitwise_or) return Enum_Binary_IRInstruction.or;
+        if (op== Binary_Enum.Bitwise_and) return Enum_Binary_IRInstruction.and;
+        if (op== Binary_Enum.RIGHT_SHIFT) return Enum_Binary_IRInstruction.ashr;
+        if (op== Binary_Enum.LEFT_SHIFT) return Enum_Binary_IRInstruction.shl;
         if (op== Binary_Enum.EQUALEQUAL) return Enum_Compare_IRInstruction.eq;
         if (op== Binary_Enum.NOT_EQUAL) return Enum_Compare_IRInstruction.ne;
         if (op== Binary_Enum.GREATEREQUAL) return Enum_Compare_IRInstruction.sge;
