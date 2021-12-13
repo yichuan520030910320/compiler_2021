@@ -292,9 +292,11 @@ public class IRbuilder implements ASTvisitor {
             assert irfunction != null;
             ArrayList<BaseOperand> para_list_;
             para_list_ = new ArrayList<>();
-            for (int i = 0; i < it.paralist.size(); i++) {
-                it.paralist.get(i).accept(this);
-                para_list_.add(it.paralist.get(i).ir_operand);
+            if (it.paralist!=null) {
+                for (int i = 0; i < it.paralist.size(); i++) {
+                    it.paralist.get(i).accept(this);
+                    para_list_.add(it.paralist.get(i).ir_operand);
+                }
             }
             Register callreg;
             if (!(function.returntype instanceof Voidtype_ASTnode)) {
@@ -400,7 +402,7 @@ public class IRbuilder implements ASTvisitor {
         if (!current_basicblock.check_taiL_br()) current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,Function.return_block,null));
 
         Function.block_list.add(Function.return_block);
-        if (it.functionname.equals("main"))current_basicblock.link_in_basicblock.addFirst(new CallInstruction(current_basicblock,null,null,module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
+        if (it.functionname.equals("main"))current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_basicblock,null,null,module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
 
         current_ir_scope = current_ir_scope.parent_scope;
     }
@@ -445,7 +447,42 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(Ifstat_ASTnode it) {
         it.condition.accept(this);
-        //todo split block
+        //declare for basicblock
+        IRbasicblock then_basicblock=new IRbasicblock("then_basicblock",current_function);
+        current_function.renaming_add(then_basicblock);
+        current_function.block_list.add(then_basicblock);
+        IRbasicblock else_basicblock=new IRbasicblock("else_basicblock",current_function);
+        current_function.renaming_add(else_basicblock);
+        current_function.block_list.add(else_basicblock);
+        IRbasicblock if_end_basicblock=new IRbasicblock("if_end_basicblock",current_function);
+        current_function.renaming_add(if_end_basicblock);
+        current_function.block_list.add(if_end_basicblock);
+
+        // add for basicblock relationship
+        current_basicblock.nxt_basic_block.add(then_basicblock);
+        then_basicblock.pre_basicblock.add(current_basicblock);
+        then_basicblock.nxt_basic_block.add(if_end_basicblock);
+        if_end_basicblock.pre_basicblock.add(then_basicblock);
+
+        current_basicblock.nxt_basic_block.add(else_basicblock);
+        else_basicblock.pre_basicblock.add(current_basicblock);
+        else_basicblock.nxt_basic_block.add(if_end_basicblock);
+        if_end_basicblock.pre_basicblock.add(else_basicblock);
+
+        //add current br instruction
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,then_basicblock,else_basicblock));
+
+        //add the br instruction for thenblock and elseblock
+        current_basicblock=then_basicblock;
+        it.thenstat.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,if_end_basicblock,null));
+
+        current_basicblock=else_basicblock;
+        it.elsestat.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,if_end_basicblock,null));
+
+        current_basicblock=if_end_basicblock;
+
 
     }
 

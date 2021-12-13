@@ -37,7 +37,7 @@ public class CallInstruction extends BaseInstru {
     @Override
     public String toString() {
         StringBuilder result_string=new StringBuilder();
-        if (call_result!=null) result_string.append(call_result.unit_output()).append(" = ");
+        if (call_result!=null) result_string.append(call_result).append(" = ");
         result_string.append("call ").append(call_fuction.function_type.returntype.toString()).append(" ");
         result_string.append("@").append(call_fuction.functionname).append("(");
         if (paralist!=null){
