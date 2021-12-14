@@ -16,8 +16,11 @@ Origin Package: Codegen Pretest-577
 
 int main() {
 int i;
-    for(i=0;i<6;i++){printlnInt(i);
-    if(i>4)break;
+    for(i=0;i<60;i++){
+    if(i>=10&&i<20)continue;
+    printlnInt(i);
+    }
+
     }
     return 0;
 }
