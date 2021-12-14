@@ -1,5 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+//because c doesn't contain bool literal
+#include<stdbool.h>
+
 void print(char * x){
     printf(x);
 }
@@ -35,6 +39,40 @@ char * getString(){
     return newString;
 }
 
+int _str_ord(const char* str,int pos){
+    return str[pos];
+}
+
+bool _str_eq(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)==0;
+}
+bool _str_ne(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)!=0;
+}
+bool _str_lt(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)<0;
+}
+bool _str_le(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)<=0;
+}
+bool _str_gt(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)>0;
+}
+bool _str_ge(const char* lhs,const char* rhs){
+    return strcmp(lhs,rhs)>=0;
+}
+//for string add
+const char*_str_concatenate(const char* lhs,const char* rhs){
+    char* buf=malloc(sizeof(char)*1024);
+    strcpy(buf,lhs);
+    strcat(buf,rhs);
+    return buf;
+}
+
+//todo
 char * _f__malloc(int n) {
     return (char *) malloc(n);
 }
+
+
+//todo  parseint substring length

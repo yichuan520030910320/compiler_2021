@@ -1,6 +1,4 @@
 package IR;
-
-import AST.ASTnode;
 import AST.ASTvisitor;
 import AST.EXPRnode.*;
 import AST.EXPRnode.CONSTEXPRnode.Constbool_ASTnode;
@@ -21,8 +19,6 @@ import IR.Utils.AST_to_IR_trans;
 import IR.Utils.IR_scope;
 import Utils.error.IRbuilderError;
 import Utils.globalscope;
-import org.antlr.v4.runtime.atn.SemanticContext;
-
 import java.util.ArrayList;
 
 public class IRbuilder implements ASTvisitor {
@@ -109,6 +105,31 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.Module_Function_Map.put("toString", builtinfunction);
         module_in_irbuilder.External_Function_Map.put("toString", builtinfunction);
 
+        //int _str_ord(const char* str,int pos)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "pos"));
+        builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_str_ord", true);
+        module_in_irbuilder.Module_Function_Map.put("_str_ord", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_str_ord", builtinfunction);
+
+        //bool _str_eq(const char* lhs,const char* rhs)
+        add_str_built_in_cmp("_str_eq");
+        add_str_built_in_cmp("_str_ne");
+        add_str_built_in_cmp("_str_lt");
+        add_str_built_in_cmp("_str_le");
+        add_str_built_in_cmp("_str_gt");
+        add_str_built_in_cmp("_str_ge");
+
+        //const char*_str_concatenate(const char* lhs,const char* rhs)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "lhs"));
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "rhs"));
+        builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_str_concatenate", true);
+        module_in_irbuilder.Module_Function_Map.put("_str_concatenate", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_str_concatenate", builtinfunction);
     }
 
     @Override
@@ -218,6 +239,40 @@ public class IRbuilder implements ASTvisitor {
         if (!(it.op== Binary_Enum.AND||it.op==Binary_Enum.OR)) {
             it.lhs.accept(this);
             it.rhs.accept(this);
+            //todo string binary
+            if (it.lhs.type.typename.equals("string")&&it.rhs.type.typename.equals("string")){
+                switch (it.op) {
+                    case EQUAL -> {
+                        //todo
+                        //lhs just can be id
+                        current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                        //it may not use :just for   --->foo(a=b+1) this seem weird
+                        it.ir_operand = it.rhs.ir_operand;
+                    }
+                    case ADD -> {
+                        ArrayList<BaseOperand> para_list_;
+                        para_list_ = new ArrayList<>();
+                        para_list_.add(it.lhs.ir_operand);
+                        para_list_.add(it.rhs.ir_operand);
+                        IRfunction tmpcunction=module_in_irbuilder.Module_Function_Map.get("_str_concatenate");
+                        Register stringadd=new Register(new PointerType(new IntegerType(IntegerSubType.i8)),"string_add");
+                        current_function.renaming_add(stringadd);
+                        current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock,stringadd,para_list_,tmpcunction));
+                        it.ir_operand=stringadd;
+                    }
+                    case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
+                        Object op = type_trans.enum_trans(it.op);
+                        Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
+                        current_function.renaming_add(tmpreg);
+                        current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
+                        it.ir_operand = tmpreg;
+                    }
+                    default -> throw new IllegalStateException(" sring binary ir Unexpected value: " + it.op);
+                }
+                return;
+            }
+
+            // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
                     //lhs just can be id
@@ -235,7 +290,6 @@ public class IRbuilder implements ASTvisitor {
                     current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
                     it.ir_operand = tmpreg;
                 }
-
                 default -> throw new IllegalStateException("Unexpected value: " + it.op);
             }
         }else{
@@ -717,7 +771,7 @@ public class IRbuilder implements ASTvisitor {
 
 
     //util function
-    void set_binary_op(Binary_Enum op_, BinaryExp_ASTnode it) {
+    private void set_binary_op(Binary_Enum op_, BinaryExp_ASTnode it) {
         Object op = type_trans.enum_trans(op_);
         //create reg
         Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), op.toString());
@@ -731,5 +785,15 @@ public class IRbuilder implements ASTvisitor {
         current_function.renaming_add(return_block);
         current_function.block_list.add(return_block);
         return  return_block;
+    }
+    private void add_str_built_in_cmp(String cmp_name){
+        ArrayList<Parament> builtin_para_ = new ArrayList<>();
+        builtin_para_.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "lhs"));
+        builtin_para_.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "rhs"));
+        FunctionType builtin_functiontype_ = new FunctionType(new IntegerType(IntegerSubType.i1), builtin_para_);
+        IRfunction builtinfunction_ = new IRfunction(builtin_functiontype_, cmp_name, true);
+        module_in_irbuilder.Module_Function_Map.put(cmp_name, builtinfunction_);
+        module_in_irbuilder.External_Function_Map.put(cmp_name, builtinfunction_);
+
     }
 }
