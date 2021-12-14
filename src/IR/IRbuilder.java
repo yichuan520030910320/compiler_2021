@@ -526,7 +526,7 @@ public class IRbuilder implements ASTvisitor {
             //add scope map : string---->addr reg
             current_ir_scope.id_map.put(it.name, single_allocate);
             //add two instructions
-            current_function.entry_block.instruction_addFirst(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
+            if (!current_basicblock.check_taiL_br())current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
             if (it.expression != null) {
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
             }
