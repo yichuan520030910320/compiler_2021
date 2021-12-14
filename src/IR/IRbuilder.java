@@ -457,7 +457,31 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Whilestat_ASTnode it) {
+        //declare basic block
+        IRbasicblock while_condition=create_block("while_condition");
+        IRbasicblock while_body=create_block("while_body");
+        IRbasicblock while_end_merge=create_block("while_end_merge");
+        //add relation
+        current_basicblock.nxt_basic_block.add(while_condition);
 
+        while_condition.nxt_basic_block.add(while_body);
+        while_condition.nxt_basic_block.add(while_end_merge);
+        while_condition.pre_basicblock.add(current_basicblock);
+        while_condition.pre_basicblock.add(while_body);
+
+        while_body.nxt_basic_block.add(while_condition);
+        while_body.pre_basicblock.add(while_condition);
+
+        while_end_merge.pre_basicblock.add(current_basicblock);
+
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,while_condition,null));
+        current_basicblock=while_condition;
+        it.condition.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,while_body,while_end_merge));
+        current_basicblock=while_body;
+        it.while_stats.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,while_condition,null));
+        current_basicblock=while_end_merge;
     }
 
     @Override
@@ -480,20 +504,13 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(Ifstat_ASTnode it) {
         it.condition.accept(this);
+        current_ir_scope=new IR_scope(current_ir_scope);
         ///when there exist elsestate
         if (it.elsestat != null) {
             //declare for basicblock
-            IRbasicblock then_basicblock = new IRbasicblock("then_basicblock", current_function);
-            current_function.renaming_add(then_basicblock);
-            current_function.block_list.add(then_basicblock);
-
-            IRbasicblock else_basicblock = new IRbasicblock("else_basicblock", current_function);
-            current_function.renaming_add(else_basicblock);
-            current_function.block_list.add(else_basicblock);
-
-            IRbasicblock if_end_basicblock = new IRbasicblock("if_end_basicblock", current_function);
-            current_function.renaming_add(if_end_basicblock);
-            current_function.block_list.add(if_end_basicblock);
+            IRbasicblock then_basicblock=create_block("then_basicblock");
+            IRbasicblock else_basicblock=create_block("else_basicblock");
+            IRbasicblock if_end_basicblock=create_block("if_end_basicblock");
 
             // add for basicblock relationship
             current_basicblock.nxt_basic_block.add(then_basicblock);
@@ -523,13 +540,8 @@ public class IRbuilder implements ASTvisitor {
         //without else stat
         else {
             //declare for basicblock
-            IRbasicblock then_basicblock = new IRbasicblock("single_then_basicblock", current_function);
-            current_function.renaming_add(then_basicblock);
-            current_function.block_list.add(then_basicblock);
-
-            IRbasicblock if_end_basicblock = new IRbasicblock("if_withoutelse_end_basicblock", current_function);
-            current_function.renaming_add(if_end_basicblock);
-            current_function.block_list.add(if_end_basicblock);
+            IRbasicblock then_basicblock = create_block("single_then_basicblock");
+            IRbasicblock if_end_basicblock = create_block("if_withoutelse_end_basicblock");
 
             // add for basicblock relationship
             current_basicblock.nxt_basic_block.add(then_basicblock);
@@ -551,13 +563,48 @@ public class IRbuilder implements ASTvisitor {
 
 
         }
+        current_ir_scope=current_ir_scope.parent_scope;
 
 
     }
 
     @Override
     public void visit(Forstat_ASTnode it) {
+        //naive for with the most simple condition
+        current_ir_scope=new IR_scope(current_ir_scope);
+        it.initexpr.accept(this);
+        //declare basic block
+        IRbasicblock condition_for=create_block("for_condition");
+        IRbasicblock for_step=create_block("for_step");
+        IRbasicblock for_body=create_block("for_body");
+        IRbasicblock for_end_merge=create_block("for_end_merge");
+        //relation
+        current_basicblock.nxt_basic_block.add(condition_for);
+        condition_for.nxt_basic_block.add(for_end_merge);
+        condition_for.nxt_basic_block.add(for_body);
+        condition_for.pre_basicblock.add(current_basicblock);
+        for_end_merge.pre_basicblock.add(condition_for);
+        for_body.nxt_basic_block.add(for_step);
+        for_body.pre_basicblock.add(condition_for);
+        for_step.nxt_basic_block.add(condition_for);
+        for_step.pre_basicblock.add(for_body);
+        //add instruction
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,condition_for,null));
 
+        current_basicblock=condition_for;
+        it.condition.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,for_body,for_end_merge));
+
+        current_basicblock=for_body;
+        it.suite_in_for.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,for_step,null));
+
+        current_basicblock=for_step;
+        it.incr.accept(this);
+        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,condition_for,null));
+
+        current_basicblock=for_end_merge;
+        current_ir_scope=current_ir_scope.parent_scope;
     }
 
     @Override
@@ -615,5 +662,11 @@ public class IRbuilder implements ASTvisitor {
         //add instru
         current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, (Enum_Binary_IRInstruction) op));
         it.ir_operand = tmpreg;
+    }
+    private IRbasicblock create_block(String blockname){
+        IRbasicblock return_block=new IRbasicblock(blockname,current_function);
+        current_function.renaming_add(return_block);
+        current_function.block_list.add(return_block);
+        return  return_block;
     }
 }
