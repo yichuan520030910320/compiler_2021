@@ -9,7 +9,7 @@ public class Conststring_ASTnode extends Constexpr_ASTnode{
 
 
 
-        super(pos, type_,index.substring(1,index.length()-1));
+        super(pos, type_,index.substring(1,index.length()-1).replace("\\\\","\\").replace("\\n","\n").replace("\\\"","\"").replace("\\t","\t")+"\0");
 
     }
 

@@ -41,7 +41,7 @@ public class IRmodule {
         if (string_map.containsKey(stringname)){
             return string_map.get(stringname);
         }else {
-            Global_variable return_globalstring=new Global_variable(new PointerType(new ArrayType(new IntegerType(IntegerSubType.i8), stringname.length()+1)),"const_string"+String.valueOf(string_map.size()));
+            Global_variable return_globalstring=new Global_variable(new PointerType(new ArrayType(new IntegerType(IntegerSubType.i8), stringname.length())),"const_string"+String.valueOf(string_map.size()));
             return_globalstring.initoperand=new ConstOperand_String(new PointerType(new IntegerType(IntegerSubType.i8)),stringname);
             string_map.put(stringname,return_globalstring);
             Global_variable_map.put(stringname,return_globalstring);

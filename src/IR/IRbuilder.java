@@ -243,7 +243,7 @@ public class IRbuilder implements ASTvisitor {
             if (it.lhs.type.typename.equals("string")&&it.rhs.type.typename.equals("string")){
                 switch (it.op) {
                     case EQUAL -> {
-                        //todo
+                        // todo
                         //lhs just can be id
                         current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
                         //it may not use :just for   --->foo(a=b+1) this seem weird
@@ -261,11 +261,17 @@ public class IRbuilder implements ASTvisitor {
                         it.ir_operand=stringadd;
                     }
                     case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
-                        Object op = type_trans.enum_trans(it.op);
-                        Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
-                        current_function.renaming_add(tmpreg);
-                        current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
-                        it.ir_operand = tmpreg;
+                        // todo
+                        ArrayList<BaseOperand> para_list_;
+                        para_list_ = new ArrayList<>();
+                        para_list_.add(it.lhs.ir_operand);
+                        para_list_.add(it.rhs.ir_operand);
+                        String funcname=string_cmp_return(it.op);
+                        IRfunction tmpcunction=module_in_irbuilder.Module_Function_Map.get(funcname);
+                        Register tmpreg_cmp_result = new Register(new IntegerType(IntegerSubType.i1), "cmp_result"+funcname);
+                        current_function.renaming_add(tmpreg_cmp_result);
+                        current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock,tmpreg_cmp_result,para_list_,tmpcunction));
+                        it.ir_operand = tmpreg_cmp_result;
                     }
                     default -> throw new IllegalStateException(" sring binary ir Unexpected value: " + it.op);
                 }
@@ -794,6 +800,28 @@ public class IRbuilder implements ASTvisitor {
         IRfunction builtinfunction_ = new IRfunction(builtin_functiontype_, cmp_name, true);
         module_in_irbuilder.Module_Function_Map.put(cmp_name, builtinfunction_);
         module_in_irbuilder.External_Function_Map.put(cmp_name, builtinfunction_);
-
+    }
+    private String string_cmp_return(Binary_Enum op){
+        switch (op){
+            case GREATER -> {
+                return "_str_gt";
+            }
+            case GREATEREQUAL -> {
+                return "_str_ge";
+            }
+            case LESSER -> {
+                return "_str_lt";
+            }
+            case LESSEREQUAL -> {
+                return "_str_le";
+            }
+            case EQUALEQUAL -> {
+                return "_str_eq";
+            }
+            case NOT_EQUAL -> {
+                return "_str_ne";
+            }
+            default -> {throw new IRbuilderError("don't exist the op",null);}
+        }
     }
 }

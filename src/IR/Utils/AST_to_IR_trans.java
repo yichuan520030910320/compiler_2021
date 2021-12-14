@@ -6,10 +6,7 @@ import AST.TYPEnode.*;
 import IR.IRmodule.IRmodule;
 import IR.Instru.Enum_Binary_IRInstruction;
 import IR.Instru.Enum_Compare_IRInstruction;
-import IR.TypeSystem.IntegerSubType;
-import IR.TypeSystem.IntegerType;
-import IR.TypeSystem.Typesystem;
-import IR.TypeSystem.VoidType;
+import IR.TypeSystem.*;
 
 public class AST_to_IR_trans {
     public IRmodule ir_module;
@@ -28,6 +25,7 @@ public class AST_to_IR_trans {
         }else if (asttype instanceof Classtype_ASTnode){
 
         }else if (asttype instanceof Stringtype_ASTnode){
+            return new PointerType(new IntegerType(IntegerSubType.i8));
 
         }
         return new VoidType();

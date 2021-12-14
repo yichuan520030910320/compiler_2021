@@ -113,13 +113,13 @@ public class IRprinter implements IRvisitor {
 
 
         for (Map.Entry<String, Global_variable> entry : it.string_map.entrySet()) {
-            StringBuilder tmp = new StringBuilder(entry.getKey().replace("\\", "\\5c").
+            StringBuilder tmp = new StringBuilder(entry.getKey().replace("\\", "\\5C").
                     replace("\n", "\\0A").
                     replace("\t", "\\09").
                     replace("\"", "\\22").
                     replace("\0", "\\00"));
-            tmp.append("\\00");
-            f_println(entry.getValue().toString() + " = private unnamed_addr constant [" + (entry.getKey().length() + 1) + " x i8] c\"" + tmp.toString() + "\", align 1");
+
+            f_println(entry.getValue().toString() + " = private unnamed_addr constant [" + (entry.getKey().length() ) + " x i8] c\"" + tmp.toString() + "\", align 1");
         }
         f_println("");
 

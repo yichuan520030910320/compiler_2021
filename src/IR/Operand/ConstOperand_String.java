@@ -21,7 +21,7 @@ public class ConstOperand_String extends BaseOperand {
         return " = private unnamed_addr constant [" +
                 (conststring.length() + 1) +
                 " x i8] c\"" +
-                conststring.replace("\\", "\\5c").
+                conststring.replace("\\", "\\5C").
                         replace("\n", "\\0A").
                         replace("\t", "\\09").
                         replace("\"", "\\22").
