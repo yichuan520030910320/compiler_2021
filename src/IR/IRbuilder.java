@@ -214,7 +214,7 @@ public class IRbuilder implements ASTvisitor {
                 it.list.get(i).accept(this);
             }
         }
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
         GLOBAL__sub_I_main_mx.block_list.add(GLOBAL__sub_I_main_mx.return_block);
 
 
@@ -243,11 +243,11 @@ public class IRbuilder implements ASTvisitor {
             if (it.lhs.type.typename.equals("string")&&it.rhs.type.typename.equals("string")){
                 switch (it.op) {
                     case EQUAL -> {
-                        // todo
                         //lhs just can be id
-                        current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
                         //it may not use :just for   --->foo(a=b+1) this seem weird
                         it.ir_operand = it.rhs.ir_operand;
+                        throw new IRbuilderError("what you can do this?",null);
                     }
                     case ADD -> {
                         ArrayList<BaseOperand> para_list_;
@@ -257,7 +257,7 @@ public class IRbuilder implements ASTvisitor {
                         IRfunction tmpcunction=module_in_irbuilder.Module_Function_Map.get("_str_concatenate");
                         Register stringadd=new Register(new PointerType(new IntegerType(IntegerSubType.i8)),"string_add");
                         current_function.renaming_add(stringadd);
-                        current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock,stringadd,para_list_,tmpcunction));
+                        current_basicblock.instruction_add(new CallInstruction(current_basicblock,stringadd,para_list_,tmpcunction));
                         it.ir_operand=stringadd;
                     }
                     case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
@@ -270,7 +270,7 @@ public class IRbuilder implements ASTvisitor {
                         IRfunction tmpcunction=module_in_irbuilder.Module_Function_Map.get(funcname);
                         Register tmpreg_cmp_result = new Register(new IntegerType(IntegerSubType.i1), "cmp_result"+funcname);
                         current_function.renaming_add(tmpreg_cmp_result);
-                        current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock,tmpreg_cmp_result,para_list_,tmpcunction));
+                        current_basicblock.instruction_add(new CallInstruction(current_basicblock,tmpreg_cmp_result,para_list_,tmpcunction));
                         it.ir_operand = tmpreg_cmp_result;
                     }
                     default -> throw new IllegalStateException(" sring binary ir Unexpected value: " + it.op);
@@ -282,7 +282,7 @@ public class IRbuilder implements ASTvisitor {
             switch (it.op) {
                 case EQUAL -> {
                     //lhs just can be id
-                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
                     //it may not use :just for   --->foo(a=b+1) this seem weird
                     it.ir_operand = it.rhs.ir_operand;
                 }
@@ -293,7 +293,7 @@ public class IRbuilder implements ASTvisitor {
                     Object op = type_trans.enum_trans(it.op);
                     Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
                     current_function.renaming_add(tmpreg);
-                    current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
+                    current_basicblock.instruction_add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
                     it.ir_operand = tmpreg;
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + it.op);
@@ -317,18 +317,18 @@ public class IRbuilder implements ASTvisitor {
                     //pointer
                     Register result_reg=new Register(new PointerType(new IntegerType(IntegerSubType.i1)),it.op.toString()+"_addr");
                     //alloca and store
-                    current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
-                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
-                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_branch, short_circuit_and_end));
+                    current_basicblock.instruction_add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
+                    current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_branch, short_circuit_and_end));
                     //cope with the branch
                     current_basicblock=short_circuit_and_branch;
                     it.rhs.accept(this);
-                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
-                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
+                    current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
                     //cope with the end
                     current_basicblock=short_circuit_and_end;
                     Register load_node_iroperand=new Register(new IntegerType(IntegerSubType.i1),it.op.toString()+"_short_circuit");
-                    current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
+                    current_basicblock.instruction_add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
                     //assign
                     it.ir_operand=load_node_iroperand;
                 }
@@ -346,18 +346,18 @@ public class IRbuilder implements ASTvisitor {
                     short_circuit_and_branch.pre_basicblock.add(current_basicblock);
                     Register result_reg=new Register(new PointerType(new IntegerType(IntegerSubType.i1)),it.op.toString()+"_addr");
                     //alloca and store
-                    current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
-                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
-                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_end, short_circuit_and_branch));
+                    current_basicblock.instruction_add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
+                    current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_end, short_circuit_and_branch));
                     //cope with the branch
                     current_basicblock=short_circuit_and_branch;
                     it.rhs.accept(this);
-                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
-                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
+                    current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
                     //cope with the end
                     current_basicblock=short_circuit_and_end;
                     Register load_node_iroperand=new Register(new IntegerType(IntegerSubType.i1),it.op.toString()+"_short_circuit");
-                    current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
+                    current_basicblock.instruction_add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
                     //assign
                     it.ir_operand=load_node_iroperand;
                 }
@@ -391,14 +391,14 @@ public class IRbuilder implements ASTvisitor {
                 Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), op.toString());
                 current_function.renaming_add(tmpreg);
                 //add instru
-                current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),1), (Enum_Binary_IRInstruction) op));
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,tmpreg,current_ir_scope.find_id_to_reg(it.expr.index)));
+                current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),1), (Enum_Binary_IRInstruction) op));
+                current_basicblock.instruction_add(new StoreInstruction(current_basicblock,tmpreg,current_ir_scope.find_id_to_reg(it.expr.index)));
                 it.ir_operand=tmpreg;
             }
             case SUB -> {
                 Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), it.op.toString()+"_single_front");
                 current_function.renaming_add(tmpreg);
-                current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1), Enum_Binary_IRInstruction.mul));
+                current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1), Enum_Binary_IRInstruction.mul));
                 it.ir_operand=tmpreg;
             }
             case ADD -> {
@@ -408,14 +408,14 @@ public class IRbuilder implements ASTvisitor {
             case NOT -> {
                 Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), it.op.toString());
                 current_function.renaming_add(tmpreg);
-                current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Bool(new IntegerType(IntegerSubType.i1),true), Enum_Binary_IRInstruction.xor));
+                current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Bool(new IntegerType(IntegerSubType.i1),true), Enum_Binary_IRInstruction.xor));
                 it.ir_operand=tmpreg;
             }
             //%7 = xor i32 %6, -1 clang
             case TILDE -> {
                 Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), it.op.toString());
                 current_function.renaming_add(tmpreg);
-                current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1), Enum_Binary_IRInstruction.xor));
+                current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1), Enum_Binary_IRInstruction.xor));
                 it.ir_operand=tmpreg;
             }
         }
@@ -432,7 +432,7 @@ public class IRbuilder implements ASTvisitor {
         ArrayList<BaseOperand> tmp_get_element_ptr_list = new ArrayList<>();
         tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
-        current_basicblock.link_in_basicblock.add(new GetElementPtrInstruction(current_basicblock, tmp_const_str, global_string, tmp_get_element_ptr_list));
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, tmp_const_str, global_string, tmp_get_element_ptr_list));
         it.ir_operand = tmp_const_str;
     }
 
@@ -461,7 +461,7 @@ public class IRbuilder implements ASTvisitor {
                 callreg = new Register(irfunction.function_type.returntype, "call_" + function.functionname);
                 current_function.renaming_add(callreg);
             } else callreg = null;
-            current_basicblock.link_in_basicblock.add(new CallInstruction(current_basicblock, callreg, para_list_, irfunction));
+            current_basicblock.instruction_add(new CallInstruction(current_basicblock, callreg, para_list_, irfunction));
 
             it.ir_operand = callreg;
         } else if (it.funcname instanceof MemberExp_ASTnode) {
@@ -476,7 +476,7 @@ public class IRbuilder implements ASTvisitor {
         BaseOperand id_reg = current_ir_scope.find_id_to_reg(it.index);
         Register load_reg = new Register(type_trans.asttype_to_irtype(it.type), it.index);
         current_function.renaming_add(load_reg);
-        current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock, load_reg, id_reg));
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_reg, id_reg));
         it.ir_operand = load_reg;
     }
 
@@ -514,7 +514,7 @@ public class IRbuilder implements ASTvisitor {
             current_function.renaming_add(tmp_globalvar);
             current_ir_scope.id_map.put(it.name, tmp_globalvar);
             if (it.expression != null)
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.expression.ir_operand, tmp_globalvar));
+                current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, tmp_globalvar));
             module_in_irbuilder.Global_variable_map.put(it.name, tmp_globalvar);
         }
         //local variable
@@ -526,9 +526,9 @@ public class IRbuilder implements ASTvisitor {
             //add scope map : string---->addr reg
             current_ir_scope.id_map.put(it.name, single_allocate);
             //add two instructions
-            current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
+            current_function.entry_block.instruction_addFirst(new AllocateInstruction(current_basicblock, type_trans.asttype_to_irtype(it.type), single_allocate));
             if (it.expression != null) {
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
+                current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
             }
         }
     }
@@ -545,7 +545,7 @@ public class IRbuilder implements ASTvisitor {
                 Singlevaluedecl_ASTnode tmp = it.paralist_infuction.paralist.get(i);
                 current_ir_scope.id_map.put(tmp.name + "_para", new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para"));
                 it.paralist_infuction.paralist.get(i).accept(this);
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
+                current_basicblock.instruction_add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
             }
         }
         for (int i = 0; i < it.suite.statlist.size(); i++) {
@@ -554,12 +554,12 @@ public class IRbuilder implements ASTvisitor {
 
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, Function.return_block, null));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
 
         Function.block_list.add(Function.return_block);
-        if (it.functionname.equals("main"))
+        if (it.functionname.equals("main")) {
             current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_basicblock, null, null, module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
-
+        }
         current_ir_scope = current_ir_scope.parent_scope;
     }
 
@@ -597,13 +597,13 @@ public class IRbuilder implements ASTvisitor {
 
         while_end_merge.pre_basicblock.add(current_basicblock);
 
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,while_condition,null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,while_condition,null));
         current_basicblock=while_condition;
         it.condition.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,while_body,while_end_merge));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,it.condition.ir_operand,while_body,while_end_merge));
         current_basicblock=while_body;
         it.while_stats.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,while_condition,null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,while_condition,null));
         current_basicblock=while_end_merge;
     }
 
@@ -619,9 +619,9 @@ public class IRbuilder implements ASTvisitor {
     public void visit(Returnstat_ASTnode it) {
         if (!it.isvoid) {
             it.renturnexpr.accept(this);
-            current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.renturnexpr.ir_operand, current_function.return_reg));
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.renturnexpr.ir_operand, current_function.return_reg));
         }
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
     }
 
     @Override
@@ -647,16 +647,16 @@ public class IRbuilder implements ASTvisitor {
             if_end_basicblock.pre_basicblock.add(else_basicblock);
 
             //add current br instruction
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, else_basicblock));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, else_basicblock));
 
             //add the br instruction for thenblock and elseblock
             current_basicblock = then_basicblock;
             it.thenstat.accept(this);
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
 
             current_basicblock = else_basicblock;
             it.elsestat.accept(this);
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
 
             current_basicblock = if_end_basicblock;
         }
@@ -675,12 +675,12 @@ public class IRbuilder implements ASTvisitor {
             if_end_basicblock.pre_basicblock.add(current_basicblock);
 
             //add current br instruction
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, if_end_basicblock));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, if_end_basicblock));
 
             //add the br instruction for thenblock and elseblock
             current_basicblock = then_basicblock;
             it.thenstat.accept(this);
-            current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
 
             current_basicblock = if_end_basicblock;
 
@@ -712,19 +712,19 @@ public class IRbuilder implements ASTvisitor {
         for_step.nxt_basic_block.add(condition_for);
         for_step.pre_basicblock.add(for_body);
         //add instruction
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,condition_for,null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,condition_for,null));
 
         current_basicblock=condition_for;
         it.condition.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,it.condition.ir_operand,for_body,for_end_merge));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,it.condition.ir_operand,for_body,for_end_merge));
 
         current_basicblock=for_body;
         it.suite_in_for.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,for_step,null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,for_step,null));
 
         current_basicblock=for_step;
         it.incr.accept(this);
-        current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,condition_for,null));
+        current_basicblock.instruction_add(new BrInstruction(current_basicblock,null,condition_for,null));
 
         current_basicblock=for_end_merge;
         current_ir_scope=current_ir_scope.parent_scope;
@@ -766,8 +766,8 @@ public class IRbuilder implements ASTvisitor {
                 Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), op.toString());
                 current_function.renaming_add(tmpreg);
                 //add instru
-                current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),1), (Enum_Binary_IRInstruction) op));
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,tmpreg,current_ir_scope.find_id_to_reg(it.expr.index)));
+                current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),1), (Enum_Binary_IRInstruction) op));
+                current_basicblock.instruction_add(new StoreInstruction(current_basicblock,tmpreg,current_ir_scope.find_id_to_reg(it.expr.index)));
             }
             default -> {throw new IRbuilderError("what are you doing",null);
             }
@@ -783,7 +783,7 @@ public class IRbuilder implements ASTvisitor {
         Register tmpreg = new Register(new IntegerType(IntegerSubType.i32), op.toString());
         current_function.renaming_add(tmpreg);
         //add instru
-        current_basicblock.link_in_basicblock.add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, (Enum_Binary_IRInstruction) op));
+        current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.lhs.ir_operand, it.rhs.ir_operand, (Enum_Binary_IRInstruction) op));
         it.ir_operand = tmpreg;
     }
     private IRbasicblock create_block(String blockname){

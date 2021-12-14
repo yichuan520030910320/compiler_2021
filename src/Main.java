@@ -23,7 +23,7 @@ public class Main {
         String name;
         InputStream input = null;
         if (op == 1) {
-            name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+            name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\mytest2.mx";
             input = new FileInputStream(name);
         } else {
             name="online_judge";
