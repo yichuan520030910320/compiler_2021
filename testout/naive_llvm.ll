@@ -3,6 +3,9 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
+@a = dso_local global i32 0
+@m = dso_local global i32 0
+@n = dso_local global i32 0
 
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
@@ -24,52 +27,35 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
-    %i_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    %i = load i32, i32* %i_addr
-    store i32 0, i32* %i_addr
-    br label %for_condition
-
-for_condition:                                               ; preds = entrance_block0 for_step 
-    %i_0 = load i32, i32* %i_addr
-    %slt = icmp slt i32 %i_0, 60
-    br i1 %slt, label %for_body, label %for_end_merge
-
-for_step:                                                    ; preds = for_body single_then_basicblock if_withoutelse_end_basicblock 
-    %i_4 = load i32, i32* %i_addr
-    %add = add i32 %i_4, 1
-    store i32 %add, i32* %i_addr
-    br label %for_condition
-
-for_body:                                                    ; preds = for_condition 
-    %i_1 = load i32, i32* %i_addr
-    %sge = icmp sge i32 %i_1, 10
-    %AND_addr = alloca i1
-    store i1 %sge, i1* %AND_addr
-    br i1 %sge, label %short_circuit_and_branch_AND, label %short_circuit_and_end_AND
-
-for_end_merge:                                               ; preds = for_condition 
+    %n = load i32, i32* @n
+    %call_getInt = call i32 @getInt()
+    store i32 %call_getInt, i32* @n
+    %m = load i32, i32* @m
+    %call_getInt_0 = call i32 @getInt()
+    store i32 %call_getInt_0, i32* @m
+    %a = load i32, i32* @a
+    %call_getInt_1 = call i32 @getInt()
+    store i32 %call_getInt_1, i32* @a
+    %m_0 = load i32, i32* @m
+    %a_0 = load i32, i32* @a
+    %add = add i32 %m_0, %a_0
+    %sub = sub i32 %add, 1
+    %a_1 = load i32, i32* @a
+    %sdiv = sdiv i32 %sub, %a_1
+    %n_0 = load i32, i32* @n
+    %a_2 = load i32, i32* @a
+    %add_0 = add i32 %n_0, %a_2
+    %sub_0 = sub i32 %add_0, 1
+    %a_3 = load i32, i32* @a
+    %sdiv_0 = sdiv i32 %sub_0, %a_3
+    %mul = mul i32 %sdiv, %sdiv_0
+    %call_toString = call i8* @toString(i32 %mul)
+    call void @print(i8* %call_toString)
+    store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-short_circuit_and_end_AND:                                   ; preds = for_body short_circuit_and_branch_AND 
-    %AND_short_circuit = load i1, i1* %AND_addr
-    br i1 %AND_short_circuit, label %single_then_basicblock, label %if_withoutelse_end_basicblock
-
-short_circuit_and_branch_AND:                                ; preds = for_body 
-    %i_2 = load i32, i32* %i_addr
-    %slt_0 = icmp slt i32 %i_2, 20
-    store i1 %slt_0, i1* %AND_addr
-    br label %short_circuit_and_end_AND
-
-single_then_basicblock:                                      ; preds = short_circuit_and_end_AND 
-    br label %for_step
-
-if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock short_circuit_and_end_AND 
-    %i_3 = load i32, i32* %i_addr
-    call void @printlnInt(i32 %i_3)
-    br label %for_step
-
-return_block0:                                               ; preds = for_end_merge 
+return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

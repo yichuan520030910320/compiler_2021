@@ -706,48 +706,114 @@ public class IRbuilder implements ASTvisitor {
 
     }
 
+    //may be ugly but it is tested ok
     @Override
     public void visit(Forstat_ASTnode it) {
         //naive for with the most simple condition diff by if have condition  because whether have condition cuase the structure a lot
         current_ir_scope = new IR_scope(current_ir_scope);
         if (it.initexpr != null) it.initexpr.accept(this);
         //declare basic block
-        IRbasicblock condition_for = create_block("for_condition");
-        IRbasicblock for_step = create_block("for_step");
+        IRbasicblock condition_for = it.condition != null ? create_block("for_condition") : null;
+        IRbasicblock for_step = it.incr != null ? create_block("for_step") : null;
         IRbasicblock for_body = create_block("for_body");
         IRbasicblock for_end_merge = create_block("for_end_merge");
         //relation
-        current_basicblock.nxt_basic_block.add(condition_for);
-        condition_for.nxt_basic_block.add(for_end_merge);
-        condition_for.nxt_basic_block.add(for_body);
-        condition_for.pre_basicblock.add(current_basicblock);
-        for_end_merge.pre_basicblock.add(condition_for);
-        for_body.nxt_basic_block.add(for_step);
-        for_body.pre_basicblock.add(condition_for);
-        for_step.nxt_basic_block.add(condition_for);
-        for_step.pre_basicblock.add(for_body);
+        if (condition_for != null) current_basicblock.nxt_basic_block.add(condition_for);
+        if (condition_for != null) {
+            condition_for.nxt_basic_block.add(for_end_merge);
+            condition_for.nxt_basic_block.add(for_body);
+            condition_for.pre_basicblock.add(current_basicblock);
+            if (for_step != null) condition_for.pre_basicblock.add(for_step);
+        }
+        if (condition_for != null) for_end_merge.pre_basicblock.add(condition_for);
+        if (for_step != null) for_body.nxt_basic_block.add(for_step);
+        if (condition_for != null) for_body.pre_basicblock.add(condition_for);
+        if (for_step != null) {
+            if (condition_for != null) for_step.nxt_basic_block.add(condition_for);
+            for_step.pre_basicblock.add(for_body);
+        }
 
-        break_basicblock_stack.push(for_end_merge);
-        continue_basicblock_stack.push(for_step);
+//I simply make four decision
+        if (for_step != null && condition_for != null) {
+            break_basicblock_stack.push(for_end_merge);
+            continue_basicblock_stack.push(for_step);
 
-        //add instruction
-        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
+            //add instruction
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
 
-        current_basicblock = condition_for;
-        it.condition.accept(this);
-        current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
+            current_basicblock = condition_for;
+            it.condition.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
 
-        current_basicblock = for_body;
-        it.suite_in_for.accept(this);
-        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
+            current_basicblock = for_body;
+            it.suite_in_for.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
 
-        continue_basicblock_stack.pop();
-        break_basicblock_stack.pop();
+            continue_basicblock_stack.pop();
+            break_basicblock_stack.pop();
 
-        current_basicblock = for_step;
-        it.incr.accept(this);
-        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
+            current_basicblock = for_step;
+            it.incr.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
 
+
+        } else if (for_step == null && condition_for != null) {
+            //extra relation
+            for_body.nxt_basic_block.add(condition_for);
+            condition_for.pre_basicblock.add(for_body);
+
+            break_basicblock_stack.push(for_end_merge);
+            continue_basicblock_stack.push(condition_for);
+
+            //add instruction
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
+
+            current_basicblock = condition_for;
+            it.condition.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
+
+            current_basicblock = for_body;
+            it.suite_in_for.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
+
+            continue_basicblock_stack.pop();
+            break_basicblock_stack.pop();
+
+        } else if (for_step != null) {
+            for_step.nxt_basic_block.add(for_body);
+            for_body.pre_basicblock.add(for_step);
+
+            continue_basicblock_stack.push(for_step);
+            break_basicblock_stack.push(for_end_merge);
+
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
+
+            current_basicblock = for_body;
+            it.suite_in_for.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
+
+            continue_basicblock_stack.pop();
+            break_basicblock_stack.pop();
+
+            current_basicblock = for_step;
+            it.incr.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
+        } else {
+            for_body.pre_basicblock.add(for_body);
+            for_body.nxt_basic_block.add(for_body);
+
+            continue_basicblock_stack.push(for_body);
+            break_basicblock_stack.push(for_end_merge);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
+
+            current_basicblock = for_body;
+            it.suite_in_for.accept(this);
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
+
+            continue_basicblock_stack.pop();
+            break_basicblock_stack.pop();
+
+        }
         current_basicblock = for_end_merge;
         current_ir_scope = current_ir_scope.parent_scope;
     }
