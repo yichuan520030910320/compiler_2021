@@ -3,7 +3,10 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
+@w = dso_local global i32 0
 
+@const_string1 = private unnamed_addr constant [3 x i8] c"NO\00", align 1
+@const_string0 = private unnamed_addr constant [4 x i8] c"YES\00", align 1
 
 declare i32 @getInt()
 declare void @print(i8* %str_0)
@@ -16,29 +19,42 @@ declare i8* @getString()
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
-    %i_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    store i32 100, i32* %i_addr
-    br label %while_condition
+    %w = load i32, i32* @w
+    %call_getInt = call i32 @getInt()
+    store i32 %call_getInt, i32* @w
+    %w_0 = load i32, i32* @w
+    %srem = srem i32 %w_0, 2
+    %eq = icmp eq i32 %srem, 0
+    %AND_addr = alloca i1
+    store i1 %eq, i1* %AND_addr
+    br i1 %eq, label %short_circuit_and_branch_AND, label %short_circuit_and_end_AND
 
-while_condition:                                             ; preds = entrance_block0 while_body 
-    %i = load i32, i32* %i_addr
-    %sgt = icmp sgt i32 %i, 0
-    br i1 %sgt, label %while_body, label %while_end_merge
+short_circuit_and_end_AND:                                   ; preds = entrance_block0 short_circuit_and_branch_AND 
+    %AND_short_circuit = load i1, i1* %AND_addr
+    br i1 %AND_short_circuit, label %then_basicblock, label %else_basicblock
 
-while_body:                                                  ; preds = while_condition 
-    %i_0 = load i32, i32* %i_addr
-    call void @printlnInt(i32 %i_0)
-    %i_1 = load i32, i32* %i_addr
-    %sub = sub i32 %i_1, 1
-    store i32 %sub, i32* %i_addr
-    br label %while_condition
+short_circuit_and_branch_AND:                                ; preds = entrance_block0 
+    %w_1 = load i32, i32* @w
+    %sgt = icmp sgt i32 %w_1, 2
+    store i1 %sgt, i1* %AND_addr
+    br label %short_circuit_and_end_AND
 
-while_end_merge:                                             ; preds = entrance_block0 while_condition 
+then_basicblock:                                             ; preds = short_circuit_and_end_AND 
+    %const_string_pointer = getelementptr inbounds [4 x i8], [4 x i8]* @const_string0, i32 0, i32 0
+    call void @print(i8* %const_string_pointer)
+    br label %if_end_basicblock
+
+else_basicblock:                                             ; preds = short_circuit_and_end_AND 
+    %const_string_pointer_0 = getelementptr inbounds [3 x i8], [3 x i8]* @const_string1, i32 0, i32 0
+    call void @print(i8* %const_string_pointer_0)
+    br label %if_end_basicblock
+
+if_end_basicblock:                                           ; preds = then_basicblock else_basicblock 
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-return_block0:                                               ; preds = while_end_merge 
+return_block0:                                               ; preds = if_end_basicblock 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

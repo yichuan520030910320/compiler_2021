@@ -21,6 +21,7 @@ import IR.Utils.AST_to_IR_trans;
 import IR.Utils.IR_scope;
 import Utils.error.IRbuilderError;
 import Utils.globalscope;
+import org.antlr.v4.runtime.atn.SemanticContext;
 
 import java.util.ArrayList;
 
@@ -214,32 +215,94 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(BinaryExp_ASTnode it) {
-        it.lhs.accept(this);
-        it.rhs.accept(this);
-        switch (it.op) {
-            case EQUAL -> {
-                //lhs just can be id
-                current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
-                //it may not use :just for   --->foo(a=b+1) this seem weird
-                it.ir_operand = it.rhs.ir_operand;
-            }
-            case ADD, SUB, MOD, DIV, MUL, LEFT_SHIFT, RIGHT_SHIFT, Bitwise_and, Bitwise_xor, Bitwise_or -> {
-                set_binary_op(it.op, it);
-            }
-            case AND -> {
-            }
-            case OR -> {
+        if (!(it.op== Binary_Enum.AND||it.op==Binary_Enum.OR)) {
+            it.lhs.accept(this);
+            it.rhs.accept(this);
+            switch (it.op) {
+                case EQUAL -> {
+                    //lhs just can be id
+                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                    //it may not use :just for   --->foo(a=b+1) this seem weird
+                    it.ir_operand = it.rhs.ir_operand;
+                }
+                case ADD, SUB, MOD, DIV, MUL, LEFT_SHIFT, RIGHT_SHIFT, Bitwise_and, Bitwise_xor, Bitwise_or -> {
+                    set_binary_op(it.op, it);
+                }
+                case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
+                    Object op = type_trans.enum_trans(it.op);
+                    Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
+                    current_function.renaming_add(tmpreg);
+                    current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
+                    it.ir_operand = tmpreg;
+                }
 
+                default -> throw new IllegalStateException("Unexpected value: " + it.op);
             }
-            case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
-                Object op = type_trans.enum_trans(it.op);
-                Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
-                current_function.renaming_add(tmpreg);
-                current_basicblock.link_in_basicblock.add(new CmpInstruction(current_basicblock, tmpreg, (Enum_Compare_IRInstruction) op, it.lhs.ir_operand, it.rhs.ir_operand));
-                it.ir_operand = tmpreg;
+        }else{
+            it.lhs.accept(this);
+            switch (it.op){
+                //inspired by happypig
+                case AND -> {
+                    //when debug this you must modify it in the below too not a good design
+                    //cope with Short circuit
+                    IRbasicblock short_circuit_and_end = create_block("short_circuit_and_end_"+it.op);
+                    IRbasicblock short_circuit_and_branch = create_block("short_circuit_and_branch_"+it.op);
+                    //relation
+                    current_basicblock.nxt_basic_block.add(short_circuit_and_end);
+                    current_basicblock.nxt_basic_block.add(short_circuit_and_branch);
+                    short_circuit_and_end.pre_basicblock.add(current_basicblock);
+                    short_circuit_and_end.pre_basicblock.add(short_circuit_and_branch);
+                    short_circuit_and_branch.nxt_basic_block.add(short_circuit_and_end);
+                    short_circuit_and_branch.pre_basicblock.add(current_basicblock);
+                    //pointer
+                    Register result_reg=new Register(new PointerType(new IntegerType(IntegerSubType.i1)),it.op.toString()+"_addr");
+                    //alloca and store
+                    current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
+                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
+                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_branch, short_circuit_and_end));
+                    //cope with the branch
+                    current_basicblock=short_circuit_and_branch;
+                    it.rhs.accept(this);
+                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
+                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
+                    //cope with the end
+                    current_basicblock=short_circuit_and_end;
+                    Register load_node_iroperand=new Register(new IntegerType(IntegerSubType.i1),it.op.toString()+"_short_circuit");
+                    current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
+                    //assign
+                    it.ir_operand=load_node_iroperand;
+                }
+                case OR -> {
+                    //just modify the circuit order you can diff it with the above to find the small difference
+                    //cope with Short circuit
+                    IRbasicblock short_circuit_and_end = create_block("short_circuit_and_end_"+it.op);
+                    IRbasicblock short_circuit_and_branch = create_block("short_circuit_and_branch_"+it.op);
+                    //relation
+                    current_basicblock.nxt_basic_block.add(short_circuit_and_end);
+                    current_basicblock.nxt_basic_block.add(short_circuit_and_branch);
+                    short_circuit_and_end.pre_basicblock.add(current_basicblock);
+                    short_circuit_and_end.pre_basicblock.add(short_circuit_and_branch);
+                    short_circuit_and_branch.nxt_basic_block.add(short_circuit_and_end);
+                    short_circuit_and_branch.pre_basicblock.add(current_basicblock);
+                    Register result_reg=new Register(new PointerType(new IntegerType(IntegerSubType.i1)),it.op.toString()+"_addr");
+                    //alloca and store
+                    current_basicblock.link_in_basicblock.add(new AllocateInstruction(current_basicblock,new IntegerType(IntegerSubType.i1),result_reg));
+                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.lhs.ir_operand,result_reg));
+                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_end, short_circuit_and_branch));
+                    //cope with the branch
+                    current_basicblock=short_circuit_and_branch;
+                    it.rhs.accept(this);
+                    current_basicblock.link_in_basicblock.add(new StoreInstruction(current_basicblock,it.rhs.ir_operand,result_reg));
+                    current_basicblock.link_in_basicblock.add(new BrInstruction(current_basicblock,null,short_circuit_and_end,null));
+                    //cope with the end
+                    current_basicblock=short_circuit_and_end;
+                    Register load_node_iroperand=new Register(new IntegerType(IntegerSubType.i1),it.op.toString()+"_short_circuit");
+                    current_basicblock.link_in_basicblock.add(new LoadInstruction(current_basicblock,load_node_iroperand,result_reg));
+                    //assign
+                    it.ir_operand=load_node_iroperand;
+                }
             }
 
-            default -> throw new IllegalStateException("Unexpected value: " + it.op);
         }
 
 
