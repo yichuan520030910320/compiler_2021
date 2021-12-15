@@ -11,4 +11,9 @@ public class ArrayType extends Typesystem{
     public String toString() {
         return "["+len+" x "+basetype.toString()+"]";
     }
+
+    @Override
+    public int byte_num() {
+        return basetype.byte_num()*len;
+    }
 }

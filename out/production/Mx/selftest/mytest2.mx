@@ -1,28 +1,25 @@
 /*
 Test Package: Codegen
-Author: Admin
-Time: 2020-02-02
+Author: 11' Hang Wu
+Time: 2020-01-25
 Input:
 === input ===
 === end ===
 Output:
 === output ===
+2
 === end ===
-ExitCode: 13
+ExitCode: 0
 InstLimit: -1
-Origin Package: Codegen Pretest-582
+Origin Package: Codegen Pretest-538
 */
-int tak(int x, int y, int z) {
-    if(y < x) {
-        return 1 + tak( tak(x - 1, y , z),
-            tak(y - 1, z , x),
-            tak(z - 1, x , y)
-        );
-    } else {
-       return z;
-    }
-}
 
-int main() {
-    printInt(tak(18,12,6));
+int[] a = new int[4];
+int main()
+{
+    int[][] b = new int[4][1];
+    b[2][1]=2;
+    a=b;
+    println(toString(a[2]));
+    return 0;
 }

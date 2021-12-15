@@ -7,4 +7,9 @@ public class VoidType extends Typesystem{
     public String toString() {
         return "void";
     }
+
+    @Override
+    public int byte_num() {
+        return 0;
+    }
 }

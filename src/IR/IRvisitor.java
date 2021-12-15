@@ -31,4 +31,6 @@ public interface IRvisitor {
     void visit(IRmodule it);
 
     void visit(GetElementPtrInstruction it);
+
+    void visit(BitCastInstruction it);
 }

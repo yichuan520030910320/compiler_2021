@@ -41,8 +41,8 @@ public class IRbuilder implements ASTvisitor {
     //transform
     public AST_to_IR_trans type_trans;
 
-    private Stack<IRbasicblock> break_basicblock_stack = new Stack<>();
-    private Stack<IRbasicblock> continue_basicblock_stack = new Stack<>();
+    private final Stack<IRbasicblock> break_basicblock_stack = new Stack<>();
+    private final Stack<IRbasicblock> continue_basicblock_stack = new Stack<>();
 
 
     public IRbuilder(globalscope semantic_globalscope_) {
@@ -136,6 +136,40 @@ public class IRbuilder implements ASTvisitor {
         builtinfunction = new IRfunction(builtin_functiontype, "_str_concatenate", true);
         module_in_irbuilder.Module_Function_Map.put("_str_concatenate", builtinfunction);
         module_in_irbuilder.External_Function_Map.put("_str_concatenate", builtinfunction);
+
+        //char * _f_malloc(int n)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament((new IntegerType(IntegerSubType.i32)), "n"));
+        builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_f_malloc", true);
+        module_in_irbuilder.Module_Function_Map.put("_f_malloc", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_f_malloc", builtinfunction);
+
+        //int _str_length(const char* str)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i32)), "str"));
+        builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_str_length", true);
+        module_in_irbuilder.Module_Function_Map.put("_str_length", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_str_length", builtinfunction);
+
+        //const char* _str_substring(const char* str,int left,int right)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "left"));
+        builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "right"));
+        builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_str_substring", true);
+        module_in_irbuilder.Module_Function_Map.put("_str_substring", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_str_substring", builtinfunction);
+
+        //int _str_parseInt(const char* str)
+        builtin_para = new ArrayList<>();
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
+        builtin_functiontype = new FunctionType((new IntegerType(IntegerSubType.i32)), builtin_para);
+        builtinfunction = new IRfunction(builtin_functiontype, "_str_parseInt", true);
+        module_in_irbuilder.Module_Function_Map.put("_str_parseInt", builtinfunction);
+        module_in_irbuilder.External_Function_Map.put("_str_parseInt", builtinfunction);
     }
 
     @Override
@@ -179,6 +213,7 @@ public class IRbuilder implements ASTvisitor {
 
 
         ///collect the class inner function
+
 
         ///collect the function name information
         IRfunction collect_function;
@@ -267,7 +302,6 @@ public class IRbuilder implements ASTvisitor {
                         it.ir_operand = stringadd;
                     }
                     case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
-                        // todo
                         ArrayList<BaseOperand> para_list_;
                         para_list_ = new ArrayList<>();
                         para_list_.add(it.lhs.ir_operand);
@@ -287,8 +321,11 @@ public class IRbuilder implements ASTvisitor {
             // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
+
+                    //todo
+                    //lvalue can be a[] or m.a or id
                     //lhs just can be id
-                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                    current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, lvalue_judge(it.lhs)));
                     //it may not use :just for   --->foo(a=b+1) this seem weird
                     it.ir_operand = it.rhs.ir_operand;
                 }
@@ -493,7 +530,19 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(NewExp_ASTnode it) {
+        if (it.dim > 0) {
+            //array
+            Typesystem node_type = type_trans.asttype_to_irtype(((Arraytype_ASTnode) it.type).arraytype);
+            ArrayList<BaseOperand> new_list = new ArrayList<>();
+            for (int i = 0; i < it.newlist.size(); i++) {
+                node_type = new PointerType(node_type);
+                it.newlist.get(i).accept(this);
+                new_list.add(it.newlist.get(i).ir_operand);
+            }
+            it.ir_operand = mollca_array(0, new_list, node_type);
+        } else {
 
+        }
     }
 
     @Override
@@ -555,6 +604,7 @@ public class IRbuilder implements ASTvisitor {
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
             }
         }
+
         for (int i = 0; i < it.suite.statlist.size(); i++) {
             it.suite.statlist.get(i).accept(this);
         }
@@ -840,6 +890,25 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(ArrayExp_ASTnode it) {
+        it.arr.accept(this);
+        it.index.accept(this);
+        // get the ptr offset
+        Register getelementptr_reg = new Register(it.arr.ir_operand.type, "getelementptr_reg");
+        current_function.renaming_add(getelementptr_reg);
+        ArrayList<BaseOperand> getelemrmtptr_para_offset = new ArrayList<>();
+        getelemrmtptr_para_offset.add(it.index.ir_operand);
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock,getelementptr_reg,it.arr.ir_operand,getelemrmtptr_para_offset));
+
+        //load in the reg
+        Register load_result=new Register(((PointerType)it.arr.ir_operand.type).get_low_dim_type(),"load_result");
+        current_function.renaming_add(load_result);
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,load_result,getelementptr_reg));
+
+        it.ir_operand=load_result;
+        //for assign (in the mem)
+        it.actual_addr=getelementptr_reg;
+
+
 
     }
 
@@ -857,9 +926,7 @@ public class IRbuilder implements ASTvisitor {
                 current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1), (Enum_Binary_IRInstruction) op));
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, tmpreg, current_ir_scope.find_id_to_reg(it.expr.index)));
             }
-            default -> {
-                throw new IRbuilderError("what are you doing", null);
-            }
+
         }
 
     }
@@ -914,8 +981,64 @@ public class IRbuilder implements ASTvisitor {
                 return "_str_ne";
             }
             default -> {
-                throw new IRbuilderError("don't exist the op", null);
+                throw new IRbuilderError(" str cmp error", null);
             }
+
         }
+    }
+
+    private Register mollca_array(int loop_dim, ArrayList<BaseOperand> new_list_, Typesystem return_type) {
+        //naive only one dim
+        Typesystem malloca_size = ((PointerType) return_type).Base_Pointer_Type;
+        //calculate the byte size
+        Register mul_bytes = new Register(new IntegerType(IntegerSubType.i32), "mul_bytes");
+        current_function.renaming_add(mul_bytes);
+        current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, mul_bytes, new_list_.get(loop_dim), new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), malloca_size.byte_num()), Enum_Binary_IRInstruction.mul));
+        Register sum_bytes = new Register(new IntegerType(IntegerSubType.i32), "sum_bytes");
+        current_function.renaming_add(sum_bytes);
+        current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, sum_bytes, mul_bytes, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 4), Enum_Binary_IRInstruction.add));
+
+        //call malloca
+        ArrayList<BaseOperand> fun_para = new ArrayList<>();
+        fun_para.add(sum_bytes);
+        IRfunction call_func = module_in_irbuilder.External_Function_Map.get("_f_malloc");
+        Register malloca = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "malloca");
+        current_basicblock.instruction_add(new CallInstruction(current_basicblock, malloca, fun_para, call_func));
+
+        //bit cast to return type
+        Register array_cast_i8_to_i32 = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "array_cast_i8_to_i32");
+        current_function.renaming_add(array_cast_i8_to_i32);
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_cast_i8_to_i32, malloca, new PointerType(new IntegerType(IntegerSubType.i32))));
+
+        //store the len at pos:-1
+        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), malloca_size.byte_num()), array_cast_i8_to_i32));
+
+        //set array begin
+        ArrayList<BaseOperand> get_ele_ptr_offset = new ArrayList<>();
+        get_ele_ptr_offset.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
+        Register array_tmp_begin_i32 = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "array_tmp_begin_i32");
+        current_function.renaming_add(array_tmp_begin_i32);
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, array_tmp_begin_i32, array_cast_i8_to_i32, get_ele_ptr_offset));
+
+
+        //when the type don't consistent we can bit cast
+        if (!return_type.toString().equals(array_tmp_begin_i32.toString())) {
+            //return
+            Register array_addr = new Register(return_type, "array_addr");
+            current_function.renaming_add(array_addr);
+            current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_addr, array_tmp_begin_i32, return_type));
+            return array_addr;
+        } else return array_tmp_begin_i32;
+
+
+    }
+
+    BaseOperand lvalue_judge(Expr_ASTnode it) {
+
+        if (it instanceof IdExp_ASTnode) return current_ir_scope.find_id_to_reg(it.index);
+        else if (it instanceof ArrayExp_ASTnode) {
+            return ((ArrayExp_ASTnode) it).actual_addr;
+        }
+        return null;
     }
 }

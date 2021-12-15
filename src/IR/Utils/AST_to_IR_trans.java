@@ -20,6 +20,11 @@ public class AST_to_IR_trans {
             return  new IntegerType(IntegerSubType.i1);
         }
         else if (asttype instanceof Arraytype_ASTnode){
+            Typesystem tmp=asttype_to_irtype(((Arraytype_ASTnode) asttype).arraytype);
+           for (int i = 0; i <asttype.dim ; i++) {
+               tmp=new PointerType(tmp);
+           }
+           return tmp;
 
 
         }else if (asttype instanceof Classtype_ASTnode){

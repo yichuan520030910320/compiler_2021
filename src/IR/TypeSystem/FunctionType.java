@@ -15,4 +15,9 @@ public class FunctionType extends Typesystem{
     public String toString() {
         return null;
     }//don't need to do
+
+    @Override
+    public int byte_num() {
+        return 0;
+    }
 }

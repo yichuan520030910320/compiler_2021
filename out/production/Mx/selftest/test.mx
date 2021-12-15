@@ -1,24 +1,27 @@
 /*
 Test Package: Codegen
-Author: Pikachu
-Time: 2020-02-03
+Author: 11' Hang Wu
+Time: 2020-01-25
 Input:
 === input ===
-1001 1000 10
 === end ===
 Output:
 === output ===
-10100
+2
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Codeforces 1A #52940143
+Origin Package: Codegen Pretest-538
 */
-int n,m,a;
-int main(){
-    n = getInt();
-    m = getInt();
-    a = getInt();
-    print(toString((m+a-1)/a*((n+a-1)/a)));
+
+//int[] a = new int[4];
+int main()
+{
+    int[] b = new int[4];
+    b[2]=2;
+    //a=b;
+    //println(toString(a[2]));
+    println(toString(b[2]));
+
     return 0;
 }

@@ -29,4 +29,9 @@ public class StructType extends Typesystem {
         }
         return struct_tostring.toString();
     }
+
+    @Override
+    public int byte_num() {
+        return 0;
+    }
 }

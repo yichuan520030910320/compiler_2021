@@ -69,10 +69,28 @@ const char*_str_concatenate(const char* lhs,const char* rhs){
     return buf;
 }
 
-//todo
-char * _f__malloc(int n) {
+//malloc byte
+char * _f_malloc(int n) {
     return (char *) malloc(n);
 }
+
+int _str_length(const char* str){
+    return strlen(str);
+}
+
+const char* _str_substring(const char* str,int left,int right){
+    char* buf=malloc(sizeof(char)*(right-left+1));
+    memcpy(buf,str+left,right-left);
+    buf[right-left]='\0';
+    return buf;
+}
+//格式化搜索
+int _str_parseInt(const char* str){
+    int ret;
+    sscanf(str,"%d",&ret);
+    return ret;
+}
+
 
 
 //todo  parseint substring length

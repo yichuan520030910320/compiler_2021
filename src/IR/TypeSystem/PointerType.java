@@ -25,4 +25,9 @@ public class PointerType extends Typesystem {
     public String toString() {
         return Base_Pointer_Type.toString() + "*".repeat(dim);
     }
+
+    @Override
+    public int byte_num() {
+        return 4;
+    }
 }

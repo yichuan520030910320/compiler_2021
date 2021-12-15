@@ -75,6 +75,11 @@ public class IRprinter implements IRvisitor {
     }
 
     @Override
+    public void visit(BitCastInstruction it) {
+        f_println(tab + it.toString());
+    }
+
+    @Override
     public void visit(IRbasicblock it) {
         StringBuilder tmp_output = new StringBuilder(it.blockname + ":");
         tmp_output.append(" ".repeat(60 - it.blockname.length()));
