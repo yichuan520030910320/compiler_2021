@@ -112,7 +112,9 @@ public class IRprinter implements IRvisitor {
         for (Map.Entry<String, Global_variable> entry : it.Global_variable_map.entrySet()) {
             //don't print the string here print it in the next
             if (entry.getValue().initoperand instanceof ConstOperand_String) continue;
-            f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType)entry.getValue().type).get_low_dim_type() + " " + 0);
+            //a detial output inspired by gls
+            StringBuilder tail= new StringBuilder(((PointerType) entry.getValue().type).dim > 1 ? "null" : "0");
+            f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType)entry.getValue().type).get_low_dim_type() + " "+tail.toString() );
         }
         f_println("");
 

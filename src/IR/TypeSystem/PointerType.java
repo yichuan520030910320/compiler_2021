@@ -13,7 +13,7 @@ public class PointerType extends Typesystem {
         }
     }
     public Typesystem get_low_dim_type(){
-        if (Base_Pointer_Type instanceof PointerType) {
+        if (dim>1) {
             PointerType tmp= new PointerType(Base_Pointer_Type);
             tmp.dim= dim-1;
             return tmp;
