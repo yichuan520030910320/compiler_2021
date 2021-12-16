@@ -6,6 +6,7 @@ import IR.Operand.Register;
 import IR.TypeSystem.Typesystem;
 //%returnValue$addr.0 = alloca i32
 public class AllocateInstruction extends BaseInstru{
+    //allocate type attention ! not the type of the pointer
     public Typesystem allocate_type;
     public Register allocate_result;
 

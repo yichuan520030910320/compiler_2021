@@ -1,11 +1,9 @@
 /*
 Test Package: Codegen
-Author: Pikachu
-Time: 2020-02-02
+Author: 11' Hang Wu
+Time: 2020-01-25
 Input:
 === input ===
-8
-11 12 1 2 13 14 3 4
 === end ===
 Output:
 === output ===
@@ -13,29 +11,22 @@ Output:
 === end ===
 ExitCode: 0
 InstLimit: -1
-Origin Package: Codeforces 1145A #52445759
+Origin Package: Codegen Pretest-538
 */
-int n;
-int[] a = new int[20];
-int jud(int x){
-	int i,j;
-	for(i=0;i<n/x;i++){
-		bool flag=false;
-		for(j=0;j<x-1;j++){
-			if(a[i*x+j]>a[i*x+j+1])flag=true;
-		}
-		if(!flag)return 1;
-	}
-	return 0;
-}
-int i;
-int main(){
-	n = getInt();
-	for(i=0;i<n;i++) a[i] = getInt();
-	for(i=n; i > 0;i = i / 2)
-        if(jud(i) > 0){
-            print(toString(i));
-            return 0;
-        }
-	return 0;
+
+//int[] a = new int[4];
+int main()
+{
+    int [][]a=new int [4][4];
+    int i,j;
+    int p=0;
+    for(i=0;i<4;i++)
+    {
+    for(j=0;j<4;j++)a[i][j]=p++;
+    }
+    for(i=0;i<4;i++)
+    {
+       for(j=0;j<4;j++)printlnInt(a[i][j]);
+     }
+    return 0;
 }

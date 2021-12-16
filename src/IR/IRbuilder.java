@@ -321,7 +321,6 @@ public class IRbuilder implements ASTvisitor {
             // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
-
                     //todo
                     //lvalue can be a[] or m.a or id
                     //lhs just can be id
@@ -897,17 +896,16 @@ public class IRbuilder implements ASTvisitor {
         current_function.renaming_add(getelementptr_reg);
         ArrayList<BaseOperand> getelemrmtptr_para_offset = new ArrayList<>();
         getelemrmtptr_para_offset.add(it.index.ir_operand);
-        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock,getelementptr_reg,it.arr.ir_operand,getelemrmtptr_para_offset));
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, getelementptr_reg, it.arr.ir_operand, getelemrmtptr_para_offset));
 
         //load in the reg
-        Register load_result=new Register(((PointerType)it.arr.ir_operand.type).get_low_dim_type(),"load_result");
+        Register load_result = new Register(((PointerType) it.arr.ir_operand.type).get_low_dim_type(), "load_result");
         current_function.renaming_add(load_result);
-        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,load_result,getelementptr_reg));
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_result, getelementptr_reg));
 
-        it.ir_operand=load_result;
+        it.ir_operand = load_result;
         //for assign (in the mem)
-        it.actual_addr=getelementptr_reg;
-
+        it.actual_addr = getelementptr_reg;
 
 
     }
@@ -988,6 +986,7 @@ public class IRbuilder implements ASTvisitor {
     }
 
     private Register mollca_array(int loop_dim, ArrayList<BaseOperand> new_list_, Typesystem return_type) {
+        //inspired by lrh use a reg to record the current pointer and it can be optimized by using the call phi
         //naive only one dim
         Typesystem malloca_size = ((PointerType) return_type).Base_Pointer_Type;
         //calculate the byte size
@@ -1003,6 +1002,7 @@ public class IRbuilder implements ASTvisitor {
         fun_para.add(sum_bytes);
         IRfunction call_func = module_in_irbuilder.External_Function_Map.get("_f_malloc");
         Register malloca = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "malloca");
+        current_function.renaming_add(malloca);
         current_basicblock.instruction_add(new CallInstruction(current_basicblock, malloca, fun_para, call_func));
 
         //bit cast to return type
@@ -1022,15 +1022,75 @@ public class IRbuilder implements ASTvisitor {
 
 
         //when the type don't consistent we can bit cast
-        if (!return_type.toString().equals(array_tmp_begin_i32.toString())) {
-            //return
-            Register array_addr = new Register(return_type, "array_addr");
-            current_function.renaming_add(array_addr);
-            current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_addr, array_tmp_begin_i32, return_type));
-            return array_addr;
-        } else return array_tmp_begin_i32;
+        Register array_addr = new Register(return_type, "array_addr");
+        current_function.renaming_add(array_addr);
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_addr, array_tmp_begin_i32, return_type));
 
+        if (loop_dim < new_list_.size() - 1) {
+            ArrayList<BaseOperand> get_ele_ptr_tail_offset = new ArrayList<>();
+            get_ele_ptr_tail_offset.add(new_list_.get(loop_dim));
+            Register array_tail_addr = new Register(return_type, "array_tail_addr");
+            current_function.renaming_add(array_tail_addr);
+            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, array_tail_addr, array_addr, get_ele_ptr_tail_offset));
 
+            //alloca a space to record the currnt array pointer (in the first level)
+            Register current_array_ptr_addr = new Register(new PointerType(return_type), "current_array_ptr_addr");
+            current_function.renaming_add(current_array_ptr_addr);
+            if (!current_basicblock.check_taiL_br())
+                current_basicblock.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, return_type, current_array_ptr_addr));
+
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr, current_array_ptr_addr));
+
+            //basicblock declare
+            IRbasicblock new_condition = create_block("new_condition");
+            IRbasicblock new_loop_body = create_block("new_loop_body");
+            IRbasicblock new_end = create_block("new_end");
+
+            //add relation
+            current_basicblock.nxt_basic_block.add(new_condition);
+            new_condition.pre_basicblock.add(new_loop_body);
+            new_condition.pre_basicblock.add(current_basicblock);
+            new_condition.nxt_basic_block.add(new_loop_body);
+            new_condition.nxt_basic_block.add(new_end);
+            new_end.pre_basicblock.add(new_condition);
+            new_loop_body.pre_basicblock.add(new_condition);
+            new_loop_body.nxt_basic_block.add(new_condition);
+
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
+
+            current_basicblock = new_condition;
+            Register load_tmp_current_pointer = new Register(return_type, "load_tmp_current_pointer");
+            current_function.renaming_add(load_tmp_current_pointer);
+            current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_tmp_current_pointer, current_array_ptr_addr));
+
+            Register addr_cmp_result = new Register(new IntegerType(IntegerSubType.i1), "addr_cmp_result");
+            current_function.renaming_add(addr_cmp_result);
+            current_basicblock.instruction_add(new CmpInstruction(current_basicblock, addr_cmp_result, Enum_Compare_IRInstruction.slt, load_tmp_current_pointer, array_tail_addr));
+
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, addr_cmp_result, new_loop_body, new_end));
+
+            current_basicblock = new_loop_body;
+            Register array_addr_head = mollca_array(loop_dim + 1, new_list_, ((PointerType) return_type).get_low_dim_type());
+            current_function.renaming_add(array_addr_head);
+
+            //store the pointer in the heap for instance a[3][2]  store the second level pointer in the first level heap
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr_head, load_tmp_current_pointer));
+
+            //set the next array pointer
+            ArrayList<BaseOperand> get_ele_ptr_offset2 = new ArrayList<>();
+            get_ele_ptr_offset2.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
+            Register nxt_pointer = new Register(return_type, "nxt_pointer");
+            current_function.renaming_add(nxt_pointer);
+            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, nxt_pointer, load_tmp_current_pointer, get_ele_ptr_offset2));
+
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, nxt_pointer, current_array_ptr_addr));
+            //unconditional br to condition
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
+
+            current_basicblock = new_end;
+
+        }
+        return array_addr;
     }
 
     BaseOperand lvalue_judge(Expr_ASTnode it) {
