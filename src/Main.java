@@ -52,14 +52,14 @@ public class Main {
             System.out.println("Semantic Success");
 
             //ir builder
-            IRbuilder irbuilder = new IRbuilder(gScope);
-            ASTRoot.accept(irbuilder);
-
-            //print naive llvm
-            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
-            llvm_naive.visit(irbuilder.module_in_irbuilder);
-
-            System.out.println("IRbuild Success");
+//            IRbuilder irbuilder = new IRbuilder(gScope);
+//            ASTRoot.accept(irbuilder);
+//
+//            //print naive llvm
+//            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
+//            llvm_naive.visit(irbuilder.module_in_irbuilder);
+//
+//            System.out.println("IRbuild Success");
 
 
 

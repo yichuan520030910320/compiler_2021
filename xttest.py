@@ -1,17 +1,15 @@
 #!python3
 
 import os, time
-import subprocess
 
 
 """
     Modify following configurations to adapt to your environment.
 """
 # test_cases_dir = './testcases/sema/'
-# test_cases_dir = './testcases/codegen/'
+test_cases_dir = './testcases/codegen/'
 # test_cases_dir = './testcases/optim/'
 # test_cases_dir = './testcases/optim-new/'
-test_cases_dir = './testcases/codegen/shortest_path/'
 compile_cmd = "bash ./build.bash"
 execute_cmd = "bash ./semantic.bash"
 excluded_test_cases = ["foo.mx"]
@@ -22,7 +20,7 @@ halt_on_3_fails = True
 calculate_score = False
 test_codegen = True
 # When test_codegen && use_llvm is true, the output should be a .ll file, and we will use llc to
-# compile it into asm. You can test the correctness of your MiddleEnd-gen with this.
+# compile it into asm. You can test the correctness of your IR-gen with this.
 use_llvm = True
 llc_cmd = 'llc'
 
@@ -31,38 +29,6 @@ llc_cmd = 'llc'
 color_red = "\033[0;31m"
 color_green = "\033[0;32m"
 color_none = "\033[0m"
-
-def printRet(ret, val):
-    if val!='':
-        if ret==0:
-            print("\033[37m{}\033[0m".format(val))
-        else:
-            print("\033[31m{}\033[0m".format('ret code: '+str(ret)))
-            print("\033[37m{}\033[0m".format(val))
-
-def javac():
-    print("\033[36m{}\033[0m".format('=======javac======='))
-    ret, val = subprocess.getstatusoutput('find ./src -name "*.java" -print0|xargs -0 javac -d runContain -cp ./src/antlr-4.9.2-complete.jar')
-    printRet(ret, val)
-    return ret
-
-def compile():
-    print("\033[36m{}\033[0m".format('======compile======'))
-    ret, val = subprocess.getstatusoutput('java -cp antlr-4.9.2-complete.jar:./runContain Main <test.mx >src.ll')
-    printRet(ret, val)
-    return ret
-
-def link(llFile):
-    print("\033[36m{}\033[0m".format('=======clang======='))
-    ret, val = subprocess.getstatusoutput('clang {} builtin/builtin.ll -o a.out'.format(llFile))
-    printRet(ret, val)
-    return ret
-
-def run(inFile,outFile):
-    print("\033[36m{}\033[0m".format('========run========'))
-    ret, val = subprocess.getstatusoutput('./a.out <{} >{}'.format(inFile,outFile))
-    printRet(ret, val)
-    return ret
 
 def collect_test_cases():
     test_cases = []
@@ -95,12 +61,14 @@ def clear():
     os.system("rm test.*")
     os.system("rm *.out")
     os.system("rm *.ll")
+    os.system("rm *.bc")
 
 def main():
-    if javac():
+    if os.system(compile_cmd):
         print(color_red + "Fail when building your compiler...")
         return
     test_cases = collect_test_cases()
+    os.system('cp %s ./builtin.ll' % builtin_path)
     total = 0
     passed = 0
     continue_fail = 0
@@ -122,14 +90,18 @@ def main():
         for i in range(len(t), max_len):
             print(end = ' ')
         start = time.time()
-        if compile():
+        if os.system('%s < ./test.mx > test.ll' % "bash ./testout/test.sh"):
             print(color_red + "Compilation failed" + color_none)
             continue_fail += 1
             continue
         print("(T=%.2fs)" % (time.time() - start), end="\n")
         if test_codegen:
-            link('src.ll')
-            run('test.in','test.out')
+            os.system(llc_cmd + ' --march=riscv32 -mattr=+m -o test.s test.ll')
+            os.system("llvm-as test.ll -o t.bc")
+            os.system("llvm-as builtin.ll -o b.bc")
+            os.system("llvm-link t.bc b.bc -o l.bc")
+            os.system("clang l.bc -o a.out")
+            os.system("./a.out < test.in > test.out")
             if os.system('diff -B -b test.out test.ans > diff.out'):
                 print(color_red + "Wrong answer" + color_none)
                 continue

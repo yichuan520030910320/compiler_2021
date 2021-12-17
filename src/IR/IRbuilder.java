@@ -358,8 +358,9 @@ public class IRbuilder implements ASTvisitor {
                     short_circuit_and_branch.pre_basicblock.add(current_basicblock);
                     //pointer
                     Register result_reg = new Register(new PointerType(new IntegerType(IntegerSubType.i1)), it.op.toString() + "_addr");
+                    current_function.renaming_add(result_reg);
                     //alloca and store
-                    current_basicblock.instruction_add(new AllocateInstruction(current_basicblock, new IntegerType(IntegerSubType.i1), result_reg));
+                    if (!current_basicblock.check_taiL_br())current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, new IntegerType(IntegerSubType.i1), result_reg));
                     current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.lhs.ir_operand, result_reg));
                     current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_branch, short_circuit_and_end));
                     //cope with the branch
@@ -370,6 +371,7 @@ public class IRbuilder implements ASTvisitor {
                     //cope with the end
                     current_basicblock = short_circuit_and_end;
                     Register load_node_iroperand = new Register(new IntegerType(IntegerSubType.i1), it.op.toString() + "_short_circuit");
+                    current_function.renaming_add(load_node_iroperand);
                     current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_node_iroperand, result_reg));
                     //assign
                     it.ir_operand = load_node_iroperand;
@@ -387,8 +389,9 @@ public class IRbuilder implements ASTvisitor {
                     short_circuit_and_branch.nxt_basic_block.add(short_circuit_and_end);
                     short_circuit_and_branch.pre_basicblock.add(current_basicblock);
                     Register result_reg = new Register(new PointerType(new IntegerType(IntegerSubType.i1)), it.op.toString() + "_addr");
+                    current_function.renaming_add(result_reg);
                     //alloca and store
-                    current_basicblock.instruction_add(new AllocateInstruction(current_basicblock, new IntegerType(IntegerSubType.i1), result_reg));
+                    if (!current_basicblock.check_taiL_br())current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_basicblock, new IntegerType(IntegerSubType.i1), result_reg));
                     current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.lhs.ir_operand, result_reg));
                     current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_end, short_circuit_and_branch));
                     //cope with the branch
@@ -399,6 +402,7 @@ public class IRbuilder implements ASTvisitor {
                     //cope with the end
                     current_basicblock = short_circuit_and_end;
                     Register load_node_iroperand = new Register(new IntegerType(IntegerSubType.i1), it.op.toString() + "_short_circuit");
+                    current_function.renaming_add(load_node_iroperand);
                     current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_node_iroperand, result_reg));
                     //assign
                     it.ir_operand = load_node_iroperand;
@@ -534,9 +538,11 @@ public class IRbuilder implements ASTvisitor {
             Typesystem node_type = type_trans.asttype_to_irtype(((Arraytype_ASTnode) it.type).arraytype);
             ArrayList<BaseOperand> new_list = new ArrayList<>();
             for (int i = 0; i < it.newlist.size(); i++) {
-                node_type = new PointerType(node_type);
                 it.newlist.get(i).accept(this);
                 new_list.add(it.newlist.get(i).ir_operand);
+            }
+            for (int i = 0; i <it.type.dim ; i++) {
+                node_type = new PointerType(node_type);
             }
             it.ir_operand = mollca_array(0, new_list, node_type);
         } else {
