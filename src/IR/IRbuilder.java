@@ -1086,14 +1086,13 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new StoreInstruction(current_basicblock, nxt_pointer, current_array_ptr_addr));
             //unconditional br to condition
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
-
             current_basicblock = new_end;
 
         }
         return array_addr;
     }
 
-    BaseOperand lvalue_judge(Expr_ASTnode it) {
+    private BaseOperand lvalue_judge(Expr_ASTnode it) {
 
         if (it instanceof IdExp_ASTnode) return current_ir_scope.find_id_to_reg(it.index);
         else if (it instanceof ArrayExp_ASTnode) {

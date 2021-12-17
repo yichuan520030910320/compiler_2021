@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        int op = 1;
+        int op = 2;
         String name;
         InputStream input = null;
         if (op == 1) {
