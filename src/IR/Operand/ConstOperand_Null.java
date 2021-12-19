@@ -14,6 +14,6 @@ public class ConstOperand_Null extends BaseOperand{
 
     @Override
     public String unit_output() {
-        return "null";
+        return type.toString()+" "+"null";
     }
 }

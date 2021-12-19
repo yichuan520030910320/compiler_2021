@@ -3,7 +3,9 @@ package IR.Instru;
 import IR.IRbasicblock.IRbasicblock;
 import IR.IRvisitor;
 import IR.Operand.BaseOperand;
+import IR.Operand.ConstOperand_Null;
 import IR.Operand.Register;
+import IR.TypeSystem.PointerType;
 
 //  store i32 0, i32* %1, align 4
 public class StoreInstruction extends BaseInstru {
@@ -25,6 +27,7 @@ public class StoreInstruction extends BaseInstru {
 //store i32 9, i32* %c$addr.0
     @Override
     public String toString() {
+        if (source_operand instanceof ConstOperand_Null)return "store "+((PointerType)dest_operand.type).get_low_dim_type()+" null"+", "+dest_operand.unit_output();
         return "store "+source_operand.unit_output()+", "+dest_operand.unit_output();
     }
 }

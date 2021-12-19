@@ -1,7 +1,6 @@
 package IR.Utils;
 
 import IR.Operand.BaseOperand;
-import IR.Operand.Register;
 
 import java.util.HashMap;
 import java.util.Map;

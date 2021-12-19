@@ -3,7 +3,7 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-%class.node = type { i32, i32, i32 }
+%class.node = type { i32, i32, %class.node* }
 @hashsize = dso_local global i32 0
 @table = dso_local global %class.node** null
 
@@ -51,7 +51,7 @@ entrance_block0:
     %key_addr = alloca i32
     %return_register_infunction_addr = alloca i32
     store i32 %key_para, i32* %key_addr
-    store null, %class.node** %ptr_addr
+    store %class.node* null, %class.node** %ptr_addr
     %ptr = load %class.node*, %class.node** %ptr_addr
     %table = load %class.node**, %class.node*** @table
     %key = load i32, i32* %key_addr
@@ -123,7 +123,7 @@ for_body:                                                    ; preds = for_condi
     %i_1 = load i32, i32* %i_addr
     %getelementptr_reg = getelementptr inbounds %class.node*, %class.node** %table_0, i32 %i_1
     %load_result = load %class.node*, %class.node** %getelementptr_reg
-    store null, %class.node** %getelementptr_reg
+    store %class.node* null, %class.node** %getelementptr_reg
     br label %for_step
 
 for_end_merge:                                               ; preds = for_condition 
@@ -192,7 +192,7 @@ entrance_block0:
     %key_addr = alloca i32
     store i32 %key_para, i32* %key_addr
     store i32 %data_para, i32* %data_addr
-    store null, %class.node** %ptr_addr
+    store %class.node* null, %class.node** %ptr_addr
     %p = load i32, i32* %p_addr
     %key = load i32, i32* %key_addr
     %call_getHash = call i32 @getHash(i32 %key)
@@ -234,7 +234,7 @@ single_then_basicblock:                                      ; preds = entrance_
     %load_result_3 = load %class.node*, %class.node** %getelementptr_reg_3
     %class_mem_gep_reg_1 = getelementptr inbounds %class.node, %class.node* %load_result_3, i32 0, i32 2
     %load_member_1 = load %class.node*, %class.node** %class_mem_gep_reg_1
-    store null, %class.node** %class_mem_gep_reg_1
+    store %class.node* null, %class.node** %class_mem_gep_reg_1
     br label %return_block0
 
 if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock entrance_block0 
@@ -288,7 +288,7 @@ single_then_basicblock0:                                     ; preds = while_bod
     %load_member_7 = load %class.node*, %class.node** %class_mem_gep_reg_7
     %class_mem_gep_reg_8 = getelementptr inbounds %class.node, %class.node* %load_member_7, i32 0, i32 2
     %load_member_8 = load %class.node*, %class.node** %class_mem_gep_reg_8
-    store null, %class.node** %class_mem_gep_reg_8
+    store %class.node* null, %class.node** %class_mem_gep_reg_8
     br label %if_withoutelse_end_basicblock0
 
 if_withoutelse_end_basicblock0:                              ; preds = single_then_basicblock0 while_body 

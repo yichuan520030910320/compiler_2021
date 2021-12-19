@@ -1,11 +1,7 @@
 package IR;
-
 import AST.ASTvisitor;
 import AST.EXPRnode.*;
-import AST.EXPRnode.CONSTEXPRnode.Constbool_ASTnode;
-import AST.EXPRnode.CONSTEXPRnode.Constint_ASTnode;
-import AST.EXPRnode.CONSTEXPRnode.Constnull_ASTnode;
-import AST.EXPRnode.CONSTEXPRnode.Conststring_ASTnode;
+import AST.EXPRnode.CONSTEXPRnode.*;
 import AST.Rootnode;
 import AST.STATnode.*;
 import AST.TYPEnode.*;
@@ -226,7 +222,7 @@ public class IRbuilder implements ASTvisitor {
                 ArrayList<Typesystem> para = classtype.parament_list;
 
                 for (int j = 0; j < nowclass.valdecllist.size(); j++) {
-                    para.add(type_trans.asttype_to_irtype(nowclass.valdecllist.get(i).type_instat));
+                    para.add(type_trans.asttype_to_irtype(nowclass.valdecllist.get(j).type_instat));
                 }
 
                 for (int j = 0; j < nowclass.functionlist.size(); j++) {
@@ -455,6 +451,8 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(FunctioncallExp_ASTnode it) {
         ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+
+
         if (it.funcname instanceof IdExp_ASTnode) {
             Fundecl_ASTnode function = semantic_globalscope.getfundecl(it.funcname.index, null);
             IRfunction irfunction = module_in_irbuilder.Module_Function_Map.get(it.funcname.index);
@@ -475,8 +473,18 @@ public class IRbuilder implements ASTvisitor {
 
             it.ir_operand = callreg;
         } else if (it.funcname instanceof MemberExp_ASTnode) {
+
+
+
             //a.test()
             ((MemberExp_ASTnode) it.funcname).classcall.accept(this);
+
+            //first we cope with two special function call
+            if (((MemberExp_ASTnode) it.funcname).classcall.type instanceof Arraytype_ASTnode){
+                array_size(it);
+                return;
+            }
+
             //get irfunction
             String class_name = ((MemberExp_ASTnode) it.funcname).classcall.type.typename;
             Classdecl_ASTnode classdecl_asTnode = semantic_globalscope.classdetailmap.get(class_name);
@@ -1234,5 +1242,17 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_node_iroperand, result_reg));
         //assign
         it.ir_operand = load_node_iroperand;
+    }
+    private void array_size(FunctioncallExp_ASTnode it){
+        Register bitcast_i32=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"bitcast_i32");
+        current_function.renaming_add(bitcast_i32);
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock,bitcast_i32,(Register) it.funcname.ir_operand,new PointerType(new IntegerType(IntegerSubType.i32))));
+
+        Register gep_size=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"gep_size");
+        current_function.renaming_add(gep_size);
+        ArrayList<BaseOperand> geppara=new ArrayList<>();
+        geppara.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1));
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock,gep_size,bitcast_i32,geppara));
+        it.ir_operand=gep_size;
     }
 }
