@@ -1,14 +1,18 @@
-class C2 {
-    int x;
-    int y;
-    int z;
+class K{
+int m;
+void test(){
+m=m+1;
+printlnInt(m);
+}
 };
+int k(int kkk){
+return kkk;
+}
+int main(){
+K tmp=new K;
+tmp.m=9;
+k(4);
+tmp.test();
+return 0;
 
-int main() {
-    C2 obj = new C2;
-    obj.x = 10;
-    obj.y = 20;
-    obj.z = 40;
-    printlnInt(obj.x + obj.y + obj.z);
-    return 0;
 }

@@ -18,6 +18,10 @@ public class IR_scope {
     }
     public BaseOperand find_id_to_reg(String id){
         if (id_map.containsKey(id))return id_map.get(id);
-        else return parent_scope.find_id_to_reg(id);
+        else {
+            if (parent_scope!=null)
+            return parent_scope.find_id_to_reg(id);
+            return null;
+        }
     }
 }

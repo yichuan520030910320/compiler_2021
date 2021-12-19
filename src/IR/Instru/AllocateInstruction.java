@@ -8,6 +8,7 @@ import IR.TypeSystem.Typesystem;
 public class AllocateInstruction extends BaseInstru{
     //allocate type attention ! not the type of the pointer
     public Typesystem allocate_type;
+    //alocate result type is different from the allocate_type in fact the allocate result is the pointer of allocate type
     public Register allocate_result;
 
 
