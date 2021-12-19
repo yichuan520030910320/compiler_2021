@@ -1,7 +1,14 @@
-bool f(int a){
-printlnInt(4);
-return true;}
-int main(){
-if(true&&true&&false&& f(1)){}
-printInt(7);
+class C2 {
+    int x;
+    int y;
+    int z;
+};
+
+int main() {
+    C2 obj = new C2;
+    obj.x = 10;
+    obj.y = 20;
+    obj.z = 40;
+    printlnInt(obj.x + obj.y + obj.z);
+    return 0;
 }

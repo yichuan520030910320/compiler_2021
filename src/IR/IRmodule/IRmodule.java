@@ -4,10 +4,8 @@ import IR.IRfunction.IRfunction;
 import IR.IRvisitor;
 import IR.Operand.ConstOperand_String;
 import IR.Operand.Global_variable;
-import IR.TypeSystem.ArrayType;
-import IR.TypeSystem.IntegerSubType;
-import IR.TypeSystem.IntegerType;
-import IR.TypeSystem.PointerType;
+import IR.TypeSystem.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +17,7 @@ import java.util.Map;
 //===----------------------------------------------------------------------===//
 
 public class IRmodule {
+    public Map<String, StructType> Module_Struct_Map=new HashMap<>();
     public Map<String, IRfunction> Module_Function_Map=new HashMap<>();
     public Map<String, Global_variable> Global_variable_map=new HashMap<>();
 

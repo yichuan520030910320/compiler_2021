@@ -25,10 +25,8 @@ public class AST_to_IR_trans {
                tmp=new PointerType(tmp);
            }
            return tmp;
-
-
         }else if (asttype instanceof Classtype_ASTnode){
-
+            return new PointerType(ir_module.Module_Struct_Map.get(asttype.typename));
         }else if (asttype instanceof Stringtype_ASTnode){
             return new PointerType(new IntegerType(IntegerSubType.i8));
 

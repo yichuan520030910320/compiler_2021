@@ -7,6 +7,7 @@ import IR.Instru.*;
 import IR.Operand.ConstOperand_String;
 import IR.Operand.Global_variable;
 import IR.TypeSystem.PointerType;
+import IR.TypeSystem.StructType;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -108,13 +109,20 @@ public class IRprinter implements IRvisitor {
                 "target triple = \"x86_64-pc-linux-gnu\"");
         f_println("");
 
+        for (Map.Entry<String, StructType> entry : it.Module_Struct_Map.entrySet()) {
+            f_println(entry.getValue().class_type_unit());
+
+
+        }
+
+
         //just for int need to be modiefied
         for (Map.Entry<String, Global_variable> entry : it.Global_variable_map.entrySet()) {
             //don't print the string here print it in the next
             if (entry.getValue().initoperand instanceof ConstOperand_String) continue;
             //a detial output inspired by gls
-            StringBuilder tail= new StringBuilder(((PointerType) entry.getValue().type).dim > 1 ? "null" : "0");
-            f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType)entry.getValue().type).get_low_dim_type() + " "+tail.toString() );
+            StringBuilder tail = new StringBuilder(((PointerType) entry.getValue().type).dim > 1 ? "null" : "0");
+            f_println(entry.getValue().toString() + " = dso_local global " + ((PointerType) entry.getValue().type).get_low_dim_type() + " " + tail.toString());
         }
         f_println("");
 
@@ -126,7 +134,7 @@ public class IRprinter implements IRvisitor {
                     replace("\"", "\\22").
                     replace("\0", "\\00"));
 
-            f_println(entry.getValue().toString() + " = private unnamed_addr constant [" + (entry.getKey().length() ) + " x i8] c\"" + tmp.toString() + "\", align 1");
+            f_println(entry.getValue().toString() + " = private unnamed_addr constant [" + (entry.getKey().length()) + " x i8] c\"" + tmp.toString() + "\", align 1");
         }
         f_println("");
 

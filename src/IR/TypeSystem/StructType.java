@@ -13,10 +13,14 @@ public class StructType extends Typesystem {
 
     @Override
     public String toString() {
+        return "%"+classname;
+    }
+    //only used for irprinter
+    public String class_type_unit(){
         StringBuilder struct_tostring = new StringBuilder();
-        struct_tostring.append("%class.");
+        struct_tostring.append("%");
         struct_tostring.append(classname);
-        struct_tostring.append(" type= {");
+        struct_tostring.append(" = type {");
         for (int i = 0; i < parament_list.size(); i++) {
             if (i == parament_list.size() - 1) {
                 struct_tostring.append(" ");
@@ -27,11 +31,18 @@ public class StructType extends Typesystem {
                 struct_tostring.append(",");
             }
         }
+        struct_tostring.append(" }");
         return struct_tostring.toString();
     }
 
     @Override
     public int byte_num() {
-        return 0;
+        int size=0;
+        for (int i = 0; i <parament_list.size() ; i++) {
+            size+=parament_list.get(i).byte_num();
+        }
+        return size;
+
+
     }
 }
