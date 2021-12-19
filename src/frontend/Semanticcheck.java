@@ -255,7 +255,7 @@ public class Semanticcheck implements ASTvisitor {
 
             }
             case EQUAL -> {
-                if (it.lhs.type.dim==0&&(it.rhs.type instanceof Nulltype_ASTnode)&&(!(it.lhs.type instanceof Classtype_ASTnode))){
+                if (it.lhs.type.dim==0&&(it.rhs.type instanceof Nulltype_ASTnode)&&((it.lhs.type.typename.equals("int")||it.lhs.type.typename.equals("bool")||it.lhs.type.typename.equals("null")))){
                     throw new SemanticError(" null cannot be assigned to primitive type variable", it.pos);
                 }
                 if (it.lhs instanceof FunctioncallExp_ASTnode) {

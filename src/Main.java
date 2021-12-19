@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        int op = 1;
+        int op = 2;
         String name;
         InputStream input = null;
         if (op == 1) {
@@ -52,14 +52,14 @@ public class Main {
             System.out.println("Semantic Success");
 
             //ir builder
-            IRbuilder irbuilder = new IRbuilder(gScope);
-            ASTRoot.accept(irbuilder);
-
-            //print naive llvm
-            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
-            llvm_naive.visit(irbuilder.module_in_irbuilder);
-
-            System.out.println("IRbuild Success");
+//            IRbuilder irbuilder = new IRbuilder(gScope);
+//            ASTRoot.accept(irbuilder);
+//
+//            //print naive llvm
+//            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
+//            llvm_naive.visit(irbuilder.module_in_irbuilder);
+//
+//            System.out.println("IRbuild Success");
 
 
 
