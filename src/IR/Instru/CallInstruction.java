@@ -42,7 +42,7 @@ public class CallInstruction extends BaseInstru {
         result_string.append("@").append(call_fuction.functionname).append("(");
         if (paralist!=null){
             for (int i = 0; i <paralist.size() ; i++) {
-                result_string.append(paralist.get(i).unit_output());
+                result_string.append(call_fuction.function_type.parament_list.get(i).type+" "+paralist.get(i).toString());
                 if (i!=paralist.size()-1)result_string.append(", ");
             }
         }
