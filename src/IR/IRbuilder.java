@@ -322,7 +322,6 @@ public class IRbuilder implements ASTvisitor {
                         current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
                         //it may not use :just for   --->foo(a=b+1) this seem weird
                         it.ir_operand = it.rhs.ir_operand;
-                        throw new IRbuilderError("what you can do this?", null);
                     }
                     case ADD -> {
                         ArrayList<BaseOperand> para_list_;
@@ -452,18 +451,39 @@ public class IRbuilder implements ASTvisitor {
     public void visit(FunctioncallExp_ASTnode it) {
         ArrayList<BaseOperand> para_list_ = new ArrayList<>();
 
-
+        //cope with such as getdim():only function name and parament
         if (it.funcname instanceof IdExp_ASTnode) {
-            Fundecl_ASTnode function = semantic_globalscope.getfundecl(it.funcname.index, null);
-            IRfunction irfunction = module_in_irbuilder.Module_Function_Map.get(it.funcname.index);
-            assert irfunction != null;
 
+            ///get function detail and irfunction
+            Fundecl_ASTnode function=null;
+            IRfunction irfunction=null;
+            //first to find the function in class
+            if (current_class_detail!=null){
+                function=current_class_detail.classscope.funcmap.get(it.funcname.index);
+                irfunction=module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname+"."+it.funcname.index);
+                //if have the function in the class then load this and put it in the parament
+                if (!(function==null&&irfunction==null)) {
+                    Register Implicit_call_inclass = new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)), "Implicit_call_inclass");
+                    current_function.renaming_add(Implicit_call_inclass);
+                    current_basicblock.instruction_add(new LoadInstruction(current_basicblock, Implicit_call_inclass, current_ir_scope.find_id_to_reg("this_addr")));
+                    para_list_.add(Implicit_call_inclass);
+                }
+            }
+            //if not find  find it in global
+            if (function==null&&irfunction==null) {
+                function = semantic_globalscope.getfundecl(it.funcname.index, null);
+                irfunction = module_in_irbuilder.Module_Function_Map.get(it.funcname.index);
+            }
+
+
+            //visit parament
             if (it.paralist != null) {
                 for (int i = 0; i < it.paralist.size(); i++) {
                     it.paralist.get(i).accept(this);
                     para_list_.add(it.paralist.get(i).ir_operand);
                 }
             }
+            //add call instruction
             Register callreg;
             if (!(function.returntype instanceof Voidtype_ASTnode)) {
                 callreg = new Register(irfunction.function_type.returntype, "call_" + function.functionname);
@@ -473,9 +493,6 @@ public class IRbuilder implements ASTvisitor {
 
             it.ir_operand = callreg;
         } else if (it.funcname instanceof MemberExp_ASTnode) {
-
-
-
             //a.test()
             ((MemberExp_ASTnode) it.funcname).classcall.accept(this);
 
@@ -493,7 +510,6 @@ public class IRbuilder implements ASTvisitor {
 
             //add this as parament
             para_list_.add(((MemberExp_ASTnode) it.funcname).classcall.ir_operand);
-
 
             if (it.paralist != null) {
                 for (int i = 0; i < it.paralist.size(); i++) {
@@ -525,6 +541,7 @@ public class IRbuilder implements ASTvisitor {
             //when meet an id in class
             //I use the scope map to find this register which is put into the map in the funcdecl node you can ctrl+F "this_addr" to find it
             Register thisreg = new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)), "this_reg");
+            current_function.renaming_add(thisreg);
             current_basicblock.instruction_add(new LoadInstruction(current_basicblock, thisreg, current_ir_scope.find_id_to_reg("this_addr")));
             //get offset for gep
             int cnt = 0;
@@ -735,12 +752,15 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Paralist_ASTnode it) {
-
+//nothing to do
     }
 
     @Override
     public void visit(Thisexpr_ASTnode it) {
-
+        Register thisexpr_reg=new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)),"thisexpr_reg");
+        current_function.renaming_add(thisexpr_reg);
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,thisexpr_reg, current_ir_scope.find_id_to_reg("this_addr")));
+        it.ir_operand=thisexpr_reg;
     }
 
     @Override
@@ -1115,7 +1135,7 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_cast_i8_to_i32, malloca, new PointerType(new IntegerType(IntegerSubType.i32))));
 
         //store the len at pos:-1
-        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), malloca_size.byte_num()), array_cast_i8_to_i32));
+        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, new_list_.get(loop_dim), array_cast_i8_to_i32));
 
         //set array begin
         ArrayList<BaseOperand> get_ele_ptr_offset = new ArrayList<>();
@@ -1246,13 +1266,18 @@ public class IRbuilder implements ASTvisitor {
     private void array_size(FunctioncallExp_ASTnode it){
         Register bitcast_i32=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"bitcast_i32");
         current_function.renaming_add(bitcast_i32);
-        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock,bitcast_i32,(Register) it.funcname.ir_operand,new PointerType(new IntegerType(IntegerSubType.i32))));
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock,bitcast_i32,(Register)( (MemberExp_ASTnode)(it.funcname)).classcall.ir_operand,new PointerType(new IntegerType(IntegerSubType.i32))));
 
         Register gep_size=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"gep_size");
         current_function.renaming_add(gep_size);
         ArrayList<BaseOperand> geppara=new ArrayList<>();
         geppara.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1));
         current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock,gep_size,bitcast_i32,geppara));
-        it.ir_operand=gep_size;
+
+        Register size_load=new Register(new IntegerType(IntegerSubType.i32),"size_load");
+        current_function.renaming_add(size_load);
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,size_load,gep_size));
+
+        it.ir_operand=size_load;
     }
 }

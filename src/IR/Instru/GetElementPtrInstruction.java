@@ -17,6 +17,7 @@ public class GetElementPtrInstruction extends BaseInstru {
 
     public GetElementPtrInstruction(IRbasicblock iRbasicblock, Register result_register_, BaseOperand source_ptr_, ArrayList<BaseOperand> index_offset_) {
         super(iRbasicblock);
+
         result_register = result_register_;
         source_ptr = source_ptr_;
         index_offset = index_offset_;
