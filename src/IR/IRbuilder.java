@@ -141,7 +141,7 @@ public class IRbuilder implements ASTvisitor {
 
         //int _str_length(const char* str)
         builtin_para = new ArrayList<>();
-        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i32)), "str"));
+        builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
         builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "_str_length", true);
         module_in_irbuilder.Module_Function_Map.put("_str_length", builtinfunction);
@@ -483,8 +483,6 @@ public class IRbuilder implements ASTvisitor {
                 function = semantic_globalscope.getfundecl(it.funcname.index, null);
                 irfunction = module_in_irbuilder.Module_Function_Map.get(it.funcname.index);
             }
-
-
             //visit parament
             if (it.paralist != null) {
                 for (int i = 0; i < it.paralist.size(); i++) {
@@ -516,6 +514,9 @@ public class IRbuilder implements ASTvisitor {
             Classdecl_ASTnode classdecl_asTnode = semantic_globalscope.classdetailmap.get(class_name);
             Fundecl_ASTnode class_function = classdecl_asTnode.classscope.funcmap.get(((MemberExp_ASTnode) it.funcname).member);
             IRfunction irfunction = module_in_irbuilder.Module_Function_Map.get(class_name + "." + ((MemberExp_ASTnode) it.funcname).member);
+            if (irfunction==null&&class_name.equals("string")){
+                irfunction = module_in_irbuilder.Module_Function_Map.get("_str_"+((MemberExp_ASTnode) it.funcname).member);
+            }
 
             //add this as parament
             para_list_.add(((MemberExp_ASTnode) it.funcname).classcall.ir_operand);
