@@ -328,7 +328,7 @@ public class IRbuilder implements ASTvisitor {
                 switch (it.op) {
                     case EQUAL -> {
                         //lhs just can be id
-                        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, current_ir_scope.find_id_to_reg(it.lhs.index)));
+                        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, lvalue_judge(it.lhs)));
                         //it may not use :just for   --->foo(a=b+1) this seem weird
                         it.ir_operand = it.rhs.ir_operand;
                     }
