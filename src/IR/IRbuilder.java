@@ -720,7 +720,7 @@ public class IRbuilder implements ASTvisitor {
         current_function = Function;
         current_basicblock = Function.entry_block;
         add_this_pointer_inclasspara(Function);
-        it.suite.accept(this);
+        if (it.suite!=null)it.suite.accept(this);
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
@@ -753,7 +753,7 @@ public class IRbuilder implements ASTvisitor {
         if (current_class_detail != null) {
             add_this_pointer_inclasspara(Function);  }
         //visit internal class
-        it.suite.accept(this);
+        if (it.suite!=null)it.suite.accept(this);
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
@@ -819,7 +819,7 @@ public class IRbuilder implements ASTvisitor {
         it.condition.accept(this);
         current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, while_body, while_end_merge));
         current_basicblock = while_body;
-        it.while_stats.accept(this);
+        if (it.while_stats!=null)it.while_stats.accept(this);
 
         continue_basicblock_stack.pop();
         break_basicblock_stack.pop();
@@ -900,7 +900,7 @@ public class IRbuilder implements ASTvisitor {
 
             //add the br instruction for thenblock and elseblock
             current_basicblock = then_basicblock;
-            it.thenstat.accept(this);
+            if (it.thenstat!=null)it.thenstat.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
 
             current_basicblock = if_end_basicblock;
@@ -950,7 +950,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
 
             current_basicblock = for_body;
-            it.suite_in_for.accept(this);
+            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
 
             continue_basicblock_stack.pop();
@@ -977,7 +977,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
 
             current_basicblock = for_body;
-            it.suite_in_for.accept(this);
+            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
 
             continue_basicblock_stack.pop();
@@ -993,7 +993,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             current_basicblock = for_body;
-            it.suite_in_for.accept(this);
+            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
 
             continue_basicblock_stack.pop();
@@ -1011,7 +1011,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             current_basicblock = for_body;
-            it.suite_in_for.accept(this);
+            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             continue_basicblock_stack.pop();

@@ -1,12 +1,25 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Expression
+Test Target: codeforces
 Author: Pikachu
-Time: 2019-10-20
+Time: 2020-02-03
 Verdict: Success
-Origin Package: Semantic Extended
+Origin Package:  Codeforces 158A #62259103
 */
-int main() {
-    int a;
-    ++++a;
+
+int[] a = new int[50];
+int m;
+int k;
+int i;
+int main()
+{
+m = getInt();
+k = getInt();
+//scanf("%d%d",&m,&k);
+for(i=0;i<m;i++)
+//scanf("%d",&a[i]);
+a[i] = getInt();
+for(i=0;a[i]>=a[k-1]&&a[i] > 0&&i<m;i++);
+printInt(i);
+//printf("%d",i);
 }
