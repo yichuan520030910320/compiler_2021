@@ -1135,7 +1135,7 @@ public class IRbuilder implements ASTvisitor {
     private Register mollca_array(int loop_dim, ArrayList<BaseOperand> new_list_, Typesystem return_type) {
         //inspired by lrh use a reg to record the current pointer and it can be optimized by using the call phi
         //naive only one dim
-        Typesystem malloca_size = ((PointerType) return_type).Base_Pointer_Type;
+        Typesystem malloca_size = ((PointerType) return_type).get_low_dim_type();
         //calculate the byte size
         Register mul_bytes = new Register(new IntegerType(IntegerSubType.i32), "mul_bytes");
         current_function.renaming_add(mul_bytes);
