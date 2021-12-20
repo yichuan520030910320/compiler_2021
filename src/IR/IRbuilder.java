@@ -409,6 +409,7 @@ public class IRbuilder implements ASTvisitor {
                 //add instru
                 current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1), (Enum_Binary_IRInstruction) op));
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, tmpreg, lvalue_judge(it.expr)));
+                it.actual_addr=lvalue_judge(it.expr);
                 it.ir_operand = tmpreg;
             }
             case SUB -> {
@@ -1247,6 +1248,7 @@ public class IRbuilder implements ASTvisitor {
         } else if (it instanceof MemberExp_ASTnode) {
             return ((MemberExp_ASTnode) it).lvalue_addr;
         }
+        else  if (it instanceof Front_UnaryExp_ASTnode)return  ((Front_UnaryExp_ASTnode) it).actual_addr;
         return current_ir_scope.find_id_to_reg(it.index);
     }
 
