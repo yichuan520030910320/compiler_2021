@@ -224,14 +224,23 @@ public class IRbuilder implements ASTvisitor {
                 for (int j = 0; j < nowclass.valdecllist.size(); j++) {
                     para.add(type_trans.asttype_to_irtype(nowclass.valdecllist.get(j).type_instat));
                 }
+                for (int j = 0; j <nowclass.constructerlist.size() ; j++) {
+                    Constructdecl_ASTnode constru=nowclass.constructerlist.get(j);
+                    //add function paraments
+                    collect_function_para = new ArrayList<>();
+                    Parament this_class = new Parament(new PointerType(module_in_irbuilder.Module_Struct_Map.get(nowclass.classname)), "this");
+                    collect_function_para.add(this_class);
+                    collect_function_type=new FunctionType(new VoidType(),collect_function_para);
+                    collect_function = new IRfunction(collect_function_type, nowclass.classname + "." +constru.classname, false);
+                    module_in_irbuilder.Module_Function_Map.put(nowclass.classname + "." +constru.classname, collect_function);
+                    module_in_irbuilder.Internal_Function_Map.put(nowclass.classname + "." +constru.classname, collect_function);
+                }
 
                 for (int j = 0; j < nowclass.functionlist.size(); j++) {
                     Fundecl_ASTnode functiondecl = nowclass.functionlist.get(j);
                     //add function paraments
                     collect_function_para = new ArrayList<>();
                     Parament this_class = new Parament(new PointerType(module_in_irbuilder.Module_Struct_Map.get(nowclass.classname)), "this");
-
-
                     collect_function_para.add(this_class);
                     if (functiondecl.paralist_infuction != null) {
                         for (int k = 0; k < functiondecl.paralist_infuction.paralist.size(); k++) {
@@ -595,8 +604,9 @@ public class IRbuilder implements ASTvisitor {
                 node_type = new PointerType(node_type);
             }
             it.ir_operand = mollca_array(0, new_list, node_type);
-        } else {
-            //new class
+        } else
+        //new class
+        {
             //malloc
             StructType classtype = module_in_irbuilder.Module_Struct_Map.get(it.type.typename);
             Register class_malloc = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "class_malloc");
@@ -611,6 +621,15 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, class_ptr, class_malloc, new PointerType(classtype)));
 
             it.ir_operand = class_ptr;
+            //IF have construction we then call it to initialize it
+            int constructernum=semantic_globalscope.classdetailmap.get(it.type.typename).constructerlist.size();
+            if (constructernum!=0){
+                //because the constructer name is the same as the class name
+                IRfunction constructer=module_in_irbuilder.Module_Function_Map.get(it.type.typename+"."+it.type.typename);
+                ArrayList<BaseOperand> call_paralist=new ArrayList<>();
+                call_paralist.add(class_ptr);
+                current_basicblock.instruction_add(new CallInstruction(current_basicblock,null,call_paralist,constructer));
+            }
         }
     }
 
@@ -691,6 +710,22 @@ public class IRbuilder implements ASTvisitor {
         }
     }
 
+
+    @Override
+    public void visit(Constructdecl_ASTnode it) {
+        current_ir_scope=new IR_scope(current_ir_scope);
+        IRfunction Function=module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname+"."+it.classname);
+        current_function = Function;
+        current_basicblock = Function.entry_block;
+        add_this_pointer_inclasspara(Function);
+        it.suite.accept(this);
+        //add for the special condition such as void function without return
+        if (!current_basicblock.check_taiL_br())
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
+        Function.block_list.add(Function.return_block);
+        current_ir_scope=current_ir_scope.parent_scope;
+
+    }
     @Override
     public void visit(Fundecl_ASTnode it) {
         current_ir_scope = new IR_scope(current_ir_scope);
@@ -703,8 +738,6 @@ public class IRbuilder implements ASTvisitor {
         }
         current_function = Function;
         current_basicblock = Function.entry_block;
-
-
         //first collect the xx_para and put it into the scope map the visit the paranode and allocate for space and sote the para value into it
         if (it.paralist_infuction != null) {
             for (int i = 0; i < it.paralist_infuction.paralist.size(); i++) {
@@ -716,22 +749,12 @@ public class IRbuilder implements ASTvisitor {
         }
         //add this (function in class need this pointer)
         if (current_class_detail != null) {
-            Register this_addr = new Register(new PointerType(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname))), "this_addr");
-            current_function.renaming_add(this_addr);
-            if (!current_basicblock.check_taiL_br())
-                current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block,( (PointerType) this_addr.type).get_low_dim_type(), this_addr));
-            current_ir_scope.id_map.put("this_addr", this_addr);
-            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, Function.function_type.parament_list.get(0), this_addr));
-        }
-//visit internal class
-        for (int i = 0; i < it.suite.statlist.size(); i++) {
-            it.suite.statlist.get(i).accept(this);
-        }
-
+            add_this_pointer_inclasspara(Function);  }
+        //visit internal class
+        it.suite.accept(this);
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
-
         Function.block_list.add(Function.return_block);
         if (it.functionname.equals("main")) {
             current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_function.entry_block, null, null, module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
@@ -743,6 +766,9 @@ public class IRbuilder implements ASTvisitor {
     public void visit(Classdecl_ASTnode it) {
         current_class_detail = it;
         current_ir_scope = new IR_scope(current_ir_scope);
+        for (int i = 0; i <it.constructerlist.size() ; i++) {
+            it.constructerlist.get(i).accept(this);
+        }
         for (int i = 0; i < it.functionlist.size(); i++) {
             it.functionlist.get(i).accept(this);
         }
@@ -1009,10 +1035,7 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, break_basicblock_stack.peek(), null));
     }
 
-    @Override
-    public void visit(Constructdecl_ASTnode it) {
 
-    }
 
     @Override
     public void visit(ArrayExp_ASTnode it) {
@@ -1217,13 +1240,11 @@ public class IRbuilder implements ASTvisitor {
     }
 
     private BaseOperand lvalue_judge(Expr_ASTnode it) {
-
         if (it instanceof IdExp_ASTnode) return current_ir_scope.find_id_to_reg(it.index);
         else if (it instanceof ArrayExp_ASTnode) {
             return ((ArrayExp_ASTnode) it).actual_addr;
         } else if (it instanceof MemberExp_ASTnode) {
             return ((MemberExp_ASTnode) it).lvalue_addr;
-
         }
         return current_ir_scope.find_id_to_reg(it.index);
     }
@@ -1280,4 +1301,13 @@ public class IRbuilder implements ASTvisitor {
 
         it.ir_operand=size_load;
     }
+    private  void add_this_pointer_inclasspara(IRfunction Function){
+        Register this_addr = new Register(new PointerType(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname))), "this_addr");
+        current_function.renaming_add(this_addr);
+        if (!current_basicblock.check_taiL_br())
+            current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block,( (PointerType) this_addr.type).get_low_dim_type(), this_addr));
+        current_ir_scope.id_map.put("this_addr", this_addr);
+        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, Function.function_type.parament_list.get(0), this_addr));
+    }
+
 }
