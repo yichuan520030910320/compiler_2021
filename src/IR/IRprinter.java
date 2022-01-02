@@ -17,6 +17,8 @@ import java.util.Map;
 public class IRprinter implements IRvisitor {
     public PrintWriter file_print;
     public String source_file;
+
+    public boolean stdout=false;
     private String tab = "    ";
 
     public IRprinter(String path, String src) throws FileNotFoundException {
@@ -156,6 +158,11 @@ public class IRprinter implements IRvisitor {
     }
 
     void f_println(String index) {
+
+        if (stdout) {
+            System.out.println(index);
+            return;
+        }
         file_print.println(index);
     }
 }

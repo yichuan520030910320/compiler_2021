@@ -7,7 +7,7 @@ import os, time
     Modify following configurations to adapt to your environment.
 """
 # test_cases_dir = './testcases/sema/'
-test_cases_dir = './testcases/codegen/'
+test_cases_dir = './Compiler-2021-testcases/codegen/sorting'
 # test_cases_dir = './testcases/optim/'
 # test_cases_dir = './testcases/optim-new/'
 compile_cmd = "bash ./build.bash"
@@ -90,17 +90,14 @@ def main():
         for i in range(len(t), max_len):
             print(end = ' ')
         start = time.time()
-        if os.system('%s < ./test.mx > test.ll' % "bash ./testout/test.sh"):
+        if os.system('%s < ./test.mx > test.ll' % "bash ./ir.bash"):
             print(color_red + "Compilation failed" + color_none)
             continue_fail += 1
             continue
         print("(T=%.2fs)" % (time.time() - start), end="\n")
         if test_codegen:
-            os.system(llc_cmd + ' --march=riscv32 -mattr=+m -o test.s test.ll')
-            os.system("llvm-as test.ll -o t.bc")
-            os.system("llvm-as builtin.ll -o b.bc")
-            os.system("llvm-link t.bc b.bc -o l.bc")
-            os.system("clang l.bc -o a.out")
+
+            os.system("clang test.ll builtin/builtin.ll -o a.out")
             os.system("./a.out < test.in > test.out")
             if os.system('diff -B -b test.out test.ans > diff.out'):
                 print(color_red + "Wrong answer" + color_none)
