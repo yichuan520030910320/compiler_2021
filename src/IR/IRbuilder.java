@@ -1312,5 +1312,4 @@ public class IRbuilder implements ASTvisitor {
         current_ir_scope.id_map.put("this_addr", this_addr);
         current_basicblock.instruction_add(new StoreInstruction(current_basicblock, Function.function_type.parament_list.get(0), this_addr));
     }
-
 }
