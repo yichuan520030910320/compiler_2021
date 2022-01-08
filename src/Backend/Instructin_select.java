@@ -5,8 +5,22 @@ import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
 import IR.IRvisitor;
 import IR.Instru.*;
+import RISCV.ASM_Basicblock.ASM_Basicblock;
+import RISCV.ASM_Function.ASM_Function;
+import RISCV.ASM_Module.ASM_Module;
 
 public class Instructin_select implements IRvisitor {
+    public IRmodule iRmodule;
+    public ASM_Module cur_module;
+    public ASM_Basicblock cur_basicblock;
+    public ASM_Function cur_function;
+
+
+    public Instructin_select (IRmodule iRmodule_){
+        iRmodule=iRmodule_;
+
+
+    }
     @Override
     public void visit(BinaryInstruction it) {
 

@@ -1,3 +1,6 @@
+import Backend.ASMprinter;
+import Backend.HorribleStackAlllocate;
+import Backend.Instructin_select;
 import IR.IRbuilder;
 import IR.IRprinter;
 import Parser.MxErrorListener;
@@ -62,8 +65,16 @@ public class Main {
 
             //System.out.println("IRbuild Success");
 
+            //instrunction select
+            Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
+            instructin_select.visit(instructin_select.iRmodule);
 
+            //reg allocate
+            HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            horribleStackAlllocate.reg_allocate();
 
+            //asm printer
+            ASMprinter asMprinter=new ASMprinter(horribleStackAlllocate.asm_module,"testout/output.s");
 
 
         } catch (Error er) {
