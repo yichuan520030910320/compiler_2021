@@ -72,7 +72,6 @@ public class Main {
             HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
 
             //asm printer
-            ASMprinter asMprinter=new ASMprinter(horribleStackAlllocate.asm_module,"testout/test.s");
             ASMprinter asMprinter_to_ravel=new ASMprinter(horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
 
 

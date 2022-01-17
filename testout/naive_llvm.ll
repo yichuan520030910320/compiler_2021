@@ -29,7 +29,7 @@ define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
     %return_register_infunction_addr = alloca i32
-    call void @printlnInt(i32 1)
+    call void @printlnInt(i32 100)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 

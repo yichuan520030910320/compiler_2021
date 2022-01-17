@@ -26,6 +26,7 @@ public class ASM_Function {
     public HashMap<IRbasicblock, ASM_Basicblock> iRbasicblockASM_basicblockHashMap = new HashMap<>();
 
     public ASM_Function(IRfunction iRfunction) {
+        virtual_reg_offset=8;// consider the sp and ra
         asm_function_name = iRfunction.functionname;
         //crate basic block and maintain the map for irbb to asmbb for use(eg: branch instruction)
         for (int i = 0; i < iRfunction.block_list.size(); i++) {

@@ -7,6 +7,6 @@ public class Virtual_Register extends Base_RISCV_Register {
     byte_num=byte_num_;}
     @Override
     public String toString() {
-        return "%"+vitural_reg_name;
+        return vitural_reg_name;
     }
 }

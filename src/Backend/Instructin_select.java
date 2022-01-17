@@ -6,6 +6,7 @@ import IR.IRmodule.IRmodule;
 import IR.IRvisitor;
 import IR.Instru.*;
 import IR.Operand.*;
+import IR.TypeSystem.VoidType;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
@@ -57,12 +58,12 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(CallInstruction it) {
-        if (it.paralist!=null){
+        if (it.paralist != null) {
             for (int i = 0; i < Math.min(8, it.paralist.size()); i++) {
                 Base_RISCV_Register rs1 = transreg(it.paralist.get(i));
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rs1));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(rs1, cur_module.physical_registers.get(10 + i)));
             }
-            for (int i = 8; i <it.paralist.size() ; i++) {
+            for (int i = 8; i < it.paralist.size(); i++) {
                 //todo
             }
         }
@@ -79,7 +80,7 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(LoadInstruction it) {
-        Virtual_Register asm_virtual_rd = new Virtual_Register(it.destination_register.toString(),it.destination_register.type.byte_num());
+        Virtual_Register asm_virtual_rd = new Virtual_Register(it.destination_register.toString(), it.destination_register.type.byte_num());
         IRreg_to_ASMreg.put(it.destination_register, asm_virtual_rd);
         if (it.source_pointer instanceof Global_variable) {
             //todo
@@ -92,14 +93,14 @@ public class Instructin_select implements IRvisitor {
                 int stackoffset = -cur_function.Virtual_to_offset.get(asm_rs1);
                 if (checkimmrange(stackoffset)) {
                     //when I can use imm to load the correct reg
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_virtual_rd, s0, new Immediate(0)));
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), s0, asm_virtual_rd, new Immediate(stackoffset)));
                 } else {
                     //when the imm is out of the range
                     //todo
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_virtual_rd, asm_rs1, new Immediate(0)));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_rs1, asm_virtual_rd, new Immediate(0)));
             }
         }
     }
@@ -111,8 +112,12 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(RetInstruction it) {
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10), IRreg_to_ASMreg.get(it.Ret_Operand)));
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Ret());
+        if (it.Ret_Type instanceof VoidType) {
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
+            return;
+        }
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(IRreg_to_ASMreg.get(it.Ret_Operand), cur_module.physical_registers.get(10)));
+        //put the ret in the printer
     }
 
     @Override
@@ -144,14 +149,14 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(AllocateInstruction it) {
-        Virtual_Register alloca_virtual_reg = new Virtual_Register(it.allocate_result.toString(),it.allocate_type.byte_num());
+        Virtual_Register alloca_virtual_reg = new Virtual_Register(it.allocate_result.toString(), it.allocate_type.byte_num());
         IRreg_to_ASMreg.put(it.allocate_result, alloca_virtual_reg);
         cur_function.alloca(alloca_virtual_reg, it.allocate_type.byte_num());
     }
 
     @Override
     public void visit(IRbasicblock it) {
-        for (int i = 0; i <it.link_in_basicblock.size() ; i++) {
+        for (int i = 0; i < it.link_in_basicblock.size(); i++) {
             it.link_in_basicblock.get(i).accept(this);
         }
     }
@@ -160,14 +165,14 @@ public class Instructin_select implements IRvisitor {
     public void visit(IRfunction it) {
         cur_function = new ASM_Function(it);
         cur_module.all_function.put(it.functionname, cur_function);
-        cur_basicblock=cur_function.head_basicblock;
+        cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
-            Virtual_Register rd = new Virtual_Register("para_rd",it.paramentlist.get(i).type.byte_num());
+            Virtual_Register rd = new Virtual_Register("para_rd", it.paramentlist.get(i).type.byte_num());
             IRreg_to_ASMreg.put(it.paramentlist.get(i), rd);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rd));
         }
-        for (int i = 8; i <it.paramentlist.size() ; i++) {
+        for (int i = 8; i < it.paramentlist.size(); i++) {
 //todo
             //first need to finish call
         }
@@ -203,13 +208,13 @@ public class Instructin_select implements IRvisitor {
         } else if (iropreand instanceof ConstOperand_Bool) {
             //if the operand is a const i will use li
             if (!((ConstOperand_Bool) iropreand).bool_value) return cur_module.physical_registers.get(0);
-            Virtual_Register constli = new Virtual_Register("virtual_reg_const_li",1);
+            Virtual_Register constli = new Virtual_Register("virtual_reg_const_li", 1);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(constli, new Immediate(1)));
             return constli;
         } else if (iropreand instanceof ConstOperand_Integer) {
             //if the operand is a const i will use li
             if (((ConstOperand_Integer) iropreand).value == 0) return cur_module.physical_registers.get(0);
-            Virtual_Register constli = new Virtual_Register("virtual_reg_const_li",4);
+            Virtual_Register constli = new Virtual_Register("virtual_reg_const_li", 4);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(constli, new Immediate(((ConstOperand_Integer) iropreand).value)));
             return constli;
         }

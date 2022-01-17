@@ -25,6 +25,6 @@ public class RISCV_Instruction_Store extends Base_RISCV_Instruction {
 
     @Override
     public String toString() {
-        return store_type.name() + "\t" + rs2 + ",\t" + immediate + "(" + rs1 + ")";
+        return store_type.name() + "\t" + rs2 + "," + immediate + "(" + rs1 + ")";
     }
 }

@@ -56,6 +56,7 @@ public class HorribleStackAlllocate {
     private Base_RISCV_Operand Horrible_LoadStore_onStack(Base_RISCV_Operand operand1, Base_RISCV_Operand operand2, boolean load_or_store) {
         //todo
         //cope with the global var condition
+        //cope with stackframe size out of range
         if (operand1 instanceof Physical_Register) return operand1;
         else {
             assert operand1 instanceof Virtual_Register;
@@ -65,7 +66,7 @@ public class HorribleStackAlllocate {
             int imm_ = -curfunction.Virtual_to_offset.get(operand1);
             if (load_or_store) {
                 it.previous();
-                it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num, (Base_RISCV_Register) operand2, s0, new Immediate(imm_)));
+                it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num,  s0, (Base_RISCV_Register) operand2,new Immediate(imm_)));
                 it.next();
             } else
                 it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));

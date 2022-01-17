@@ -1,6 +1,6 @@
 
 int main(){
 
-printlnInt(1);
+printlnInt(100);
 return 0;
 }
