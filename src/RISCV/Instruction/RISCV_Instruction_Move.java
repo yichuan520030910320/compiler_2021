@@ -16,6 +16,6 @@ public class RISCV_Instruction_Move extends Base_RISCV_Instruction{
 
     @Override
     public String toString() {
-        return null;
+        return "mv\t"+rd+","+rs1;
     }
 }

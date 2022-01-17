@@ -744,7 +744,9 @@ public class IRbuilder implements ASTvisitor {
         if (it.paralist_infuction != null) {
             for (int i = 0; i < it.paralist_infuction.paralist.size(); i++) {
                 Singlevaluedecl_ASTnode tmp = it.paralist_infuction.paralist.get(i);
-                current_ir_scope.id_map.put(tmp.name + "_para", new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para"));
+                Register tmp_para=new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para");
+                current_ir_scope.id_map.put(tmp.name + "_para", tmp_para);
+                current_function.paramentlist.add(tmp_para);
                 it.paralist_infuction.paralist.get(i).accept(this);
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
             }

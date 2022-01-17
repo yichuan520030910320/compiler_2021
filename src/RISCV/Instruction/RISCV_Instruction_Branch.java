@@ -2,13 +2,26 @@ package RISCV.Instruction;
 
 import Backend.ASMVisitor;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
+import RISCV.Operand.Base_RISCV_Operand;
 import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 
+import java.util.Locale;
+
 public class RISCV_Instruction_Branch extends Base_RISCV_Instruction{
 
-    public RISCV_Instruction_Branch(Base_RISCV_Register rs1_, Base_RISCV_Register rs2_, Base_RISCV_Register rd_, Immediate imm_) {
-        super(rs1_, rs2_, rd_, imm_);
+    public enum BranchType{
+        BEQZ, BNEZ, BLEZ, BGEZ, BLTZ, BGTZ
+    }
+    BranchType branchType;
+    Base_RISCV_Operand base_riscv_operand;
+    String jmpdest;
+
+    public RISCV_Instruction_Branch(BranchType branchType_, Base_RISCV_Operand base_riscv_operand_,String jmplabel) {
+        super(null,null,null,null);
+        branchType=branchType_;
+        base_riscv_operand=base_riscv_operand_;
+        jmpdest=jmplabel;
     }
 
     public void accept(ASMVisitor visitor) {
@@ -17,6 +30,6 @@ public class RISCV_Instruction_Branch extends Base_RISCV_Instruction{
 
     @Override
     public String toString() {
-        return null;
+        return branchType.toString().toLowerCase(Locale.ROOT)+"\t"+base_riscv_operand+"\t"+jmpdest;
     }
 }

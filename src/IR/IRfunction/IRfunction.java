@@ -18,7 +18,7 @@ import java.util.LinkedList;
 
 public class IRfunction extends BaseUser {
     public FunctionType function_type;
-    public ArrayList<BaseOperand> paramentlist;
+    public ArrayList<BaseOperand> paramentlist=new ArrayList<>();
     public String functionname;
     public IRbasicblock entry_block;
     public IRbasicblock return_block;

@@ -578,6 +578,7 @@ public class Semanticcheck implements ASTvisitor {
     @Override
     public void visit(Singlevaluedecl_ASTnode it) {
         if (it.expression != null) {
+            if (inclass) throw new SemanticError("can't initial in the class", it.pos);
             it.expression.accept(this);
             if (it.expression instanceof NewExp_ASTnode) {
                 if (!it.type.gettype().equals(((NewExp_ASTnode) it.expression).type1.gettype())) {

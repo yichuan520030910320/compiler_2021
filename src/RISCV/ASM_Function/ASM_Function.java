@@ -1,8 +1,11 @@
 package RISCV.ASM_Function;
 
 import Backend.ASMVisitor;
+import IR.IRbasicblock.IRbasicblock;
+import IR.IRfunction.IRfunction;
 import IR.Operand.Register;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
+import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Virtual_Register;
 
 import java.util.HashMap;
@@ -18,9 +21,21 @@ public class ASM_Function {
     //record the frame size
     public int virtual_reg_offset;
     //record the virtual reg and the offset
-    public HashMap<Virtual_Register, Integer> Virtual_to_offset = new HashMap<>();
+    public HashMap<Base_RISCV_Register, Integer> Virtual_to_offset = new HashMap<>();
+    //record bb to lbael(string)
+    public HashMap<IRbasicblock, ASM_Basicblock> iRbasicblockASM_basicblockHashMap = new HashMap<>();
 
-    public ASM_Function() {
+    public ASM_Function(IRfunction iRfunction) {
+        asm_function_name = iRfunction.functionname;
+        //crate basic block and maintain the map for irbb to asmbb for use(eg: branch instruction)
+        for (int i = 0; i < iRfunction.block_list.size(); i++) {
+            IRbasicblock tmpbb = iRfunction.block_list.get(i);
+            String tmpbb_name = ".LBB_" + asm_function_name + "_" + tmpbb.toString();
+            ASM_Basicblock asm_basicblock=new ASM_Basicblock(tmpbb_name);
+            iRbasicblockASM_basicblockHashMap.put(tmpbb, asm_basicblock);
+            asm_basicblock_in_function.add(asm_basicblock);
+        }
+        head_basicblock=asm_basicblock_in_function.getFirst();
 
     }
 

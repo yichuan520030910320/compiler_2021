@@ -67,11 +67,9 @@ public class Main {
 
             //instrunction select
             Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
-            instructin_select.visit(instructin_select.iRmodule);
 
             //reg allocate
             HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
-            horribleStackAlllocate.reg_allocate();
 
             //asm printer
             ASMprinter asMprinter=new ASMprinter(horribleStackAlllocate.asm_module,"testout/test.s");
