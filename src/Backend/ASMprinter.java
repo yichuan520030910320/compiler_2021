@@ -38,7 +38,7 @@ public class ASMprinter implements ASMVisitor {
     }
     public void run_print(){
         asm_module.accept(this);
-        if (stdout==false)file_print.close();
+        file_print.close();
 
     }
 
