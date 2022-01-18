@@ -17,6 +17,7 @@ import AST.*;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -24,15 +25,22 @@ public class Main {
         //chose the read option
         boolean localjudge =false;
         String name;
-        InputStream input = null;
+        InputStream input = null;boolean onlysemnatic=false;
         if (localjudge ) {
             name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
             input = new FileInputStream(name);
         } else {
             name="online_judge";
             input = System.in;
+            for (int i = 0; i < args.length; ++i){
+                if (args[i].charAt(0) == '-'){
+                    if (Objects.equals(args[i], "fsyntax-only"))
+                        onlysemnatic = true;
+                }
+            }
         }
         try {
+
 
             //lexer and parser
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
@@ -53,6 +61,7 @@ public class Main {
             Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
             //System.out.println("Semantic Success");
+            if (onlysemnatic)return;
 
             //ir builder
             IRbuilder irbuilder = new IRbuilder(gScope);
