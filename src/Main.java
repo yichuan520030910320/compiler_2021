@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge = false;
+        boolean localjudge =false;
         String name;
         InputStream input = null;
         if (localjudge ) {

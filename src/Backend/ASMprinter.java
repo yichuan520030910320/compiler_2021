@@ -36,10 +36,11 @@ public class ASMprinter implements ASMVisitor {
         ra = asm_module_.physical_registers.get(1);
         file_print = new PrintWriter(new FileOutputStream(path));
 
-        file_print.close();
     }
     public void run_print(){
         asm_module.accept(this);
+        file_print.close();
+
     }
 
     void f_println(Base_RISCV_Instruction index) {
