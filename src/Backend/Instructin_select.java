@@ -11,7 +11,6 @@ import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
 import RISCV.Instruction.*;
-import RISCV.Operand.Base_RISCV_Operand;
 import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
@@ -28,7 +27,7 @@ public class Instructin_select implements IRvisitor {
 
     //record the corresponding relationship with irregister and virtual register
     public HashMap<BaseOperand, Base_RISCV_Register> IRreg_to_ASMreg = new HashMap<>();
-    Physical_Register ra, sp, s0;
+    Physical_Register ra, sp, s0,a0;
 
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
@@ -36,6 +35,7 @@ public class Instructin_select implements IRvisitor {
         ra = cur_module.physical_registers.get(1);
         sp = cur_module.physical_registers.get(2);
         s0 = cur_module.physical_registers.get(8);
+        a0=cur_module.physical_registers.get(10);
         for (Map.Entry<String, IRfunction> entry : iRmodule_.Internal_Function_Map.entrySet()) {
             entry.getValue().accept(this);
         }
@@ -43,7 +43,24 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(BinaryInstruction it) {
-
+        Base_RISCV_Register rd = transreg(it.result_operand);
+        Base_RISCV_Register rs1 = transreg(it.operand1);
+        Base_RISCV_Register rs2 = transreg(it.operand2);
+        RISCV_Instruction_Binary.RISCVBinarytype op;
+        switch (it.op) {
+            case add -> op = RISCV_Instruction_Binary.RISCVBinarytype.add;
+            case sub -> op = RISCV_Instruction_Binary.RISCVBinarytype.sub;
+            case mul -> op = RISCV_Instruction_Binary.RISCVBinarytype.mul;
+            case sdiv -> op = RISCV_Instruction_Binary.RISCVBinarytype.div;
+            case srem -> op = RISCV_Instruction_Binary.RISCVBinarytype.rem;
+            case shl -> op = RISCV_Instruction_Binary.RISCVBinarytype.sll;
+            case ashr -> op = RISCV_Instruction_Binary.RISCVBinarytype.sra;
+            case and -> op = RISCV_Instruction_Binary.RISCVBinarytype.and;
+            case or -> op = RISCV_Instruction_Binary.RISCVBinarytype.or;
+            case xor -> op = RISCV_Instruction_Binary.RISCVBinarytype.xor;
+            default -> throw new IllegalStateException("Unexpected value: " + it.op);
+        }
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(op, rs1, rs2, rd, null));
     }
 
     // br l1         -> j l1
@@ -70,16 +87,42 @@ public class Instructin_select implements IRvisitor {
         }
 
         cur_basicblock.add_tail_instru(new RISCV_Instruction_Call(it.call_fuction.functionname));
+        if (!(it.call_fuction.function_type.returntype instanceof VoidType)){
+            Base_RISCV_Register call_result=transreg(it.call_result);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(a0,call_result));
+        }
 
 
     }
 
     @Override
     public void visit(CmpInstruction it) {
-        Base_RISCV_Register rd=transreg(it.cmp_result);
-        Base_RISCV_Register rs1=transreg(it.operand1);
-        Base_RISCV_Register rs2=transreg(it.operand2);
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(it.cmp_operation,rs1,rs2,rd));
+        Base_RISCV_Register rd = transreg(it.cmp_result);
+        Base_RISCV_Register rs1 = transreg(it.operand1);
+        Base_RISCV_Register rs2 = transreg(it.operand2);
+        RISCV_Instruction_Cmp.RISCVCompareType cmp_type;
+        Virtual_Register xor_result = new Virtual_Register("sub_virtual_reg", it.operand1.type.byte_num());
+        switch (it.cmp_operation) {
+            case slt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
+            case sgt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
+            case sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sle;
+            case sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sge;
+            case eq -> {
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor,rs1,rs2,xor_result,null));
+                cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.seqz;
+            }
+            case ne -> {
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor,rs1,rs2,xor_result,null));
+                cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.snez;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
+        }
+        switch (it.cmp_operation) {
+            case slt, sgt, sle, sge -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
+            case eq,ne->cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
+            default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
+        }
+
     }
 
     @Override
@@ -172,7 +215,7 @@ public class Instructin_select implements IRvisitor {
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
-            Base_RISCV_Register rd=transreg(it.paramentlist.get(i));
+            Base_RISCV_Register rd = transreg(it.paramentlist.get(i));
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rd));
         }
         for (int i = 8; i < it.paramentlist.size(); i++) {
