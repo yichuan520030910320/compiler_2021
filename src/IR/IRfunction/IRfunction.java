@@ -25,6 +25,7 @@ public class IRfunction extends BaseUser {
     public LinkedList<IRbasicblock> block_list;
     public Register return_reg;
     boolean is_builtin;
+    public HashMap<String,Register>para_map_fic_for_codegen=new HashMap<>();
 
     //renaming map just for llvm
     public HashMap<String, Integer> reg_map=new HashMap<>();

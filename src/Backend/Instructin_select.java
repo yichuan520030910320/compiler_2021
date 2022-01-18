@@ -11,6 +11,7 @@ import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
 import RISCV.Instruction.*;
+import RISCV.Operand.Base_RISCV_Operand;
 import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
@@ -76,23 +77,22 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(CallInstruction it) {
+
         if (it.paralist != null) {
             for (int i = 0; i < Math.min(8, it.paralist.size()); i++) {
                 Base_RISCV_Register rs1 = transreg(it.paralist.get(i));
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(rs1, cur_module.physical_registers.get(10 + i)));
             }
             for (int i = 8; i < it.paralist.size(); i++) {
-                //todo
+                BaseOperand tmp_para = it.paralist.get(i);
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(tmp_para.type.byte_num(), sp, transreg(tmp_para), new Immediate((i - 8) * 4)));
             }
         }
-
         cur_basicblock.add_tail_instru(new RISCV_Instruction_Call(it.call_fuction.functionname));
         if (!(it.call_fuction.function_type.returntype instanceof VoidType)) {
             Base_RISCV_Register call_result = transreg(it.call_result);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(a0, call_result));
         }
-
-
     }
 
     @Override
@@ -175,7 +175,7 @@ public class Instructin_select implements IRvisitor {
         //eg M[R[rs1]+imm](7:0)=R[rs2](7:0)
         if (it.dest_operand instanceof Global_variable) {
             Virtual_Register globaltmp = new Virtual_Register("global_tmp", it.source_operand.type.byte_num());
-            RISCV_Instruction_Store store_global = new RISCV_Instruction_Store(it.source_operand.type.byte_num(),transreg(it.source_operand), globaltmp,null);
+            RISCV_Instruction_Store store_global = new RISCV_Instruction_Store(it.source_operand.type.byte_num(), transreg(it.source_operand), globaltmp, null);
             store_global.global_store_name = ((Global_variable) it.dest_operand).GlobalVariableName;
             cur_basicblock.add_tail_instru(store_global);
         } else {
@@ -222,12 +222,15 @@ public class Instructin_select implements IRvisitor {
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
-            Base_RISCV_Register rd = transreg(it.function_type.parament_list.get(i));
+            String para_name = it.function_type.parament_list.get(i).paraname;
+            BaseOperand para = it.para_map_fic_for_codegen.get(para_name);
+            Base_RISCV_Register rd = transreg(para);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rd));
         }
-        for (int i = 8; i < it.paramentlist.size(); i++) {
-//todo
-            //first need to finish call
+        for (int i = 8; i < it.function_type.parament_list.size(); i++) {
+            String para_name = it.function_type.parament_list.get(i).paraname;
+            BaseOperand tmp_para = it.para_map_fic_for_codegen.get(para_name);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(tmp_para.type.byte_num(), s0, transreg(tmp_para), new Immediate((i - 8) * 4)));
         }
 
         for (int i = 0; i < cur_function.asm_basicblock_in_function.size(); i++) {
@@ -256,7 +259,12 @@ public class Instructin_select implements IRvisitor {
 
     private Base_RISCV_Register transreg(BaseOperand iropreand) {
         //todo it is naive
-        if (iropreand instanceof Register) {
+        if (iropreand instanceof Parament) {
+            if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
+            Virtual_Register new_virtual_reg = new Virtual_Register(iropreand.toString(), iropreand.type.byte_num());
+            IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
+            return new_virtual_reg;
+        } else if (iropreand instanceof Register) {
             if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
             Virtual_Register new_virtual_reg = new Virtual_Register(((Register) iropreand).RegName, iropreand.type.byte_num());
             IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
