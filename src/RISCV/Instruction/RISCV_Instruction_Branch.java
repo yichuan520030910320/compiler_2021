@@ -29,6 +29,6 @@ public class RISCV_Instruction_Branch extends Base_RISCV_Instruction{
 
     @Override
     public String toString() {
-        return branchType.toString().toLowerCase(Locale.ROOT)+"\t"+rs1+"\t"+jmpdest;
+        return branchType.toString().toLowerCase(Locale.ROOT)+"\t"+rs1+",\t"+jmpdest;
     }
 }
