@@ -151,7 +151,12 @@ public class Instructin_select implements IRvisitor {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), s0, asm_virtual_rd, new Immediate(stackoffset)));
                 } else {
                     //when the imm is out of the range
-                    //todo
+                    //li immreg 100000
+                    //add t s0 t
+                    //rs2=M[t]
+                    Virtual_Register immreg = outofrangeadd(stackoffset);
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, immreg, transreg(it.destination_register), new Immediate(0)));
+
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
@@ -194,12 +199,15 @@ public class Instructin_select implements IRvisitor {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), s0, asm_rs2, new Immediate(stackoffset)));
                 } else {
                     //when the imm is out of the range
-                    //todo
+                    //li immreg 100000
+                    //add t s0 t
+                    //M[t]=rs2
+                    Virtual_Register immreg = outofrangeadd(stackoffset);
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, immreg, transreg(it.dest_operand), new Immediate(0)));
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
                 //here the imm is important it's related to rs1
-
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, new Immediate(0)));
             }
 
@@ -268,7 +276,9 @@ public class Instructin_select implements IRvisitor {
 
                 BaseOperand offset_in_gep = it.index_offset.get(0);
                 //change offset=byte_in_gep*offset
+
                 Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep,new Immediate(offset_in_gep.type.byte_num())));
                 Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
                 //rd=rs+changeoffset
@@ -328,6 +338,13 @@ public class Instructin_select implements IRvisitor {
         }
         throw new IRbuilderError(" actual error in inst select", null);
 
+    }
+
+    public Virtual_Register outofrangeadd(int stack) {
+        Virtual_Register immreg = new Virtual_Register("immreg", 4);
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(immreg, new Immediate(stack)));
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s0, immreg, immreg, null));
+        return immreg;
     }
 
     public boolean checkimmrange(int imm_) {
