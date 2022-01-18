@@ -28,13 +28,12 @@ public class ASMprinter implements ASMVisitor {
 
     private final Physical_Register s0, sp, ra;
 
-    public ASMprinter(IRmodule iRmodule_, ASM_Module asm_module_, String path) throws FileNotFoundException {
+    public ASMprinter(IRmodule iRmodule_, ASM_Module asm_module_) throws FileNotFoundException {
         iRmodule = iRmodule_;
         asm_module = asm_module_;
         s0 = asm_module_.physical_registers.get(8);
         sp = asm_module_.physical_registers.get(2);
         ra = asm_module_.physical_registers.get(1);
-        file_print = new PrintWriter(new FileOutputStream(path));
 
     }
     public void run_print(){

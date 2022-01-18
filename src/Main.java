@@ -16,7 +16,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import AST.*;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 public class Main {
@@ -67,12 +69,12 @@ public class Main {
             IRbuilder irbuilder = new IRbuilder(gScope);
             ASTRoot.accept(irbuilder);
 
-            //print naive llvm
-            IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
+            if (localjudge){//print naive llvm
+                IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
 
-            //llvm_naive.stdout=true;
-            llvm_naive.visit(irbuilder.module_in_irbuilder);
-
+                //llvm_naive.stdout=true;
+                llvm_naive.visit(irbuilder.module_in_irbuilder);
+            }
             //System.out.println("IRbuild Success");
 
             //instrunction select
@@ -82,7 +84,8 @@ public class Main {
             HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
 
             //asm printer
-            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
+            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
+            if (localjudge)asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
             if (!localjudge)asMprinter_to_ravel.stdout=true;
             asMprinter_to_ravel.run_print();
 
