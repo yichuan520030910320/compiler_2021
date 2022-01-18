@@ -3,8 +3,6 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-@x = dso_local global i32 0
-@y = dso_local global i32 0
 
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
@@ -30,20 +28,8 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %c_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    %x = load i32, i32* @x
-    store i32 10, i32* @x
-    %y = load i32, i32* @y
-    store i32 20, i32* @y
-    %x_0 = load i32, i32* @x
-    %y_0 = load i32, i32* @y
-    %add = add i32 %x_0, %y_0
-    store i32 %add, i32* %c_addr
-    %c = load i32, i32* %c_addr
-    call void @printlnInt(i32 %c)
-    %c_0 = load i32, i32* %c_addr
-    store i32 %c_0, i32* %return_register_infunction_addr
+    call void @printlnInt(i32 1)
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 

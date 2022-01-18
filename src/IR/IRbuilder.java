@@ -589,6 +589,7 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(LambdaExp_ASTnode it) {
+
 //nothing to do
     }
 
@@ -677,6 +678,7 @@ public class IRbuilder implements ASTvisitor {
     public void visit(Suite_ASTnode it) {
         current_ir_scope = new IR_scope(current_ir_scope);
         for (int i = 0; i < it.statlist.size(); i++) {
+
             it.statlist.get(i).accept(this);
         }
         current_ir_scope = current_ir_scope.parent_scope;
@@ -707,6 +709,7 @@ public class IRbuilder implements ASTvisitor {
             if (!current_basicblock.check_taiL_br())
                 current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, type_trans.asttype_to_irtype(it.type), single_allocate));
             if (it.expression != null) {
+                if (it.expression instanceof LambdaExp_ASTnode)return;//special judge for lambda not put in ir
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
             }
         }

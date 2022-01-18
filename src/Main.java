@@ -60,6 +60,7 @@ public class Main {
 
             //print naive llvm
             IRprinter llvm_naive=new IRprinter("testout/naive_llvm.ll",name);
+
             //llvm_naive.stdout=true;
             llvm_naive.visit(irbuilder.module_in_irbuilder);
 

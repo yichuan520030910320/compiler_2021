@@ -16,7 +16,7 @@ public class StoreInstruction extends BaseInstru {
         source_operand=source_operand_;
         dest_operand=dest_operand_;
 
-        if (dest_operand==null){
+        if (source_operand_==null){
 
             System.out.println("nope");
         }

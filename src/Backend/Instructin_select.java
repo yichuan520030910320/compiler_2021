@@ -222,7 +222,7 @@ public class Instructin_select implements IRvisitor {
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
-            Base_RISCV_Register rd = transreg(it.paramentlist.get(i));
+            Base_RISCV_Register rd = transreg(it.function_type.parament_list.get(i));
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rd));
         }
         for (int i = 8; i < it.paramentlist.size(); i++) {
