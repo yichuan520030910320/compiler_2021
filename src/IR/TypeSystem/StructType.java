@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class StructType extends Typesystem {
     public String classname;
     public ArrayList<Typesystem> parament_list;
+    public ArrayList<Integer> prefix_sum_bytenum=new ArrayList<>();
 
     public StructType(String classname_,ArrayList<Typesystem> parament_list_){
         classname=classname_;

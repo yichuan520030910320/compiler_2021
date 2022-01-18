@@ -14,6 +14,10 @@ public class Classdecl_ASTnode extends Declare_ASTnode {
     public ArrayList<Constructdecl_ASTnode> constructerlist;// many constructer maybe
     public Scope classscope;
 
+    //for codegen
+    public ArrayList<Integer> prefix_sum_bytenum_in_ast=new ArrayList<>();
+
+
     public Classdecl_ASTnode(position pos, String classname_, ArrayList<Fundecl_ASTnode> functionlist_,
                              ArrayList<Valdeclstat_ASTnode> valdecllist_,
                              ArrayList<Constructdecl_ASTnode> constructerlist_) {

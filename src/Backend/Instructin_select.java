@@ -122,7 +122,8 @@ public class Instructin_select implements IRvisitor {
             case slt, sgt -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
             case eq, ne -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
             case sge, sle -> {
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs2, rs1, rd));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rd, null, rd, new Immediate(1)));
             }
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
@@ -154,7 +155,7 @@ public class Instructin_select implements IRvisitor {
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_rs1, asm_virtual_rd, null));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_rs1, asm_virtual_rd, new Immediate(0)));
             }
         }
     }
@@ -197,8 +198,9 @@ public class Instructin_select implements IRvisitor {
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
-                //here the imm is useless
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, null));
+                //here the imm is important it's related to rs1
+
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, new Immediate(0)));
             }
 
         }
@@ -258,6 +260,29 @@ public class Instructin_select implements IRvisitor {
                 throw new IRbuilderError("actual error in symbol collector", null);
             Base_RISCV_Register tmp = transreg(it.source_ptr);
             IRreg_to_ASMreg.put(it.result_register, tmp);
+        } else {
+            Base_RISCV_Register rd = transreg(it.result_register);
+            if (it.prefix_sum_bytenum.size() == 0) {
+                //may be wrong
+                //is in the array
+
+                BaseOperand offset_in_gep = it.index_offset.get(0);
+                //change offset=byte_in_gep*offset
+                Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
+                Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
+                //rd=rs+changeoffset
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, transreg(it.source_ptr), change_offset, rd, null));
+            }
+
+            if (it.index_offset.size() > 1) {
+                //in class such as a.b
+                BaseOperand offset_in_gep1 = it.index_offset.get(1);
+                assert offset_in_gep1 instanceof ConstOperand_Integer;
+                int offset_class = ((ConstOperand_Integer) offset_in_gep1).value;
+                int total_byte_offset = it.prefix_sum_bytenum.get(offset_class);
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, transreg(it.source_ptr), null, rd, new Immediate(total_byte_offset)));
+            }
         }
 
     }

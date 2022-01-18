@@ -14,6 +14,9 @@ public class GetElementPtrInstruction extends BaseInstru {
     public BaseOperand source_ptr;
     public ArrayList<BaseOperand> index_offset;
 
+    //for codegen
+    public ArrayList<Integer> prefix_sum_bytenum=new ArrayList<>();
+
 
     public GetElementPtrInstruction(IRbasicblock iRbasicblock, Register result_register_, BaseOperand source_ptr_, ArrayList<BaseOperand> index_offset_) {
         super(iRbasicblock);

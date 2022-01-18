@@ -15,11 +15,6 @@ public class StoreInstruction extends BaseInstru {
         super(iRbasicblock);
         source_operand=source_operand_;
         dest_operand=dest_operand_;
-
-        if (source_operand_==null){
-
-            System.out.println("nope");
-        }
         if (source_operand instanceof Register) source_operand.Add_be_used(this);
         if (dest_operand instanceof Register) dest_operand.Add_def(this);
     }

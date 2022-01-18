@@ -1,4 +1,5 @@
 package IR;
+
 import AST.ASTvisitor;
 import AST.EXPRnode.*;
 import AST.EXPRnode.CONSTEXPRnode.*;
@@ -14,6 +15,7 @@ import IR.Operand.*;
 import IR.TypeSystem.*;
 import IR.Utils.AST_to_IR_trans;
 import IR.Utils.IR_scope;
+import RISCV.Instruction.Base_RISCV_Instruction;
 import Utils.error.IRbuilderError;
 import Utils.globalscope;
 
@@ -220,20 +222,32 @@ public class IRbuilder implements ASTvisitor {
                 Classdecl_ASTnode nowclass = (Classdecl_ASTnode) it.list.get(i);
                 StructType classtype = module_in_irbuilder.Module_Struct_Map.get(nowclass.classname);
                 ArrayList<Typesystem> para = classtype.parament_list;
-
+                int typenumcnt = 0;
                 for (int j = 0; j < nowclass.valdecllist.size(); j++) {
-                    para.add(type_trans.asttype_to_irtype(nowclass.valdecllist.get(j).type_instat));
+                    for (int k = 0; k < nowclass.valdecllist.get(j).vardecllist.size(); k++) {
+                        Valdeclstat_ASTnode tmp = nowclass.valdecllist.get(j);
+                        para.add(type_trans.asttype_to_irtype(tmp.vardecllist.get(k).type));
+                        //cnt the prefix sum
+                        if (typenumcnt == 0) {
+                            classtype.prefix_sum_bytenum.add(0);
+                            typenumcnt++;
+                        } else {
+                            classtype.prefix_sum_bytenum.add(classtype.prefix_sum_bytenum.get((typenumcnt) - 1) + para.get(typenumcnt).byte_num());
+                            typenumcnt++;
+                        }
+                    }
                 }
-                for (int j = 0; j <nowclass.constructerlist.size() ; j++) {
-                    Constructdecl_ASTnode constru=nowclass.constructerlist.get(j);
+                nowclass.prefix_sum_bytenum_in_ast=classtype.prefix_sum_bytenum;
+                for (int j = 0; j < nowclass.constructerlist.size(); j++) {
+                    Constructdecl_ASTnode constru = nowclass.constructerlist.get(j);
                     //add function paraments
                     collect_function_para = new ArrayList<>();
                     Parament this_class = new Parament(new PointerType(module_in_irbuilder.Module_Struct_Map.get(nowclass.classname)), "this");
                     collect_function_para.add(this_class);
-                    collect_function_type=new FunctionType(new VoidType(),collect_function_para);
-                    collect_function = new IRfunction(collect_function_type, nowclass.classname + "." +constru.classname, false);
-                    module_in_irbuilder.Module_Function_Map.put(nowclass.classname + "." +constru.classname, collect_function);
-                    module_in_irbuilder.Internal_Function_Map.put(nowclass.classname + "." +constru.classname, collect_function);
+                    collect_function_type = new FunctionType(new VoidType(), collect_function_para);
+                    collect_function = new IRfunction(collect_function_type, nowclass.classname + "." + constru.classname, false);
+                    module_in_irbuilder.Module_Function_Map.put(nowclass.classname + "." + constru.classname, collect_function);
+                    module_in_irbuilder.Internal_Function_Map.put(nowclass.classname + "." + constru.classname, collect_function);
                 }
 
                 for (int j = 0; j < nowclass.functionlist.size(); j++) {
@@ -409,7 +423,7 @@ public class IRbuilder implements ASTvisitor {
                 //add instru
                 current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, tmpreg, it.expr.ir_operand, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1), (Enum_Binary_IRInstruction) op));
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, tmpreg, lvalue_judge(it.expr)));
-                it.actual_addr=lvalue_judge(it.expr);
+                it.actual_addr = lvalue_judge(it.expr);
                 it.ir_operand = tmpreg;
             }
             case SUB -> {
@@ -465,14 +479,14 @@ public class IRbuilder implements ASTvisitor {
         if (it.funcname instanceof IdExp_ASTnode) {
 
             ///get function detail and irfunction
-            Fundecl_ASTnode function=null;
-            IRfunction irfunction=null;
+            Fundecl_ASTnode function = null;
+            IRfunction irfunction = null;
             //first to find the function in class
-            if (current_class_detail!=null){
-                function=current_class_detail.classscope.funcmap.get(it.funcname.index);
-                irfunction=module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname+"."+it.funcname.index);
+            if (current_class_detail != null) {
+                function = current_class_detail.classscope.funcmap.get(it.funcname.index);
+                irfunction = module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname + "." + it.funcname.index);
                 //if have the function in the class then load this and put it in the parament
-                if (!(function==null&&irfunction==null)) {
+                if (!(function == null && irfunction == null)) {
                     Register Implicit_call_inclass = new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)), "Implicit_call_inclass");
                     current_function.renaming_add(Implicit_call_inclass);
                     current_basicblock.instruction_add(new LoadInstruction(current_basicblock, Implicit_call_inclass, current_ir_scope.find_id_to_reg("this_addr")));
@@ -480,7 +494,7 @@ public class IRbuilder implements ASTvisitor {
                 }
             }
             //if not find  find it in global
-            if (function==null&&irfunction==null) {
+            if (function == null && irfunction == null) {
                 function = semantic_globalscope.getfundecl(it.funcname.index, null);
                 irfunction = module_in_irbuilder.Module_Function_Map.get(it.funcname.index);
             }
@@ -505,7 +519,7 @@ public class IRbuilder implements ASTvisitor {
             ((MemberExp_ASTnode) it.funcname).classcall.accept(this);
 
             //first we cope with two special function call
-            if (((MemberExp_ASTnode) it.funcname).classcall.type instanceof Arraytype_ASTnode){
+            if (((MemberExp_ASTnode) it.funcname).classcall.type instanceof Arraytype_ASTnode) {
                 array_size(it);
                 return;
             }
@@ -515,8 +529,8 @@ public class IRbuilder implements ASTvisitor {
             Classdecl_ASTnode classdecl_asTnode = semantic_globalscope.classdetailmap.get(class_name);
             Fundecl_ASTnode class_function = classdecl_asTnode.classscope.funcmap.get(((MemberExp_ASTnode) it.funcname).member);
             IRfunction irfunction = module_in_irbuilder.Module_Function_Map.get(class_name + "." + ((MemberExp_ASTnode) it.funcname).member);
-            if (irfunction==null&&class_name.equals("string")){
-                irfunction = module_in_irbuilder.Module_Function_Map.get("_str_"+((MemberExp_ASTnode) it.funcname).member);
+            if (irfunction == null && class_name.equals("string")) {
+                irfunction = module_in_irbuilder.Module_Function_Map.get("_str_" + ((MemberExp_ASTnode) it.funcname).member);
             }
 
             //add this as parament
@@ -575,7 +589,9 @@ public class IRbuilder implements ASTvisitor {
             para_gep.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
             Register gep_in_id = new Register(new PointerType(member_type), current_class_detail.classname + "." + it.index + "_gep_in_id");
             current_function.renaming_add(gep_in_id);
-            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, gep_in_id, thisreg, para_gep));
+            GetElementPtrInstruction gep=new GetElementPtrInstruction(current_basicblock, gep_in_id, thisreg, para_gep);
+            gep.prefix_sum_bytenum= current_class_detail.prefix_sum_bytenum_in_ast;
+            current_basicblock.instruction_add(gep);
             current_ir_scope.id_map.put(it.index, gep_in_id);
 
             Register load_reg = new Register(member_type, current_class_detail.classname + "." + it.index + "_load_reg");
@@ -625,13 +641,13 @@ public class IRbuilder implements ASTvisitor {
 
             it.ir_operand = class_ptr;
             //IF have construction we then call it to initialize it
-            int constructernum=semantic_globalscope.classdetailmap.get(it.type.typename).constructerlist.size();
-            if (constructernum!=0){
+            int constructernum = semantic_globalscope.classdetailmap.get(it.type.typename).constructerlist.size();
+            if (constructernum != 0) {
                 //because the constructer name is the same as the class name
-                IRfunction constructer=module_in_irbuilder.Module_Function_Map.get(it.type.typename+"."+it.type.typename);
-                ArrayList<BaseOperand> call_paralist=new ArrayList<>();
+                IRfunction constructer = module_in_irbuilder.Module_Function_Map.get(it.type.typename + "." + it.type.typename);
+                ArrayList<BaseOperand> call_paralist = new ArrayList<>();
                 call_paralist.add(class_ptr);
-                current_basicblock.instruction_add(new CallInstruction(current_basicblock,null,call_paralist,constructer));
+                current_basicblock.instruction_add(new CallInstruction(current_basicblock, null, call_paralist, constructer));
             }
         }
     }
@@ -662,7 +678,9 @@ public class IRbuilder implements ASTvisitor {
         ArrayList<BaseOperand> getelementptr_para = new ArrayList<>();
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
-        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, class_mem_gep_reg, it.classcall.ir_operand, getelementptr_para));
+        GetElementPtrInstruction geptmp=new GetElementPtrInstruction(current_basicblock, class_mem_gep_reg, it.classcall.ir_operand, getelementptr_para);
+        geptmp.prefix_sum_bytenum= class_decl.prefix_sum_bytenum_in_ast;
+        current_basicblock.instruction_add(geptmp);
         //load it
         Register load_member = new Register(member_type, "load_member");
         current_function.renaming_add(load_member);
@@ -709,7 +727,7 @@ public class IRbuilder implements ASTvisitor {
             if (!current_basicblock.check_taiL_br())
                 current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, type_trans.asttype_to_irtype(it.type), single_allocate));
             if (it.expression != null) {
-                if (it.expression instanceof LambdaExp_ASTnode)return;//special judge for lambda not put in ir
+                if (it.expression instanceof LambdaExp_ASTnode) return;//special judge for lambda not put in ir
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
             }
         }
@@ -718,19 +736,20 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Constructdecl_ASTnode it) {
-        current_ir_scope=new IR_scope(current_ir_scope);
-        IRfunction Function=module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname+"."+it.classname);
+        current_ir_scope = new IR_scope(current_ir_scope);
+        IRfunction Function = module_in_irbuilder.Module_Function_Map.get(current_class_detail.classname + "." + it.classname);
         current_function = Function;
         current_basicblock = Function.entry_block;
         add_this_pointer_inclasspara(Function);
-        if (it.suite!=null)it.suite.accept(this);
+        if (it.suite != null) it.suite.accept(this);
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
         Function.block_list.add(Function.return_block);
-        current_ir_scope=current_ir_scope.parent_scope;
+        current_ir_scope = current_ir_scope.parent_scope;
 
     }
+
     @Override
     public void visit(Fundecl_ASTnode it) {
         current_ir_scope = new IR_scope(current_ir_scope);
@@ -747,9 +766,9 @@ public class IRbuilder implements ASTvisitor {
         if (it.paralist_infuction != null) {
             for (int i = 0; i < it.paralist_infuction.paralist.size(); i++) {
                 Singlevaluedecl_ASTnode tmp = it.paralist_infuction.paralist.get(i);
-                Register tmp_para=new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para");
+                Register tmp_para = new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para");
                 current_ir_scope.id_map.put(tmp.name + "_para", tmp_para);
-                current_function.para_map_fic_for_codegen.put(tmp.name + "_para",tmp_para);
+                current_function.para_map_fic_for_codegen.put(tmp.name + "_para", tmp_para);
                 current_function.paramentlist.add(tmp_para);
                 it.paralist_infuction.paralist.get(i).accept(this);
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
@@ -757,9 +776,10 @@ public class IRbuilder implements ASTvisitor {
         }
         //add this (function in class need this pointer)
         if (current_class_detail != null) {
-            add_this_pointer_inclasspara(Function);  }
+            add_this_pointer_inclasspara(Function);
+        }
         //visit internal class
-        if (it.suite!=null)it.suite.accept(this);
+        if (it.suite != null) it.suite.accept(this);
         //add for the special condition such as void function without return
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
@@ -774,7 +794,7 @@ public class IRbuilder implements ASTvisitor {
     public void visit(Classdecl_ASTnode it) {
         current_class_detail = it;
         current_ir_scope = new IR_scope(current_ir_scope);
-        for (int i = 0; i <it.constructerlist.size() ; i++) {
+        for (int i = 0; i < it.constructerlist.size(); i++) {
             it.constructerlist.get(i).accept(this);
         }
         for (int i = 0; i < it.functionlist.size(); i++) {
@@ -791,10 +811,10 @@ public class IRbuilder implements ASTvisitor {
 
     @Override
     public void visit(Thisexpr_ASTnode it) {
-        Register thisexpr_reg=new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)),"thisexpr_reg");
+        Register thisexpr_reg = new Register(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname)), "thisexpr_reg");
         current_function.renaming_add(thisexpr_reg);
-        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,thisexpr_reg, current_ir_scope.find_id_to_reg("this_addr")));
-        it.ir_operand=thisexpr_reg;
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock, thisexpr_reg, current_ir_scope.find_id_to_reg("this_addr")));
+        it.ir_operand = thisexpr_reg;
     }
 
     @Override
@@ -825,7 +845,7 @@ public class IRbuilder implements ASTvisitor {
         it.condition.accept(this);
         current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, while_body, while_end_merge));
         current_basicblock = while_body;
-        if (it.while_stats!=null)it.while_stats.accept(this);
+        if (it.while_stats != null) it.while_stats.accept(this);
 
         continue_basicblock_stack.pop();
         break_basicblock_stack.pop();
@@ -906,7 +926,7 @@ public class IRbuilder implements ASTvisitor {
 
             //add the br instruction for thenblock and elseblock
             current_basicblock = then_basicblock;
-            if (it.thenstat!=null)it.thenstat.accept(this);
+            if (it.thenstat != null) it.thenstat.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, if_end_basicblock, null));
 
             current_basicblock = if_end_basicblock;
@@ -956,7 +976,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
 
             current_basicblock = for_body;
-            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
+            if (it.suite_in_for != null) it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
 
             continue_basicblock_stack.pop();
@@ -983,7 +1003,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, for_body, for_end_merge));
 
             current_basicblock = for_body;
-            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
+            if (it.suite_in_for != null) it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, condition_for, null));
 
             continue_basicblock_stack.pop();
@@ -999,7 +1019,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             current_basicblock = for_body;
-            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
+            if (it.suite_in_for != null) it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_step, null));
 
             continue_basicblock_stack.pop();
@@ -1017,7 +1037,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             current_basicblock = for_body;
-            if (it.suite_in_for!=null)it.suite_in_for.accept(this);
+            if (it.suite_in_for != null) it.suite_in_for.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
 
             continue_basicblock_stack.pop();
@@ -1042,7 +1062,6 @@ public class IRbuilder implements ASTvisitor {
     public void visit(Breakstat_ASTnode it) {
         current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, break_basicblock_stack.peek(), null));
     }
-
 
 
     @Override
@@ -1253,8 +1272,7 @@ public class IRbuilder implements ASTvisitor {
             return ((ArrayExp_ASTnode) it).actual_addr;
         } else if (it instanceof MemberExp_ASTnode) {
             return ((MemberExp_ASTnode) it).lvalue_addr;
-        }
-        else  if (it instanceof Front_UnaryExp_ASTnode)return  ((Front_UnaryExp_ASTnode) it).actual_addr;
+        } else if (it instanceof Front_UnaryExp_ASTnode) return ((Front_UnaryExp_ASTnode) it).actual_addr;
         return current_ir_scope.find_id_to_reg(it.index);
     }
 
@@ -1293,31 +1311,33 @@ public class IRbuilder implements ASTvisitor {
         //assign
         it.ir_operand = load_node_iroperand;
     }
-    private void array_size(FunctioncallExp_ASTnode it){
-        Register bitcast_i32=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"bitcast_i32");
+
+    private void array_size(FunctioncallExp_ASTnode it) {
+        Register bitcast_i32 = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "bitcast_i32");
         current_function.renaming_add(bitcast_i32);
-        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock,bitcast_i32,(Register)( (MemberExp_ASTnode)(it.funcname)).classcall.ir_operand,new PointerType(new IntegerType(IntegerSubType.i32))));
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, bitcast_i32, (Register) ((MemberExp_ASTnode) (it.funcname)).classcall.ir_operand, new PointerType(new IntegerType(IntegerSubType.i32))));
 
-        Register gep_size=new Register(new PointerType(new IntegerType(IntegerSubType.i32)),"gep_size");
+        Register gep_size = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "gep_size");
         current_function.renaming_add(gep_size);
-        ArrayList<BaseOperand> geppara=new ArrayList<>();
-        geppara.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32),-1));
-        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock,gep_size,bitcast_i32,geppara));
+        ArrayList<BaseOperand> geppara = new ArrayList<>();
+        geppara.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), -1));
+        current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, gep_size, bitcast_i32, geppara));
 
-        Register size_load=new Register(new IntegerType(IntegerSubType.i32),"size_load");
+        Register size_load = new Register(new IntegerType(IntegerSubType.i32), "size_load");
         current_function.renaming_add(size_load);
-        current_basicblock.instruction_add(new LoadInstruction(current_basicblock,size_load,gep_size));
+        current_basicblock.instruction_add(new LoadInstruction(current_basicblock, size_load, gep_size));
 
-        it.ir_operand=size_load;
+        it.ir_operand = size_load;
     }
-    private  void add_this_pointer_inclasspara(IRfunction Function){
+
+    private void add_this_pointer_inclasspara(IRfunction Function) {
         Register this_addr = new Register(new PointerType(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname))), "this_addr");
         current_function.renaming_add(this_addr);
         if (!current_basicblock.check_taiL_br())
-            current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block,( (PointerType) this_addr.type).get_low_dim_type(), this_addr));
+            current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, ((PointerType) this_addr.type).get_low_dim_type(), this_addr));
         current_ir_scope.id_map.put("this_addr", this_addr);
         //fix a bug in instruction selector
-        current_function.para_map_fic_for_codegen.put("this",this_addr);
+        current_function.para_map_fic_for_codegen.put("this", this_addr);
 
         current_basicblock.instruction_add(new StoreInstruction(current_basicblock, Function.function_type.parament_list.get(0), this_addr));
     }
