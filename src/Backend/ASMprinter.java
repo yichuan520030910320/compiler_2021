@@ -2,6 +2,7 @@ package Backend;
 
 import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
+import IR.Operand.ConstOperand_String;
 import IR.Operand.Global_variable;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
@@ -36,7 +37,8 @@ public class ASMprinter implements ASMVisitor {
         ra = asm_module_.physical_registers.get(1);
 
     }
-    public void run_print(){
+
+    public void run_print() {
         asm_module.accept(this);
         file_print.close();
 
@@ -89,7 +91,6 @@ public class ASMprinter implements ASMVisitor {
         }
         f_println("# end function : " + it.asm_function_name);
         f_println("");
-
     }
 
     @Override
@@ -102,10 +103,26 @@ public class ASMprinter implements ASMVisitor {
         f_println("");
         f_println("\t.section\t.sdata");
         for (Map.Entry<String, Global_variable> entry : iRmodule.Global_variable_map.entrySet()) {
+            //string must be printed seperately
+            if (entry.getValue().initoperand instanceof ConstOperand_String) continue;
             f_println("\t.p2align\t2");
-            f_println("\t.globl\t"+entry.getKey());
-            f_println(entry.getKey()+":");
+            f_println("\t.globl\t" + entry.getKey());
+            f_println(entry.getKey() + ":");
             f_println("\t.word\t0");
+            f_println("");
+        }
+        f_println("");
+        for (Map.Entry<String, Global_variable> entry : iRmodule.string_map.entrySet()) {
+            f_println("\t.section\t.rodata\n" +
+                    "\t.p2align\t2");
+            f_println(entry.getValue().GlobalVariableName + ":");
+            String transString;
+            transString = entry.getKey().replace("\\", "\\\\");
+            transString = transString.replace("\n", "\\n");
+            transString = transString.replace("\0", "");
+            transString = transString.replace("\t", "\\t");
+            transString = transString.replace("\"", "\\\"");
+            f_println("\t.string\t" + "\"" + transString + "\"");
             f_println("");
         }
 

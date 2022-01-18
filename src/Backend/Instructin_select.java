@@ -16,6 +16,7 @@ import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
 import RISCV.Operand.Register.Virtual_Register;
+import Utils.error.IRbuilderError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -249,12 +250,19 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(GetElementPtrInstruction it) {
+        if (it.source_ptr instanceof Global_variable) {
+            if (!(((Global_variable) it.source_ptr).initoperand instanceof ConstOperand_String))
+                throw new IRbuilderError("actual error in symbol collector", null);
+            Base_RISCV_Register tmp = transreg(it.source_ptr);
+            IRreg_to_ASMreg.put(it.result_register, tmp);
+        }
 
     }
 
     @Override
     public void visit(BitCastInstruction it) {
-
+        Base_RISCV_Register tmp = transreg(it.source_reg);
+        IRreg_to_ASMreg.put(it.result_reg, tmp);
     }
 
     private Base_RISCV_Register transreg(BaseOperand iropreand) {
@@ -281,8 +289,15 @@ public class Instructin_select implements IRvisitor {
             Virtual_Register constli = new Virtual_Register("virtual_reg_const_li", 4);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(constli, new Immediate(((ConstOperand_Integer) iropreand).value)));
             return constli;
+        } else if (iropreand instanceof Global_variable) {
+            assert ((Global_variable) iropreand).initoperand instanceof ConstOperand_String;
+            if (!(((Global_variable) iropreand).initoperand instanceof ConstOperand_String))        throw new IRbuilderError(" actual error in inst select", null);
+            Virtual_Register tmp_str_addrreg = new Virtual_Register("tmp_str_addrreg", 4);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_La(iRmodule.string_map.get(((ConstOperand_String) ((Global_variable) iropreand).initoperand).conststring).GlobalVariableName, tmp_str_addrreg));
+            return tmp_str_addrreg;
+
         }
-        return null;
+        throw new IRbuilderError(" actual error in inst select", null);
 
     }
 

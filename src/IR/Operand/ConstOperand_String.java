@@ -5,7 +5,7 @@ import IR.TypeSystem.Typesystem;
 
 //@.str = private unnamed_addr constant [7 x i8] c"hsjkdh\00", align 1
 public class ConstOperand_String extends BaseOperand {
-    String conststring;
+    public String conststring;
 
     public ConstOperand_String(Typesystem typesystem,String const_string_) {
         super(typesystem);conststring=const_string_;

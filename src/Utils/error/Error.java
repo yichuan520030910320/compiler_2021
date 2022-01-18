@@ -12,6 +12,7 @@ abstract public class Error extends RuntimeException {
     }
 
     public String toString() {
+        if (pos==null)return message;
         return message + ": " + pos.toString();
     }
 }

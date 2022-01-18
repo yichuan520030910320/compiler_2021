@@ -6,9 +6,9 @@ import IR.Operand.Register;
 import IR.TypeSystem.Typesystem;
 
 public class BitCastInstruction extends BaseInstru{
-    Register result_reg;
-    Register source_reg;
-    Typesystem targettype;
+    public Register result_reg;
+    public Register source_reg;
+    public Typesystem targettype;
     public BitCastInstruction(IRbasicblock iRbasicblock,Register result_reg_,Register source_reg_,Typesystem targettype_) {
         super(iRbasicblock);
 
