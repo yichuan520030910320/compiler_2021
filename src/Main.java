@@ -22,10 +22,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        int op = 1;
+        boolean localjudge = false;
         String name;
         InputStream input = null;
-        if (op == 1) {
+        if (localjudge ) {
             name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
             input = new FileInputStream(name);
         } else {
@@ -73,6 +73,7 @@ public class Main {
 
             //asm printer
             ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
+            if (!localjudge)asMprinter_to_ravel.stdout=true;
 
 
 
