@@ -106,8 +106,8 @@ public class Instructin_select implements IRvisitor {
         switch (it.cmp_operation) {
             case slt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
             case sgt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
-            case sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sle;
-            case sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sge;
+            case sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
+            case sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
             case eq -> {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.seqz;
@@ -119,8 +119,11 @@ public class Instructin_select implements IRvisitor {
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
         switch (it.cmp_operation) {
-            case slt, sgt, sle, sge -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
+            case slt, sgt -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
             case eq, ne -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
+            case sge, sle -> {
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs2, rs1, rd));
+            }
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
 
@@ -291,7 +294,8 @@ public class Instructin_select implements IRvisitor {
             return constli;
         } else if (iropreand instanceof Global_variable) {
             assert ((Global_variable) iropreand).initoperand instanceof ConstOperand_String;
-            if (!(((Global_variable) iropreand).initoperand instanceof ConstOperand_String))        throw new IRbuilderError(" actual error in inst select", null);
+            if (!(((Global_variable) iropreand).initoperand instanceof ConstOperand_String))
+                throw new IRbuilderError(" actual error in inst select", null);
             Virtual_Register tmp_str_addrreg = new Virtual_Register("tmp_str_addrreg", 4);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_La(iRmodule.string_map.get(((ConstOperand_String) ((Global_variable) iropreand).initoperand).conststring).GlobalVariableName, tmp_str_addrreg));
             return tmp_str_addrreg;
