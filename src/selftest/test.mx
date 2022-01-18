@@ -1,5 +1,8 @@
 
 int main(){
-printlnInt(100);
+int a=0;
+if(a>1)printlnInt(a);
+else printlnInt(1);
+
 return 0;
 }

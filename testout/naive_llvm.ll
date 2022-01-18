@@ -28,12 +28,27 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main.mx()
+    %a_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    call void @printlnInt(i32 100)
+    store i32 0, i32* %a_addr
+    %a = load i32, i32* %a_addr
+    %sgt = icmp sgt i32 %a, 1
+    br i1 %sgt, label %then_basicblock, label %else_basicblock
+
+then_basicblock:                                             ; preds = entrance_block0 
+    %a_0 = load i32, i32* %a_addr
+    call void @printlnInt(i32 %a_0)
+    br label %if_end_basicblock
+
+else_basicblock:                                             ; preds = entrance_block0 
+    call void @printlnInt(i32 1)
+    br label %if_end_basicblock
+
+if_end_basicblock:                                           ; preds = then_basicblock else_basicblock 
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-return_block0:                                               ; preds = entrance_block0 
+return_block0:                                               ; preds = if_end_basicblock 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

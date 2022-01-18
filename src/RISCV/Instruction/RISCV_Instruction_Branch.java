@@ -14,13 +14,12 @@ public class RISCV_Instruction_Branch extends Base_RISCV_Instruction{
         BEQZ, BNEZ, BLEZ, BGEZ, BLTZ, BGTZ
     }
     BranchType branchType;
-    Base_RISCV_Operand base_riscv_operand;
     String jmpdest;
 
-    public RISCV_Instruction_Branch(BranchType branchType_, Base_RISCV_Operand base_riscv_operand_,String jmplabel) {
-        super(null,null,null,null);
+    public RISCV_Instruction_Branch(BranchType branchType_, Base_RISCV_Register rs1,String jmplabel) {
+        super(rs1,null,null,null);
         branchType=branchType_;
-        base_riscv_operand=base_riscv_operand_;
+
         jmpdest=jmplabel;
     }
 
@@ -30,6 +29,6 @@ public class RISCV_Instruction_Branch extends Base_RISCV_Instruction{
 
     @Override
     public String toString() {
-        return branchType.toString().toLowerCase(Locale.ROOT)+"\t"+base_riscv_operand+"\t"+jmpdest;
+        return branchType.toString().toLowerCase(Locale.ROOT)+"\t"+rs1+"\t"+jmpdest;
     }
 }

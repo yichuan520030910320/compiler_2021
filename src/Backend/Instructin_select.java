@@ -11,6 +11,7 @@ import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
 import RISCV.Instruction.*;
+import RISCV.Operand.Base_RISCV_Operand;
 import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
@@ -75,7 +76,10 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(CmpInstruction it) {
-
+        Base_RISCV_Register rd=transreg(it.cmp_result);
+        Base_RISCV_Register rs1=transreg(it.operand1);
+        Base_RISCV_Register rs2=transreg(it.operand2);
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(it.cmp_operation,rs1,rs2,rd));
     }
 
     @Override
@@ -107,7 +111,7 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(PhiInstruction it) {
-
+//nothing to do
     }
 
     @Override
@@ -168,8 +172,7 @@ public class Instructin_select implements IRvisitor {
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
-            Virtual_Register rd = new Virtual_Register("para_rd", it.paramentlist.get(i).type.byte_num());
-            IRreg_to_ASMreg.put(it.paramentlist.get(i), rd);
+            Base_RISCV_Register rd=transreg(it.paramentlist.get(i));
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(10 + i), rd));
         }
         for (int i = 8; i < it.paramentlist.size(); i++) {
@@ -204,7 +207,10 @@ public class Instructin_select implements IRvisitor {
     private Base_RISCV_Register transreg(BaseOperand iropreand) {
         //todo it is naive
         if (iropreand instanceof Register) {
-            return IRreg_to_ASMreg.get(iropreand);
+            if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
+            Virtual_Register new_virtual_reg = new Virtual_Register(((Register) iropreand).RegName, iropreand.type.byte_num());
+            IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
+            return new_virtual_reg;
         } else if (iropreand instanceof ConstOperand_Bool) {
             //if the operand is a const i will use li
             if (!((ConstOperand_Bool) iropreand).bool_value) return cur_module.physical_registers.get(0);
