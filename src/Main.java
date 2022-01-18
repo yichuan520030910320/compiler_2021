@@ -75,6 +75,7 @@ public class Main {
             //asm printer
             ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
             if (!localjudge)asMprinter_to_ravel.stdout=true;
+            asMprinter_to_ravel.run_print();
 
 
 
