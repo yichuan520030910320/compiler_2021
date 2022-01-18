@@ -34,7 +34,7 @@ public class Main {
             input = System.in;
             for (int i = 0; i < args.length; ++i){
                 if (args[i].charAt(0) == '-'){
-                    if (Objects.equals(args[i], "fsyntax-only"))
+                    if (Objects.equals(args[i], "-fsyntax-only"))
                         onlysemnatic = true;
                 }
             }
