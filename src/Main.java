@@ -25,7 +25,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =true;
+        boolean localjudge =false;
         String name;
         InputStream input = null;boolean onlysemnatic=false;
         if (localjudge ) {
