@@ -27,7 +27,7 @@ public class Instructin_select implements IRvisitor {
 
     //record the corresponding relationship with irregister and virtual register
     public HashMap<BaseOperand, Base_RISCV_Register> IRreg_to_ASMreg = new HashMap<>();
-    Physical_Register ra, sp, s0,a0;
+    Physical_Register ra, sp, s0, a0;
 
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
@@ -35,7 +35,7 @@ public class Instructin_select implements IRvisitor {
         ra = cur_module.physical_registers.get(1);
         sp = cur_module.physical_registers.get(2);
         s0 = cur_module.physical_registers.get(8);
-        a0=cur_module.physical_registers.get(10);
+        a0 = cur_module.physical_registers.get(10);
         for (Map.Entry<String, IRfunction> entry : iRmodule_.Internal_Function_Map.entrySet()) {
             entry.getValue().accept(this);
         }
@@ -87,9 +87,9 @@ public class Instructin_select implements IRvisitor {
         }
 
         cur_basicblock.add_tail_instru(new RISCV_Instruction_Call(it.call_fuction.functionname));
-        if (!(it.call_fuction.function_type.returntype instanceof VoidType)){
-            Base_RISCV_Register call_result=transreg(it.call_result);
-            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(a0,call_result));
+        if (!(it.call_fuction.function_type.returntype instanceof VoidType)) {
+            Base_RISCV_Register call_result = transreg(it.call_result);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(a0, call_result));
         }
 
 
@@ -108,18 +108,18 @@ public class Instructin_select implements IRvisitor {
             case sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sle;
             case sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sge;
             case eq -> {
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor,rs1,rs2,xor_result,null));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.seqz;
             }
             case ne -> {
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor,rs1,rs2,xor_result,null));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.snez;
             }
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
         switch (it.cmp_operation) {
             case slt, sgt, sle, sge -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
-            case eq,ne->cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
+            case eq, ne -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
 
@@ -130,9 +130,12 @@ public class Instructin_select implements IRvisitor {
         Virtual_Register asm_virtual_rd = new Virtual_Register(it.destination_register.toString(), it.destination_register.type.byte_num());
         IRreg_to_ASMreg.put(it.destination_register, asm_virtual_rd);
         if (it.source_pointer instanceof Global_variable) {
-            //todo
+            //pesudo instruction load t2 ,x,t1 there t1 is useless
             // %p_4 = load i32, i32* @p
-
+            //load rd p is ok
+            RISCV_Instruction_Load load_global = new RISCV_Instruction_Load(it.destination_register.type.byte_num(), null, transreg(it.destination_register), null);
+            load_global.global_data_name = ((Global_variable) it.source_pointer).GlobalVariableName;
+            cur_basicblock.add_tail_instru(load_global);
         } else {
             Base_RISCV_Register asm_rs1 = transreg(it.source_pointer);
             if (cur_function.Virtual_to_offset.containsKey(asm_rs1)) {
@@ -147,7 +150,7 @@ public class Instructin_select implements IRvisitor {
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_rs1, asm_virtual_rd, new Immediate(0)));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Load(it.destination_register.type.byte_num(), asm_rs1, asm_virtual_rd, null));
             }
         }
     }
@@ -171,7 +174,10 @@ public class Instructin_select implements IRvisitor {
     public void visit(StoreInstruction it) {
         //eg M[R[rs1]+imm](7:0)=R[rs2](7:0)
         if (it.dest_operand instanceof Global_variable) {
-
+            Virtual_Register globaltmp = new Virtual_Register("global_tmp", it.source_operand.type.byte_num());
+            RISCV_Instruction_Store store_global = new RISCV_Instruction_Store(it.source_operand.type.byte_num(),transreg(it.source_operand), globaltmp,null);
+            store_global.global_store_name = ((Global_variable) it.dest_operand).GlobalVariableName;
+            cur_basicblock.add_tail_instru(store_global);
         } else {
             Base_RISCV_Register asm_rs1 = transreg(it.dest_operand);
             Base_RISCV_Register asm_rs2 = transreg(it.source_operand);
@@ -187,7 +193,8 @@ public class Instructin_select implements IRvisitor {
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, new Immediate(0)));
+                //here the imm is useless
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, null));
             }
 
         }

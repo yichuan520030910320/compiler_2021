@@ -7,8 +7,10 @@ public class RISCV_Instruction_Load extends Base_RISCV_Instruction{
     enum Load_Type{
         lb,lh,lw
     }
+    //about global ld rd x rs1
     //R[rd]={48^(')b0,M[R[rs1]+imm](15:0)}
     Load_Type load_type;
+    public String global_data_name=null;
     public RISCV_Instruction_Load(int load_bytes,Base_RISCV_Register rs1_,Base_RISCV_Register rd_,Immediate imm_) {
         super(rs1_,null,rd_,imm_);
         if (load_bytes==1)load_type=Load_Type.lb;
@@ -19,6 +21,7 @@ public class RISCV_Instruction_Load extends Base_RISCV_Instruction{
 
     @Override
     public String toString() {
+        if (!(global_data_name==null))return load_type.name()+"\t"+rd+","+global_data_name;
         return load_type.name()+"\t"+rd+","+immediate+"("+rs1+")";
     }
 }

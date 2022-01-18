@@ -284,7 +284,7 @@ public class IRbuilder implements ASTvisitor {
         ///add init function
         ArrayList<Parament> tmp = new ArrayList<>();
         FunctionType global_init = new FunctionType(new VoidType(), tmp);
-        IRfunction GLOBAL__sub_I_main_mx = new IRfunction(global_init, "GLOBAL__sub_I_main.mx", false);
+        IRfunction GLOBAL__sub_I_main_mx = new IRfunction(global_init, "GLOBAL__sub_I_main_mx", false);
         module_in_irbuilder.Module_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
         module_in_irbuilder.Internal_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
         //set the state
@@ -761,7 +761,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
         Function.block_list.add(Function.return_block);
         if (it.functionname.equals("main")) {
-            current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_function.entry_block, null, null, module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main.mx")));
+            current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_function.entry_block, null, null, module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main_mx")));
         }
         current_ir_scope = current_ir_scope.parent_scope;
     }

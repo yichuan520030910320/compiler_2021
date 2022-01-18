@@ -1,6 +1,8 @@
 package Backend;
 
 import IR.IRfunction.IRfunction;
+import IR.IRmodule.IRmodule;
+import IR.Operand.Global_variable;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
@@ -22,9 +24,12 @@ public class ASMprinter implements ASMVisitor {
 
     public ASM_Module asm_module;
 
+    public IRmodule iRmodule;
+
     private final Physical_Register s0, sp, ra;
 
-    public ASMprinter(ASM_Module asm_module_, String path) throws FileNotFoundException {
+    public ASMprinter(IRmodule iRmodule_, ASM_Module asm_module_, String path) throws FileNotFoundException {
+        iRmodule = iRmodule_;
         asm_module = asm_module_;
         s0 = asm_module_.physical_registers.get(8);
         sp = asm_module_.physical_registers.get(2);
@@ -67,14 +72,14 @@ public class ASMprinter implements ASMVisitor {
         for (int i = 0; i < it.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = it.asm_basicblock_in_function.get(i);
             if (i == 0) {
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi,sp,null,s0,new Immediate((it.virtual_reg_offset+12))));
+                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, s0, new Immediate((it.virtual_reg_offset + 12))));
                 asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s0, new Immediate(it.virtual_reg_offset + 4)));
                 asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, ra, new Immediate(it.virtual_reg_offset + 8)));
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi,sp,null,sp,new Immediate(-(it.virtual_reg_offset+12))));
-            }else if (i==it.asm_basicblock_in_function.size()-1){
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4,sp,s0,new Immediate(it.virtual_reg_offset+4)));
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4,sp,ra,new Immediate(it.virtual_reg_offset+8)));
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi,sp,null,sp,new Immediate((it.virtual_reg_offset+12))));
+                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate(-(it.virtual_reg_offset + 12))));
+            } else if (i == it.asm_basicblock_in_function.size() - 1) {
+                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, s0, new Immediate(it.virtual_reg_offset + 4)));
+                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, ra, new Immediate(it.virtual_reg_offset + 8)));
+                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate((it.virtual_reg_offset + 12))));
                 asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Ret());
             }
             asm_basicblock.accept(this);
@@ -91,6 +96,16 @@ public class ASMprinter implements ASMVisitor {
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
             entry.getValue().accept(this);
         }
+        f_println("");
+        f_println("\t.section\t.sdata");
+        for (Map.Entry<String, Global_variable> entry : iRmodule.Global_variable_map.entrySet()) {
+            f_println("\t.p2align\t2");
+            f_println("\t.globl\t"+entry.getKey());
+            f_println(entry.getKey()+":");
+            f_println("\t.word\t0");
+            f_println("");
+        }
+
     }
 
     @Override

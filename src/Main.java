@@ -72,7 +72,7 @@ public class Main {
             HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
 
             //asm printer
-            ASMprinter asMprinter_to_ravel=new ASMprinter(horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
+            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module,"C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s");
 
 
 
