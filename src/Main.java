@@ -77,6 +77,7 @@ public class Main {
             }
             //System.out.println("IRbuild Success");
 
+
             //instrunction select
             Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
 
@@ -85,6 +86,7 @@ public class Main {
 
             //asm printer
             ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
+
             if (localjudge)asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
             else asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();

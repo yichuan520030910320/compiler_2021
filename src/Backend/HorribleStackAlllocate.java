@@ -57,6 +57,7 @@ public class HorribleStackAlllocate {
         //todo
         //cope with the global var condition
         //cope with stackframe size out of range
+
         if (operand1 instanceof Physical_Register) return operand1;
         else {
             assert operand1 instanceof Virtual_Register;

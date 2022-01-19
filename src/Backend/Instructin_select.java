@@ -182,10 +182,18 @@ public class Instructin_select implements IRvisitor {
     public void visit(StoreInstruction it) {
         //eg M[R[rs1]+imm](7:0)=R[rs2](7:0)
         if (it.dest_operand instanceof Global_variable) {
-            Virtual_Register globaltmp = new Virtual_Register("global_tmp", it.source_operand.type.byte_num());
-            RISCV_Instruction_Store store_global = new RISCV_Instruction_Store(it.source_operand.type.byte_num(), transreg(it.source_operand), globaltmp, null);
-            store_global.global_store_name = ((Global_variable) it.dest_operand).GlobalVariableName;
-            cur_basicblock.add_tail_instru(store_global);
+
+
+            Virtual_Register la=new Virtual_Register("la",4);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_La(((Global_variable) it.dest_operand).GlobalVariableName,la));
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4,la,transreg(it.source_operand),new Immediate(0)));
+
+//            Virtual_Register globaltmp = new Virtual_Register("global_tmp", it.source_operand.type.byte_num());
+//            RISCV_Instruction_Store store_global = new RISCV_Instruction_Store(it.source_operand.type.byte_num(), transreg(it.source_operand), globaltmp, null);
+//            store_global.global_store_name = ((Global_variable) it.dest_operand).GlobalVariableName;
+//
+//
+//            cur_basicblock.add_tail_instru(store_global);
         } else {
             Base_RISCV_Register asm_rs1 = transreg(it.dest_operand);
             Base_RISCV_Register asm_rs2 = transreg(it.source_operand);
