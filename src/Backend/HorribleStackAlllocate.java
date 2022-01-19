@@ -70,19 +70,19 @@ public class HorribleStackAlllocate {
                     it.previous();
                     it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));
                     it.next();
-                } else
+                } else {
                     it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));
-            }
+                }  }
             else{
                 if (load_or_store) {
                     it.previous();
                     outofrange_get_offset(imm_);
                      it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num, t6, (Base_RISCV_Register) operand2, new Immediate(0)));
                     it.next();
-                } else
+                } else {
                     outofrange_get_offset(imm_);
                     it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, t6, (Base_RISCV_Register) operand2, new Immediate(0)));
-
+                }
             }
 
             return operand2;
