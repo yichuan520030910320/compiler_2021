@@ -3,11 +3,14 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-@A = dso_local global i32 0
-@B = dso_local global i32 0
-@C = dso_local global i32 0
+@color = dso_local global i32* null
+@count = dso_local global i32* null
+@i = dso_local global i32 0
+@j = dso_local global i32 0
+@make = dso_local global i32** null
 
 @const_string0 = private unnamed_addr constant [2 x i8] c" \00", align 1
+@const_string1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
 declare i1 @_str_le(i8* %lhs,i8* %rhs)
@@ -29,1582 +32,743 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
+define dso_local void @search(i32 %x_para,i32 %y_para,i32 %z_para) {
+entrance_block0:                                             
+    %AND_addr_7 = alloca i1
+    %AND_addr_6 = alloca i1
+    %AND_addr_5 = alloca i1
+    %AND_addr_4 = alloca i1
+    %AND_addr_3 = alloca i1
+    %AND_addr_2 = alloca i1
+    %AND_addr_1 = alloca i1
+    %AND_addr_0 = alloca i1
+    %AND_addr = alloca i1
+    %OR_addr_1 = alloca i1
+    %OR_addr_0 = alloca i1
+    %OR_addr = alloca i1
+    %j_addr = alloca i32
+    %i_addr = alloca i32
+    %s_addr = alloca i32
+    %z_addr = alloca i32
+    %y_addr = alloca i32
+    %x_addr = alloca i32
+    store i32 %x_para, i32* %x_addr
+    store i32 %y_para, i32* %y_addr
+    store i32 %z_para, i32* %z_addr
+    %y = load i32, i32* %y_addr
+    %sgt = icmp sgt i32 %y, 0
+    store i1 %sgt, i1* %OR_addr
+    br i1 %sgt, label %short_circuit_OR_end_OR, label %short_circuit_OR_branch_OR
+
+short_circuit_OR_end_OR:                                     ; preds = entrance_block0 short_circuit_OR_branch_OR 
+    %OR_short_circuit = load i1, i1* %OR_addr
+    store i1 %OR_short_circuit, i1* %OR_addr_0
+    br i1 %OR_short_circuit, label %short_circuit_OR_end_OR0, label %short_circuit_OR_branch_OR0
+
+short_circuit_OR_branch_OR:                                  ; preds = entrance_block0 
+    %y_0 = load i32, i32* %y_addr
+    %slt = icmp slt i32 %y_0, 0
+    store i1 %slt, i1* %OR_addr
+    br label %short_circuit_OR_end_OR
+
+short_circuit_OR_end_OR0:                                    ; preds = short_circuit_OR_end_OR short_circuit_OR_branch_OR0 
+    %OR_short_circuit_0 = load i1, i1* %OR_addr_0
+    store i1 %OR_short_circuit_0, i1* %OR_addr_1
+    br i1 %OR_short_circuit_0, label %short_circuit_OR_end_OR1, label %short_circuit_OR_branch_OR1
+
+short_circuit_OR_branch_OR0:                                 ; preds = short_circuit_OR_end_OR 
+    %x = load i32, i32* %x_addr
+    %eq = icmp eq i32 %x, 0
+    store i1 %eq, i1* %OR_addr_0
+    br label %short_circuit_OR_end_OR0
+
+short_circuit_OR_end_OR1:                                    ; preds = short_circuit_OR_end_OR0 short_circuit_OR_branch_OR1 
+    %OR_short_circuit_1 = load i1, i1* %OR_addr_1
+    br i1 %OR_short_circuit_1, label %single_then_basicblock, label %if_withoutelse_end_basicblock
+
+short_circuit_OR_branch_OR1:                                 ; preds = short_circuit_OR_end_OR0 
+    %make = load i32**, i32*** @make
+    %x_0 = load i32, i32* %x_addr
+    %sub = sub i32 %x_0, 1
+    %getelementptr_reg = getelementptr inbounds i32*, i32** %make, i32 %sub
+    %load_result = load i32*, i32** %getelementptr_reg
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %load_result, i32 0
+    %load_result_0 = load i32, i32* %getelementptr_reg_0
+    %make_0 = load i32**, i32*** @make
+    %x_1 = load i32, i32* %x_addr
+    %sub_0 = sub i32 %x_1, 1
+    %getelementptr_reg_1 = getelementptr inbounds i32*, i32** %make_0, i32 %sub_0
+    %load_result_1 = load i32*, i32** %getelementptr_reg_1
+    %getelementptr_reg_2 = getelementptr inbounds i32, i32* %load_result_1, i32 1
+    %load_result_2 = load i32, i32* %getelementptr_reg_2
+    %add = add i32 %load_result_0, %load_result_2
+    %make_1 = load i32**, i32*** @make
+    %x_2 = load i32, i32* %x_addr
+    %sub_1 = sub i32 %x_2, 1
+    %getelementptr_reg_3 = getelementptr inbounds i32*, i32** %make_1, i32 %sub_1
+    %load_result_3 = load i32*, i32** %getelementptr_reg_3
+    %getelementptr_reg_4 = getelementptr inbounds i32, i32* %load_result_3, i32 2
+    %load_result_4 = load i32, i32* %getelementptr_reg_4
+    %add_0 = add i32 %add, %load_result_4
+    %eq_0 = icmp eq i32 %add_0, 15
+    store i1 %eq_0, i1* %OR_addr_1
+    br label %short_circuit_OR_end_OR1
+
+single_then_basicblock:                                      ; preds = short_circuit_OR_end_OR1 
+    %x_3 = load i32, i32* %x_addr
+    %eq_1 = icmp eq i32 %x_3, 2
+    store i1 %eq_1, i1* %AND_addr
+    br i1 %eq_1, label %short_circuit_AND_branch_AND, label %short_circuit_AND_end_AND
+
+if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock short_circuit_OR_end_OR1 if_end_basicblock 
+    br label %return_block0
+
+short_circuit_AND_end_AND:                                   ; preds = single_then_basicblock short_circuit_AND_branch_AND 
+    %AND_short_circuit = load i1, i1* %AND_addr
+    br i1 %AND_short_circuit, label %then_basicblock, label %else_basicblock
+
+short_circuit_AND_branch_AND:                                ; preds = single_then_basicblock 
+    %y_1 = load i32, i32* %y_addr
+    %eq_2 = icmp eq i32 %y_1, 2
+    store i1 %eq_2, i1* %AND_addr
+    br label %short_circuit_AND_end_AND
+
+then_basicblock:                                             ; preds = short_circuit_AND_end_AND 
+    %make_2 = load i32**, i32*** @make
+    %getelementptr_reg_5 = getelementptr inbounds i32*, i32** %make_2, i32 2
+    %load_result_5 = load i32*, i32** %getelementptr_reg_5
+    %getelementptr_reg_6 = getelementptr inbounds i32, i32* %load_result_5, i32 2
+    %load_result_6 = load i32, i32* %getelementptr_reg_6
+    %z = load i32, i32* %z_addr
+    %sub_2 = sub i32 45, %z
+    store i32 %sub_2, i32* %getelementptr_reg_6
+    %s = load i32, i32* %s_addr
+    %make_3 = load i32**, i32*** @make
+    %getelementptr_reg_7 = getelementptr inbounds i32*, i32** %make_3, i32 0
+    %load_result_7 = load i32*, i32** %getelementptr_reg_7
+    %getelementptr_reg_8 = getelementptr inbounds i32, i32* %load_result_7, i32 0
+    %load_result_8 = load i32, i32* %getelementptr_reg_8
+    %make_4 = load i32**, i32*** @make
+    %getelementptr_reg_9 = getelementptr inbounds i32*, i32** %make_4, i32 0
+    %load_result_9 = load i32*, i32** %getelementptr_reg_9
+    %getelementptr_reg_10 = getelementptr inbounds i32, i32* %load_result_9, i32 1
+    %load_result_10 = load i32, i32* %getelementptr_reg_10
+    %add_1 = add i32 %load_result_8, %load_result_10
+    %make_5 = load i32**, i32*** @make
+    %getelementptr_reg_11 = getelementptr inbounds i32*, i32** %make_5, i32 0
+    %load_result_11 = load i32*, i32** %getelementptr_reg_11
+    %getelementptr_reg_12 = getelementptr inbounds i32, i32* %load_result_11, i32 2
+    %load_result_12 = load i32, i32* %getelementptr_reg_12
+    %add_2 = add i32 %add_1, %load_result_12
+    store i32 %add_2, i32* %s_addr
+    %make_6 = load i32**, i32*** @make
+    %getelementptr_reg_13 = getelementptr inbounds i32*, i32** %make_6, i32 1
+    %load_result_13 = load i32*, i32** %getelementptr_reg_13
+    %getelementptr_reg_14 = getelementptr inbounds i32, i32* %load_result_13, i32 0
+    %load_result_14 = load i32, i32* %getelementptr_reg_14
+    %make_7 = load i32**, i32*** @make
+    %getelementptr_reg_15 = getelementptr inbounds i32*, i32** %make_7, i32 1
+    %load_result_15 = load i32*, i32** %getelementptr_reg_15
+    %getelementptr_reg_16 = getelementptr inbounds i32, i32* %load_result_15, i32 1
+    %load_result_16 = load i32, i32* %getelementptr_reg_16
+    %add_3 = add i32 %load_result_14, %load_result_16
+    %make_8 = load i32**, i32*** @make
+    %getelementptr_reg_17 = getelementptr inbounds i32*, i32** %make_8, i32 1
+    %load_result_17 = load i32*, i32** %getelementptr_reg_17
+    %getelementptr_reg_18 = getelementptr inbounds i32, i32* %load_result_17, i32 2
+    %load_result_18 = load i32, i32* %getelementptr_reg_18
+    %add_4 = add i32 %add_3, %load_result_18
+    %s_0 = load i32, i32* %s_addr
+    %eq_3 = icmp eq i32 %add_4, %s_0
+    store i1 %eq_3, i1* %AND_addr_0
+    br i1 %eq_3, label %short_circuit_AND_branch_AND0, label %short_circuit_AND_end_AND0
+
+else_basicblock:                                             ; preds = short_circuit_AND_end_AND 
+    %y_2 = load i32, i32* %y_addr
+    %eq_10 = icmp eq i32 %y_2, 2
+    br i1 %eq_10, label %then_basicblock0, label %else_basicblock0
+
+if_end_basicblock:                                           ; preds = then_basicblock else_basicblock if_withoutelse_end_basicblock0 if_end_basicblock0 
+    br label %if_withoutelse_end_basicblock
+
+short_circuit_AND_end_AND0:                                  ; preds = then_basicblock short_circuit_AND_branch_AND0 
+    %AND_short_circuit_0 = load i1, i1* %AND_addr_0
+    store i1 %AND_short_circuit_0, i1* %AND_addr_1
+    br i1 %AND_short_circuit_0, label %short_circuit_AND_branch_AND1, label %short_circuit_AND_end_AND1
+
+short_circuit_AND_branch_AND0:                               ; preds = then_basicblock 
+    %make_9 = load i32**, i32*** @make
+    %getelementptr_reg_19 = getelementptr inbounds i32*, i32** %make_9, i32 2
+    %load_result_19 = load i32*, i32** %getelementptr_reg_19
+    %getelementptr_reg_20 = getelementptr inbounds i32, i32* %load_result_19, i32 0
+    %load_result_20 = load i32, i32* %getelementptr_reg_20
+    %make_10 = load i32**, i32*** @make
+    %getelementptr_reg_21 = getelementptr inbounds i32*, i32** %make_10, i32 2
+    %load_result_21 = load i32*, i32** %getelementptr_reg_21
+    %getelementptr_reg_22 = getelementptr inbounds i32, i32* %load_result_21, i32 1
+    %load_result_22 = load i32, i32* %getelementptr_reg_22
+    %add_5 = add i32 %load_result_20, %load_result_22
+    %make_11 = load i32**, i32*** @make
+    %getelementptr_reg_23 = getelementptr inbounds i32*, i32** %make_11, i32 2
+    %load_result_23 = load i32*, i32** %getelementptr_reg_23
+    %getelementptr_reg_24 = getelementptr inbounds i32, i32* %load_result_23, i32 2
+    %load_result_24 = load i32, i32* %getelementptr_reg_24
+    %add_6 = add i32 %add_5, %load_result_24
+    %s_1 = load i32, i32* %s_addr
+    %eq_4 = icmp eq i32 %add_6, %s_1
+    store i1 %eq_4, i1* %AND_addr_0
+    br label %short_circuit_AND_end_AND0
+
+short_circuit_AND_end_AND1:                                  ; preds = short_circuit_AND_end_AND0 short_circuit_AND_branch_AND1 
+    %AND_short_circuit_1 = load i1, i1* %AND_addr_1
+    store i1 %AND_short_circuit_1, i1* %AND_addr_2
+    br i1 %AND_short_circuit_1, label %short_circuit_AND_branch_AND2, label %short_circuit_AND_end_AND2
+
+short_circuit_AND_branch_AND1:                               ; preds = short_circuit_AND_end_AND0 
+    %make_12 = load i32**, i32*** @make
+    %getelementptr_reg_25 = getelementptr inbounds i32*, i32** %make_12, i32 0
+    %load_result_25 = load i32*, i32** %getelementptr_reg_25
+    %getelementptr_reg_26 = getelementptr inbounds i32, i32* %load_result_25, i32 0
+    %load_result_26 = load i32, i32* %getelementptr_reg_26
+    %make_13 = load i32**, i32*** @make
+    %getelementptr_reg_27 = getelementptr inbounds i32*, i32** %make_13, i32 1
+    %load_result_27 = load i32*, i32** %getelementptr_reg_27
+    %getelementptr_reg_28 = getelementptr inbounds i32, i32* %load_result_27, i32 0
+    %load_result_28 = load i32, i32* %getelementptr_reg_28
+    %add_7 = add i32 %load_result_26, %load_result_28
+    %make_14 = load i32**, i32*** @make
+    %getelementptr_reg_29 = getelementptr inbounds i32*, i32** %make_14, i32 2
+    %load_result_29 = load i32*, i32** %getelementptr_reg_29
+    %getelementptr_reg_30 = getelementptr inbounds i32, i32* %load_result_29, i32 0
+    %load_result_30 = load i32, i32* %getelementptr_reg_30
+    %add_8 = add i32 %add_7, %load_result_30
+    %s_2 = load i32, i32* %s_addr
+    %eq_5 = icmp eq i32 %add_8, %s_2
+    store i1 %eq_5, i1* %AND_addr_1
+    br label %short_circuit_AND_end_AND1
+
+short_circuit_AND_end_AND2:                                  ; preds = short_circuit_AND_end_AND1 short_circuit_AND_branch_AND2 
+    %AND_short_circuit_2 = load i1, i1* %AND_addr_2
+    store i1 %AND_short_circuit_2, i1* %AND_addr_3
+    br i1 %AND_short_circuit_2, label %short_circuit_AND_branch_AND3, label %short_circuit_AND_end_AND3
+
+short_circuit_AND_branch_AND2:                               ; preds = short_circuit_AND_end_AND1 
+    %make_15 = load i32**, i32*** @make
+    %getelementptr_reg_31 = getelementptr inbounds i32*, i32** %make_15, i32 0
+    %load_result_31 = load i32*, i32** %getelementptr_reg_31
+    %getelementptr_reg_32 = getelementptr inbounds i32, i32* %load_result_31, i32 1
+    %load_result_32 = load i32, i32* %getelementptr_reg_32
+    %make_16 = load i32**, i32*** @make
+    %getelementptr_reg_33 = getelementptr inbounds i32*, i32** %make_16, i32 1
+    %load_result_33 = load i32*, i32** %getelementptr_reg_33
+    %getelementptr_reg_34 = getelementptr inbounds i32, i32* %load_result_33, i32 1
+    %load_result_34 = load i32, i32* %getelementptr_reg_34
+    %add_9 = add i32 %load_result_32, %load_result_34
+    %make_17 = load i32**, i32*** @make
+    %getelementptr_reg_35 = getelementptr inbounds i32*, i32** %make_17, i32 2
+    %load_result_35 = load i32*, i32** %getelementptr_reg_35
+    %getelementptr_reg_36 = getelementptr inbounds i32, i32* %load_result_35, i32 1
+    %load_result_36 = load i32, i32* %getelementptr_reg_36
+    %add_10 = add i32 %add_9, %load_result_36
+    %s_3 = load i32, i32* %s_addr
+    %eq_6 = icmp eq i32 %add_10, %s_3
+    store i1 %eq_6, i1* %AND_addr_2
+    br label %short_circuit_AND_end_AND2
+
+short_circuit_AND_end_AND3:                                  ; preds = short_circuit_AND_end_AND2 short_circuit_AND_branch_AND3 
+    %AND_short_circuit_3 = load i1, i1* %AND_addr_3
+    store i1 %AND_short_circuit_3, i1* %AND_addr_4
+    br i1 %AND_short_circuit_3, label %short_circuit_AND_branch_AND4, label %short_circuit_AND_end_AND4
+
+short_circuit_AND_branch_AND3:                               ; preds = short_circuit_AND_end_AND2 
+    %make_18 = load i32**, i32*** @make
+    %getelementptr_reg_37 = getelementptr inbounds i32*, i32** %make_18, i32 0
+    %load_result_37 = load i32*, i32** %getelementptr_reg_37
+    %getelementptr_reg_38 = getelementptr inbounds i32, i32* %load_result_37, i32 2
+    %load_result_38 = load i32, i32* %getelementptr_reg_38
+    %make_19 = load i32**, i32*** @make
+    %getelementptr_reg_39 = getelementptr inbounds i32*, i32** %make_19, i32 1
+    %load_result_39 = load i32*, i32** %getelementptr_reg_39
+    %getelementptr_reg_40 = getelementptr inbounds i32, i32* %load_result_39, i32 2
+    %load_result_40 = load i32, i32* %getelementptr_reg_40
+    %add_11 = add i32 %load_result_38, %load_result_40
+    %make_20 = load i32**, i32*** @make
+    %getelementptr_reg_41 = getelementptr inbounds i32*, i32** %make_20, i32 2
+    %load_result_41 = load i32*, i32** %getelementptr_reg_41
+    %getelementptr_reg_42 = getelementptr inbounds i32, i32* %load_result_41, i32 2
+    %load_result_42 = load i32, i32* %getelementptr_reg_42
+    %add_12 = add i32 %add_11, %load_result_42
+    %s_4 = load i32, i32* %s_addr
+    %eq_7 = icmp eq i32 %add_12, %s_4
+    store i1 %eq_7, i1* %AND_addr_3
+    br label %short_circuit_AND_end_AND3
+
+short_circuit_AND_end_AND4:                                  ; preds = short_circuit_AND_end_AND3 short_circuit_AND_branch_AND4 
+    %AND_short_circuit_4 = load i1, i1* %AND_addr_4
+    store i1 %AND_short_circuit_4, i1* %AND_addr_5
+    br i1 %AND_short_circuit_4, label %short_circuit_AND_branch_AND5, label %short_circuit_AND_end_AND5
+
+short_circuit_AND_branch_AND4:                               ; preds = short_circuit_AND_end_AND3 
+    %make_21 = load i32**, i32*** @make
+    %getelementptr_reg_43 = getelementptr inbounds i32*, i32** %make_21, i32 0
+    %load_result_43 = load i32*, i32** %getelementptr_reg_43
+    %getelementptr_reg_44 = getelementptr inbounds i32, i32* %load_result_43, i32 0
+    %load_result_44 = load i32, i32* %getelementptr_reg_44
+    %make_22 = load i32**, i32*** @make
+    %getelementptr_reg_45 = getelementptr inbounds i32*, i32** %make_22, i32 1
+    %load_result_45 = load i32*, i32** %getelementptr_reg_45
+    %getelementptr_reg_46 = getelementptr inbounds i32, i32* %load_result_45, i32 1
+    %load_result_46 = load i32, i32* %getelementptr_reg_46
+    %add_13 = add i32 %load_result_44, %load_result_46
+    %make_23 = load i32**, i32*** @make
+    %getelementptr_reg_47 = getelementptr inbounds i32*, i32** %make_23, i32 2
+    %load_result_47 = load i32*, i32** %getelementptr_reg_47
+    %getelementptr_reg_48 = getelementptr inbounds i32, i32* %load_result_47, i32 2
+    %load_result_48 = load i32, i32* %getelementptr_reg_48
+    %add_14 = add i32 %add_13, %load_result_48
+    %s_5 = load i32, i32* %s_addr
+    %eq_8 = icmp eq i32 %add_14, %s_5
+    store i1 %eq_8, i1* %AND_addr_4
+    br label %short_circuit_AND_end_AND4
+
+short_circuit_AND_end_AND5:                                  ; preds = short_circuit_AND_end_AND4 short_circuit_AND_branch_AND5 
+    %AND_short_circuit_5 = load i1, i1* %AND_addr_5
+    br i1 %AND_short_circuit_5, label %single_then_basicblock0, label %if_withoutelse_end_basicblock0
+
+short_circuit_AND_branch_AND5:                               ; preds = short_circuit_AND_end_AND4 
+    %make_24 = load i32**, i32*** @make
+    %getelementptr_reg_49 = getelementptr inbounds i32*, i32** %make_24, i32 2
+    %load_result_49 = load i32*, i32** %getelementptr_reg_49
+    %getelementptr_reg_50 = getelementptr inbounds i32, i32* %load_result_49, i32 0
+    %load_result_50 = load i32, i32* %getelementptr_reg_50
+    %make_25 = load i32**, i32*** @make
+    %getelementptr_reg_51 = getelementptr inbounds i32*, i32** %make_25, i32 1
+    %load_result_51 = load i32*, i32** %getelementptr_reg_51
+    %getelementptr_reg_52 = getelementptr inbounds i32, i32* %load_result_51, i32 1
+    %load_result_52 = load i32, i32* %getelementptr_reg_52
+    %add_15 = add i32 %load_result_50, %load_result_52
+    %make_26 = load i32**, i32*** @make
+    %getelementptr_reg_53 = getelementptr inbounds i32*, i32** %make_26, i32 0
+    %load_result_53 = load i32*, i32** %getelementptr_reg_53
+    %getelementptr_reg_54 = getelementptr inbounds i32, i32* %load_result_53, i32 2
+    %load_result_54 = load i32, i32* %getelementptr_reg_54
+    %add_16 = add i32 %add_15, %load_result_54
+    %s_6 = load i32, i32* %s_addr
+    %eq_9 = icmp eq i32 %add_16, %s_6
+    store i1 %eq_9, i1* %AND_addr_5
+    br label %short_circuit_AND_end_AND5
+
+single_then_basicblock0:                                     ; preds = short_circuit_AND_end_AND5 
+    %count = load i32*, i32** @count
+    %getelementptr_reg_55 = getelementptr inbounds i32, i32* %count, i32 0
+    %load_result_55 = load i32, i32* %getelementptr_reg_55
+    %count_0 = load i32*, i32** @count
+    %getelementptr_reg_56 = getelementptr inbounds i32, i32* %count_0, i32 0
+    %load_result_56 = load i32, i32* %getelementptr_reg_56
+    %add_17 = add i32 %load_result_56, 1
+    store i32 %add_17, i32* %getelementptr_reg_55
+    %i = load i32, i32* %i_addr
+    store i32 0, i32* %i_addr
+    br label %for_condition
+
+if_withoutelse_end_basicblock0:                              ; preds = single_then_basicblock0 short_circuit_AND_end_AND5 for_end_merge 
+    br label %if_end_basicblock
+
+for_condition:                                               ; preds = single_then_basicblock0 for_step 
+    %i_0 = load i32, i32* %i_addr
+    %sle = icmp sle i32 %i_0, 2
+    br i1 %sle, label %for_body, label %for_end_merge
+
+for_step:                                                    ; preds = for_body for_end_merge0 
+    %i_2 = load i32, i32* %i_addr
+    %add_19 = add i32 %i_2, 1
+    store i32 %add_19, i32* %i_addr
+    br label %for_condition
+
+for_body:                                                    ; preds = for_condition 
+    %j = load i32, i32* %j_addr
+    store i32 0, i32* %j_addr
+    br label %for_condition0
+
+for_end_merge:                                               ; preds = for_condition 
+    %const_string_pointer_1 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string1, i32 0, i32 0
+    call void @print(i8* %const_string_pointer_1)
+    br label %if_withoutelse_end_basicblock0
+
+for_condition0:                                              ; preds = for_body for_step0 
+    %j_0 = load i32, i32* %j_addr
+    %sle_0 = icmp sle i32 %j_0, 2
+    br i1 %sle_0, label %for_body0, label %for_end_merge0
+
+for_step0:                                                   ; preds = for_body0 
+    %j_2 = load i32, i32* %j_addr
+    %add_18 = add i32 %j_2, 1
+    store i32 %add_18, i32* %j_addr
+    br label %for_condition0
+
+for_body0:                                                   ; preds = for_condition0 
+    %make_27 = load i32**, i32*** @make
+    %i_1 = load i32, i32* %i_addr
+    %getelementptr_reg_57 = getelementptr inbounds i32*, i32** %make_27, i32 %i_1
+    %load_result_57 = load i32*, i32** %getelementptr_reg_57
+    %j_1 = load i32, i32* %j_addr
+    %getelementptr_reg_58 = getelementptr inbounds i32, i32* %load_result_57, i32 %j_1
+    %load_result_58 = load i32, i32* %getelementptr_reg_58
+    %call_toString = call i8* @toString(i32 %load_result_58)
+    call void @print(i8* %call_toString)
+    %const_string_pointer = getelementptr inbounds [2 x i8], [2 x i8]* @const_string0, i32 0, i32 0
+    call void @print(i8* %const_string_pointer)
+    br label %for_step0
+
+for_end_merge0:                                              ; preds = for_condition0 
+    %const_string_pointer_0 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string1, i32 0, i32 0
+    call void @print(i8* %const_string_pointer_0)
+    br label %for_step
+
+then_basicblock0:                                            ; preds = else_basicblock 
+    %make_28 = load i32**, i32*** @make
+    %x_4 = load i32, i32* %x_addr
+    %getelementptr_reg_59 = getelementptr inbounds i32*, i32** %make_28, i32 %x_4
+    %load_result_59 = load i32*, i32** %getelementptr_reg_59
+    %y_3 = load i32, i32* %y_addr
+    %getelementptr_reg_60 = getelementptr inbounds i32, i32* %load_result_59, i32 %y_3
+    %load_result_60 = load i32, i32* %getelementptr_reg_60
+    %make_29 = load i32**, i32*** @make
+    %x_5 = load i32, i32* %x_addr
+    %getelementptr_reg_61 = getelementptr inbounds i32*, i32** %make_29, i32 %x_5
+    %load_result_61 = load i32*, i32** %getelementptr_reg_61
+    %getelementptr_reg_62 = getelementptr inbounds i32, i32* %load_result_61, i32 0
+    %load_result_62 = load i32, i32* %getelementptr_reg_62
+    %sub_3 = sub i32 15, %load_result_62
+    %make_30 = load i32**, i32*** @make
+    %x_6 = load i32, i32* %x_addr
+    %getelementptr_reg_63 = getelementptr inbounds i32*, i32** %make_30, i32 %x_6
+    %load_result_63 = load i32*, i32** %getelementptr_reg_63
+    %getelementptr_reg_64 = getelementptr inbounds i32, i32* %load_result_63, i32 1
+    %load_result_64 = load i32, i32* %getelementptr_reg_64
+    %sub_4 = sub i32 %sub_3, %load_result_64
+    store i32 %sub_4, i32* %getelementptr_reg_60
+    %make_31 = load i32**, i32*** @make
+    %x_7 = load i32, i32* %x_addr
+    %getelementptr_reg_65 = getelementptr inbounds i32*, i32** %make_31, i32 %x_7
+    %load_result_65 = load i32*, i32** %getelementptr_reg_65
+    %y_4 = load i32, i32* %y_addr
+    %getelementptr_reg_66 = getelementptr inbounds i32, i32* %load_result_65, i32 %y_4
+    %load_result_66 = load i32, i32* %getelementptr_reg_66
+    %sgt_0 = icmp sgt i32 %load_result_66, 0
+    store i1 %sgt_0, i1* %AND_addr_6
+    br i1 %sgt_0, label %short_circuit_AND_branch_AND6, label %short_circuit_AND_end_AND6
+
+else_basicblock0:                                            ; preds = else_basicblock 
+    %i_3 = load i32, i32* %i_addr
+    store i32 1, i32* %i_addr
+    br label %for_condition1
+
+if_end_basicblock0:                                          ; preds = then_basicblock0 else_basicblock0 if_withoutelse_end_basicblock1 for_end_merge1 
+    br label %if_end_basicblock
+
+short_circuit_AND_end_AND6:                                  ; preds = then_basicblock0 short_circuit_AND_branch_AND6 
+    %AND_short_circuit_6 = load i1, i1* %AND_addr_6
+    store i1 %AND_short_circuit_6, i1* %AND_addr_7
+    br i1 %AND_short_circuit_6, label %short_circuit_AND_branch_AND7, label %short_circuit_AND_end_AND7
+
+short_circuit_AND_branch_AND6:                               ; preds = then_basicblock0 
+    %make_32 = load i32**, i32*** @make
+    %x_8 = load i32, i32* %x_addr
+    %getelementptr_reg_67 = getelementptr inbounds i32*, i32** %make_32, i32 %x_8
+    %load_result_67 = load i32*, i32** %getelementptr_reg_67
+    %y_5 = load i32, i32* %y_addr
+    %getelementptr_reg_68 = getelementptr inbounds i32, i32* %load_result_67, i32 %y_5
+    %load_result_68 = load i32, i32* %getelementptr_reg_68
+    %slt_0 = icmp slt i32 %load_result_68, 10
+    store i1 %slt_0, i1* %AND_addr_6
+    br label %short_circuit_AND_end_AND6
+
+short_circuit_AND_end_AND7:                                  ; preds = short_circuit_AND_end_AND6 short_circuit_AND_branch_AND7 
+    %AND_short_circuit_7 = load i1, i1* %AND_addr_7
+    br i1 %AND_short_circuit_7, label %single_then_basicblock1, label %if_withoutelse_end_basicblock1
+
+short_circuit_AND_branch_AND7:                               ; preds = short_circuit_AND_end_AND6 
+    %color = load i32*, i32** @color
+    %make_33 = load i32**, i32*** @make
+    %x_9 = load i32, i32* %x_addr
+    %getelementptr_reg_69 = getelementptr inbounds i32*, i32** %make_33, i32 %x_9
+    %load_result_69 = load i32*, i32** %getelementptr_reg_69
+    %y_6 = load i32, i32* %y_addr
+    %getelementptr_reg_70 = getelementptr inbounds i32, i32* %load_result_69, i32 %y_6
+    %load_result_70 = load i32, i32* %getelementptr_reg_70
+    %getelementptr_reg_71 = getelementptr inbounds i32, i32* %color, i32 %load_result_70
+    %load_result_71 = load i32, i32* %getelementptr_reg_71
+    %eq_11 = icmp eq i32 %load_result_71, 0
+    store i1 %eq_11, i1* %AND_addr_7
+    br label %short_circuit_AND_end_AND7
+
+single_then_basicblock1:                                     ; preds = short_circuit_AND_end_AND7 
+    %color_0 = load i32*, i32** @color
+    %make_34 = load i32**, i32*** @make
+    %x_10 = load i32, i32* %x_addr
+    %getelementptr_reg_72 = getelementptr inbounds i32*, i32** %make_34, i32 %x_10
+    %load_result_72 = load i32*, i32** %getelementptr_reg_72
+    %y_7 = load i32, i32* %y_addr
+    %getelementptr_reg_73 = getelementptr inbounds i32, i32* %load_result_72, i32 %y_7
+    %load_result_73 = load i32, i32* %getelementptr_reg_73
+    %getelementptr_reg_74 = getelementptr inbounds i32, i32* %color_0, i32 %load_result_73
+    %load_result_74 = load i32, i32* %getelementptr_reg_74
+    store i32 1, i32* %getelementptr_reg_74
+    %y_8 = load i32, i32* %y_addr
+    %eq_12 = icmp eq i32 %y_8, 2
+    br i1 %eq_12, label %then_basicblock1, label %else_basicblock1
+
+if_withoutelse_end_basicblock1:                              ; preds = single_then_basicblock1 short_circuit_AND_end_AND7 if_end_basicblock1 
+    br label %if_end_basicblock0
+
+then_basicblock1:                                            ; preds = single_then_basicblock1 
+    %x_11 = load i32, i32* %x_addr
+    %add_20 = add i32 %x_11, 1
+    %z_0 = load i32, i32* %z_addr
+    %make_35 = load i32**, i32*** @make
+    %x_12 = load i32, i32* %x_addr
+    %getelementptr_reg_75 = getelementptr inbounds i32*, i32** %make_35, i32 %x_12
+    %load_result_75 = load i32*, i32** %getelementptr_reg_75
+    %y_9 = load i32, i32* %y_addr
+    %getelementptr_reg_76 = getelementptr inbounds i32, i32* %load_result_75, i32 %y_9
+    %load_result_76 = load i32, i32* %getelementptr_reg_76
+    %add_21 = add i32 %z_0, %load_result_76
+    call void @search(i32 %add_20, i32 0, i32 %add_21)
+    br label %if_end_basicblock1
+
+else_basicblock1:                                            ; preds = single_then_basicblock1 
+    %x_13 = load i32, i32* %x_addr
+    %y_10 = load i32, i32* %y_addr
+    %add_22 = add i32 %y_10, 1
+    %z_1 = load i32, i32* %z_addr
+    %make_36 = load i32**, i32*** @make
+    %x_14 = load i32, i32* %x_addr
+    %getelementptr_reg_77 = getelementptr inbounds i32*, i32** %make_36, i32 %x_14
+    %load_result_77 = load i32*, i32** %getelementptr_reg_77
+    %y_11 = load i32, i32* %y_addr
+    %getelementptr_reg_78 = getelementptr inbounds i32, i32* %load_result_77, i32 %y_11
+    %load_result_78 = load i32, i32* %getelementptr_reg_78
+    %add_23 = add i32 %z_1, %load_result_78
+    call void @search(i32 %x_13, i32 %add_22, i32 %add_23)
+    br label %if_end_basicblock1
+
+if_end_basicblock1:                                          ; preds = then_basicblock1 else_basicblock1 
+    %color_1 = load i32*, i32** @color
+    %make_37 = load i32**, i32*** @make
+    %x_15 = load i32, i32* %x_addr
+    %getelementptr_reg_79 = getelementptr inbounds i32*, i32** %make_37, i32 %x_15
+    %load_result_79 = load i32*, i32** %getelementptr_reg_79
+    %y_12 = load i32, i32* %y_addr
+    %getelementptr_reg_80 = getelementptr inbounds i32, i32* %load_result_79, i32 %y_12
+    %load_result_80 = load i32, i32* %getelementptr_reg_80
+    %getelementptr_reg_81 = getelementptr inbounds i32, i32* %color_1, i32 %load_result_80
+    %load_result_81 = load i32, i32* %getelementptr_reg_81
+    store i32 0, i32* %getelementptr_reg_81
+    br label %if_withoutelse_end_basicblock1
+
+for_condition1:                                              ; preds = else_basicblock0 for_step1 
+    %i_4 = load i32, i32* %i_addr
+    %sle_1 = icmp sle i32 %i_4, 9
+    br i1 %sle_1, label %for_body1, label %for_end_merge1
+
+for_step1:                                                   ; preds = for_body1 if_withoutelse_end_basicblock2 
+    %i_11 = load i32, i32* %i_addr
+    %add_28 = add i32 %i_11, 1
+    store i32 %add_28, i32* %i_addr
+    br label %for_condition1
+
+for_body1:                                                   ; preds = for_condition1 
+    %color_2 = load i32*, i32** @color
+    %i_5 = load i32, i32* %i_addr
+    %getelementptr_reg_82 = getelementptr inbounds i32, i32* %color_2, i32 %i_5
+    %load_result_82 = load i32, i32* %getelementptr_reg_82
+    %eq_13 = icmp eq i32 %load_result_82, 0
+    br i1 %eq_13, label %single_then_basicblock2, label %if_withoutelse_end_basicblock2
+
+for_end_merge1:                                              ; preds = for_condition1 
+    br label %if_end_basicblock0
+
+single_then_basicblock2:                                     ; preds = for_body1 
+    %color_3 = load i32*, i32** @color
+    %i_6 = load i32, i32* %i_addr
+    %getelementptr_reg_83 = getelementptr inbounds i32, i32* %color_3, i32 %i_6
+    %load_result_83 = load i32, i32* %getelementptr_reg_83
+    store i32 1, i32* %getelementptr_reg_83
+    %make_38 = load i32**, i32*** @make
+    %x_16 = load i32, i32* %x_addr
+    %getelementptr_reg_84 = getelementptr inbounds i32*, i32** %make_38, i32 %x_16
+    %load_result_84 = load i32*, i32** %getelementptr_reg_84
+    %y_13 = load i32, i32* %y_addr
+    %getelementptr_reg_85 = getelementptr inbounds i32, i32* %load_result_84, i32 %y_13
+    %load_result_85 = load i32, i32* %getelementptr_reg_85
+    %i_7 = load i32, i32* %i_addr
+    store i32 %i_7, i32* %getelementptr_reg_85
+    %y_14 = load i32, i32* %y_addr
+    %eq_14 = icmp eq i32 %y_14, 2
+    br i1 %eq_14, label %then_basicblock2, label %else_basicblock2
+
+if_withoutelse_end_basicblock2:                              ; preds = single_then_basicblock2 for_body1 if_end_basicblock2 
+    br label %for_step1
+
+then_basicblock2:                                            ; preds = single_then_basicblock2 
+    %x_17 = load i32, i32* %x_addr
+    %add_24 = add i32 %x_17, 1
+    %z_2 = load i32, i32* %z_addr
+    %i_8 = load i32, i32* %i_addr
+    %add_25 = add i32 %z_2, %i_8
+    call void @search(i32 %add_24, i32 0, i32 %add_25)
+    br label %if_end_basicblock2
+
+else_basicblock2:                                            ; preds = single_then_basicblock2 
+    %x_18 = load i32, i32* %x_addr
+    %y_15 = load i32, i32* %y_addr
+    %add_26 = add i32 %y_15, 1
+    %z_3 = load i32, i32* %z_addr
+    %i_9 = load i32, i32* %i_addr
+    %add_27 = add i32 %z_3, %i_9
+    call void @search(i32 %x_18, i32 %add_26, i32 %add_27)
+    br label %if_end_basicblock2
+
+if_end_basicblock2:                                          ; preds = then_basicblock2 else_basicblock2 
+    %make_39 = load i32**, i32*** @make
+    %x_19 = load i32, i32* %x_addr
+    %getelementptr_reg_86 = getelementptr inbounds i32*, i32** %make_39, i32 %x_19
+    %load_result_86 = load i32*, i32** %getelementptr_reg_86
+    %y_16 = load i32, i32* %y_addr
+    %getelementptr_reg_87 = getelementptr inbounds i32, i32* %load_result_86, i32 %y_16
+    %load_result_87 = load i32, i32* %getelementptr_reg_87
+    store i32 0, i32* %getelementptr_reg_87
+    %color_4 = load i32*, i32** @color
+    %i_10 = load i32, i32* %i_addr
+    %getelementptr_reg_88 = getelementptr inbounds i32, i32* %color_4, i32 %i_10
+    %load_result_88 = load i32, i32* %getelementptr_reg_88
+    store i32 0, i32* %getelementptr_reg_88
+    br label %if_withoutelse_end_basicblock2
+
+return_block0:                                               ; preds = if_withoutelse_end_basicblock 
+    ret void
+}
+define dso_local void @origin(i32 %N_para) {
+entrance_block0:                                             
+    %N_addr = alloca i32
+    store i32 %N_para, i32* %N_addr
+    %make = load i32**, i32*** @make
+    %N = load i32, i32* %N_addr
+    %mul_bytes = mul i32 %N, 8
+    %sum_bytes = add i32 %mul_bytes, 4
+    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
+    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
+    store i32 %N, i32* %array_cast_i8_to_i32
+    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32**
+    store i32** %array_addr, i32*** @make
+    %i = load i32, i32* @i
+    store i32 0, i32* @i
+    br label %for_condition
+
+for_condition:                                               ; preds = entrance_block0 for_step 
+    %i_0 = load i32, i32* @i
+    %N_0 = load i32, i32* %N_addr
+    %slt = icmp slt i32 %i_0, %N_0
+    br i1 %slt, label %for_body, label %for_end_merge
+
+for_step:                                                    ; preds = for_body for_end_merge0 
+    %i_3 = load i32, i32* @i
+    %add_0 = add i32 %i_3, 1
+    store i32 %add_0, i32* @i
+    br label %for_condition
+
+for_body:                                                    ; preds = for_condition 
+    %make_0 = load i32**, i32*** @make
+    %i_1 = load i32, i32* @i
+    %getelementptr_reg = getelementptr inbounds i32*, i32** %make_0, i32 %i_1
+    %load_result = load i32*, i32** %getelementptr_reg
+    %N_1 = load i32, i32* %N_addr
+    %mul_bytes_0 = mul i32 %N_1, 4
+    %sum_bytes_0 = add i32 %mul_bytes_0, 4
+    %malloca_0 = call i8* @_f_malloc(i32 %sum_bytes_0)
+    %array_cast_i8_to_i32_0 = bitcast i8* %malloca_0 to i32*
+    store i32 %N_1, i32* %array_cast_i8_to_i32_0
+    %array_tmp_begin_i32_0 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32_0, i32 1
+    %array_addr_0 = bitcast i32* %array_tmp_begin_i32_0 to i32*
+    store i32* %array_addr_0, i32** %getelementptr_reg
+    %j = load i32, i32* @j
+    store i32 0, i32* @j
+    br label %for_condition0
+
+for_end_merge:                                               ; preds = for_condition 
+    br label %return_block0
+
+for_condition0:                                              ; preds = for_body for_step0 
+    %j_0 = load i32, i32* @j
+    %N_2 = load i32, i32* %N_addr
+    %slt_0 = icmp slt i32 %j_0, %N_2
+    br i1 %slt_0, label %for_body0, label %for_end_merge0
+
+for_step0:                                                   ; preds = for_body0 
+    %j_2 = load i32, i32* @j
+    %add = add i32 %j_2, 1
+    store i32 %add, i32* @j
+    br label %for_condition0
+
+for_body0:                                                   ; preds = for_condition0 
+    %make_1 = load i32**, i32*** @make
+    %i_2 = load i32, i32* @i
+    %getelementptr_reg_0 = getelementptr inbounds i32*, i32** %make_1, i32 %i_2
+    %load_result_0 = load i32*, i32** %getelementptr_reg_0
+    %j_1 = load i32, i32* @j
+    %getelementptr_reg_1 = getelementptr inbounds i32, i32* %load_result_0, i32 %j_1
+    %load_result_1 = load i32, i32* %getelementptr_reg_1
+    store i32 0, i32* %getelementptr_reg_1
+    br label %for_step0
+
+for_end_merge0:                                              ; preds = for_condition0 
+    br label %for_step
+
+return_block0:                                               ; preds = for_end_merge 
+    ret void
+}
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %AND_addr = alloca i1
     %return_register_infunction_addr = alloca i32
-    br label %while_condition
-
-while_condition:                                             ; preds = entrance_block0 while_body 
-    %C = load i32, i32* @C
-    %shl = shl i32 1, 29
-    %slt = icmp slt i32 %C, %shl
-    store i1 %slt, i1* %AND_addr
-    br i1 %slt, label %short_circuit_AND_branch_AND, label %short_circuit_AND_end_AND
-
-while_body:                                                  ; preds = while_condition short_circuit_AND_end_AND 
-    %A = load i32, i32* @A
-    %C_1 = load i32, i32* @C
-    %A_0 = load i32, i32* @A
-    %sub = sub i32 %C_1, %A_0
-    %B = load i32, i32* @B
-    %add = add i32 %sub, %B
-    %A_1 = load i32, i32* @A
-    %B_0 = load i32, i32* @B
-    %add_0 = add i32 %A_1, %B_0
-    %sub_0 = sub i32 %add, %add_0
-    %C_2 = load i32, i32* @C
-    %A_2 = load i32, i32* @A
-    %sub_1 = sub i32 %C_2, %A_2
-    %B_1 = load i32, i32* @B
-    %add_1 = add i32 %sub_1, %B_1
-    %A_3 = load i32, i32* @A
-    %B_2 = load i32, i32* @B
-    %add_2 = add i32 %A_3, %B_2
-    %sub_2 = sub i32 %add_1, %add_2
-    %add_3 = add i32 %sub_0, %sub_2
-    %C_3 = load i32, i32* @C
-    %A_4 = load i32, i32* @A
-    %sub_3 = sub i32 %C_3, %A_4
-    %B_3 = load i32, i32* @B
-    %add_4 = add i32 %sub_3, %B_3
-    %A_5 = load i32, i32* @A
-    %B_4 = load i32, i32* @B
-    %add_5 = add i32 %A_5, %B_4
-    %sub_4 = sub i32 %add_4, %add_5
-    %C_4 = load i32, i32* @C
-    %A_6 = load i32, i32* @A
-    %sub_5 = sub i32 %C_4, %A_6
-    %B_5 = load i32, i32* @B
-    %add_6 = add i32 %sub_5, %B_5
-    %add_7 = add i32 %sub_4, %add_6
-    %add_8 = add i32 %add_3, %add_7
-    %A_7 = load i32, i32* @A
-    %B_6 = load i32, i32* @B
-    %add_9 = add i32 %A_7, %B_6
-    %C_5 = load i32, i32* @C
-    %A_8 = load i32, i32* @A
-    %sub_6 = sub i32 %C_5, %A_8
-    %B_7 = load i32, i32* @B
-    %add_10 = add i32 %sub_6, %B_7
-    %add_11 = add i32 %add_9, %add_10
-    %A_9 = load i32, i32* @A
-    %B_8 = load i32, i32* @B
-    %add_12 = add i32 %A_9, %B_8
-    %sub_7 = sub i32 %add_11, %add_12
-    %C_6 = load i32, i32* @C
-    %A_10 = load i32, i32* @A
-    %sub_8 = sub i32 %C_6, %A_10
-    %B_9 = load i32, i32* @B
-    %add_13 = add i32 %sub_8, %B_9
-    %A_11 = load i32, i32* @A
-    %B_10 = load i32, i32* @B
-    %add_14 = add i32 %A_11, %B_10
-    %sub_9 = sub i32 %add_13, %add_14
-    %C_7 = load i32, i32* @C
-    %A_12 = load i32, i32* @A
-    %sub_10 = sub i32 %C_7, %A_12
-    %B_11 = load i32, i32* @B
-    %add_15 = add i32 %sub_10, %B_11
-    %add_16 = add i32 %sub_9, %add_15
-    %add_17 = add i32 %sub_7, %add_16
-    %sub_11 = sub i32 %add_8, %add_17
-    %A_13 = load i32, i32* @A
-    %B_12 = load i32, i32* @B
-    %add_18 = add i32 %A_13, %B_12
-    %C_8 = load i32, i32* @C
-    %A_14 = load i32, i32* @A
-    %sub_12 = sub i32 %C_8, %A_14
-    %B_13 = load i32, i32* @B
-    %add_19 = add i32 %sub_12, %B_13
-    %add_20 = add i32 %add_18, %add_19
-    %A_15 = load i32, i32* @A
-    %B_14 = load i32, i32* @B
-    %add_21 = add i32 %A_15, %B_14
-    %C_9 = load i32, i32* @C
-    %A_16 = load i32, i32* @A
-    %sub_13 = sub i32 %C_9, %A_16
-    %B_15 = load i32, i32* @B
-    %add_22 = add i32 %sub_13, %B_15
-    %add_23 = add i32 %add_21, %add_22
-    %sub_14 = sub i32 %add_20, %add_23
-    %A_17 = load i32, i32* @A
-    %B_16 = load i32, i32* @B
-    %add_24 = add i32 %A_17, %B_16
-    %C_10 = load i32, i32* @C
-    %A_18 = load i32, i32* @A
-    %sub_15 = sub i32 %C_10, %A_18
-    %B_17 = load i32, i32* @B
-    %add_25 = add i32 %sub_15, %B_17
-    %add_26 = add i32 %add_24, %add_25
-    %A_19 = load i32, i32* @A
-    %B_18 = load i32, i32* @B
-    %add_27 = add i32 %A_19, %B_18
-    %sub_16 = sub i32 %add_26, %add_27
-    %sub_17 = sub i32 %sub_14, %sub_16
-    %C_11 = load i32, i32* @C
-    %A_20 = load i32, i32* @A
-    %sub_18 = sub i32 %C_11, %A_20
-    %B_19 = load i32, i32* @B
-    %add_28 = add i32 %sub_18, %B_19
-    %A_21 = load i32, i32* @A
-    %B_20 = load i32, i32* @B
-    %add_29 = add i32 %A_21, %B_20
-    %sub_19 = sub i32 %add_28, %add_29
-    %C_12 = load i32, i32* @C
-    %A_22 = load i32, i32* @A
-    %sub_20 = sub i32 %C_12, %A_22
-    %B_21 = load i32, i32* @B
-    %add_30 = add i32 %sub_20, %B_21
-    %add_31 = add i32 %sub_19, %add_30
-    %A_23 = load i32, i32* @A
-    %B_22 = load i32, i32* @B
-    %add_32 = add i32 %A_23, %B_22
-    %C_13 = load i32, i32* @C
-    %A_24 = load i32, i32* @A
-    %sub_21 = sub i32 %C_13, %A_24
-    %B_23 = load i32, i32* @B
-    %add_33 = add i32 %sub_21, %B_23
-    %add_34 = add i32 %add_32, %add_33
-    %A_25 = load i32, i32* @A
-    %B_24 = load i32, i32* @B
-    %add_35 = add i32 %A_25, %B_24
-    %sub_22 = sub i32 %add_34, %add_35
-    %sub_23 = sub i32 %add_31, %sub_22
-    %add_36 = add i32 %sub_17, %sub_23
-    %sub_24 = sub i32 %sub_11, %add_36
-    %C_14 = load i32, i32* @C
-    %A_26 = load i32, i32* @A
-    %sub_25 = sub i32 %C_14, %A_26
-    %B_25 = load i32, i32* @B
-    %add_37 = add i32 %sub_25, %B_25
-    %A_27 = load i32, i32* @A
-    %B_26 = load i32, i32* @B
-    %add_38 = add i32 %A_27, %B_26
-    %sub_26 = sub i32 %add_37, %add_38
-    %C_15 = load i32, i32* @C
-    %A_28 = load i32, i32* @A
-    %sub_27 = sub i32 %C_15, %A_28
-    %B_27 = load i32, i32* @B
-    %add_39 = add i32 %sub_27, %B_27
-    %A_29 = load i32, i32* @A
-    %B_28 = load i32, i32* @B
-    %add_40 = add i32 %A_29, %B_28
-    %sub_28 = sub i32 %add_39, %add_40
-    %add_41 = add i32 %sub_26, %sub_28
-    %C_16 = load i32, i32* @C
-    %A_30 = load i32, i32* @A
-    %sub_29 = sub i32 %C_16, %A_30
-    %B_29 = load i32, i32* @B
-    %add_42 = add i32 %sub_29, %B_29
-    %A_31 = load i32, i32* @A
-    %B_30 = load i32, i32* @B
-    %add_43 = add i32 %A_31, %B_30
-    %sub_30 = sub i32 %add_42, %add_43
-    %C_17 = load i32, i32* @C
-    %A_32 = load i32, i32* @A
-    %sub_31 = sub i32 %C_17, %A_32
-    %B_31 = load i32, i32* @B
-    %add_44 = add i32 %sub_31, %B_31
-    %add_45 = add i32 %sub_30, %add_44
-    %add_46 = add i32 %add_41, %add_45
-    %A_33 = load i32, i32* @A
-    %B_32 = load i32, i32* @B
-    %add_47 = add i32 %A_33, %B_32
-    %C_18 = load i32, i32* @C
-    %A_34 = load i32, i32* @A
-    %sub_32 = sub i32 %C_18, %A_34
-    %B_33 = load i32, i32* @B
-    %add_48 = add i32 %sub_32, %B_33
-    %add_49 = add i32 %add_47, %add_48
-    %A_35 = load i32, i32* @A
-    %B_34 = load i32, i32* @B
-    %add_50 = add i32 %A_35, %B_34
-    %sub_33 = sub i32 %add_49, %add_50
-    %C_19 = load i32, i32* @C
-    %A_36 = load i32, i32* @A
-    %sub_34 = sub i32 %C_19, %A_36
-    %B_35 = load i32, i32* @B
-    %add_51 = add i32 %sub_34, %B_35
-    %A_37 = load i32, i32* @A
-    %B_36 = load i32, i32* @B
-    %add_52 = add i32 %A_37, %B_36
-    %sub_35 = sub i32 %add_51, %add_52
-    %C_20 = load i32, i32* @C
-    %A_38 = load i32, i32* @A
-    %sub_36 = sub i32 %C_20, %A_38
-    %B_37 = load i32, i32* @B
-    %add_53 = add i32 %sub_36, %B_37
-    %add_54 = add i32 %sub_35, %add_53
-    %add_55 = add i32 %sub_33, %add_54
-    %sub_37 = sub i32 %add_46, %add_55
-    %A_39 = load i32, i32* @A
-    %B_38 = load i32, i32* @B
-    %add_56 = add i32 %A_39, %B_38
-    %C_21 = load i32, i32* @C
-    %A_40 = load i32, i32* @A
-    %sub_38 = sub i32 %C_21, %A_40
-    %B_39 = load i32, i32* @B
-    %add_57 = add i32 %sub_38, %B_39
-    %add_58 = add i32 %add_56, %add_57
-    %A_41 = load i32, i32* @A
-    %B_40 = load i32, i32* @B
-    %add_59 = add i32 %A_41, %B_40
-    %sub_39 = sub i32 %add_58, %add_59
-    %C_22 = load i32, i32* @C
-    %A_42 = load i32, i32* @A
-    %sub_40 = sub i32 %C_22, %A_42
-    %B_41 = load i32, i32* @B
-    %add_60 = add i32 %sub_40, %B_41
-    %A_43 = load i32, i32* @A
-    %B_42 = load i32, i32* @B
-    %add_61 = add i32 %A_43, %B_42
-    %sub_41 = sub i32 %add_60, %add_61
-    %C_23 = load i32, i32* @C
-    %A_44 = load i32, i32* @A
-    %sub_42 = sub i32 %C_23, %A_44
-    %B_43 = load i32, i32* @B
-    %add_62 = add i32 %sub_42, %B_43
-    %add_63 = add i32 %sub_41, %add_62
-    %add_64 = add i32 %sub_39, %add_63
-    %A_45 = load i32, i32* @A
-    %B_44 = load i32, i32* @B
-    %add_65 = add i32 %A_45, %B_44
-    %C_24 = load i32, i32* @C
-    %A_46 = load i32, i32* @A
-    %sub_43 = sub i32 %C_24, %A_46
-    %B_45 = load i32, i32* @B
-    %add_66 = add i32 %sub_43, %B_45
-    %add_67 = add i32 %add_65, %add_66
-    %A_47 = load i32, i32* @A
-    %B_46 = load i32, i32* @B
-    %add_68 = add i32 %A_47, %B_46
-    %sub_44 = sub i32 %add_67, %add_68
-    %C_25 = load i32, i32* @C
-    %A_48 = load i32, i32* @A
-    %sub_45 = sub i32 %C_25, %A_48
-    %B_47 = load i32, i32* @B
-    %add_69 = add i32 %sub_45, %B_47
-    %A_49 = load i32, i32* @A
-    %B_48 = load i32, i32* @B
-    %add_70 = add i32 %A_49, %B_48
-    %sub_46 = sub i32 %add_69, %add_70
-    %C_26 = load i32, i32* @C
-    %A_50 = load i32, i32* @A
-    %sub_47 = sub i32 %C_26, %A_50
-    %B_49 = load i32, i32* @B
-    %add_71 = add i32 %sub_47, %B_49
-    %add_72 = add i32 %sub_46, %add_71
-    %add_73 = add i32 %sub_44, %add_72
-    %sub_48 = sub i32 %add_64, %add_73
-    %sub_49 = sub i32 %sub_37, %sub_48
-    %add_74 = add i32 %sub_24, %sub_49
-    %A_51 = load i32, i32* @A
-    %B_50 = load i32, i32* @B
-    %add_75 = add i32 %A_51, %B_50
-    %C_27 = load i32, i32* @C
-    %A_52 = load i32, i32* @A
-    %sub_50 = sub i32 %C_27, %A_52
-    %B_51 = load i32, i32* @B
-    %add_76 = add i32 %sub_50, %B_51
-    %add_77 = add i32 %add_75, %add_76
-    %A_53 = load i32, i32* @A
-    %B_52 = load i32, i32* @B
-    %add_78 = add i32 %A_53, %B_52
-    %C_28 = load i32, i32* @C
-    %A_54 = load i32, i32* @A
-    %sub_51 = sub i32 %C_28, %A_54
-    %B_53 = load i32, i32* @B
-    %add_79 = add i32 %sub_51, %B_53
-    %add_80 = add i32 %add_78, %add_79
-    %sub_52 = sub i32 %add_77, %add_80
-    %A_55 = load i32, i32* @A
-    %B_54 = load i32, i32* @B
-    %add_81 = add i32 %A_55, %B_54
-    %C_29 = load i32, i32* @C
-    %A_56 = load i32, i32* @A
-    %sub_53 = sub i32 %C_29, %A_56
-    %B_55 = load i32, i32* @B
-    %add_82 = add i32 %sub_53, %B_55
-    %add_83 = add i32 %add_81, %add_82
-    %A_57 = load i32, i32* @A
-    %B_56 = load i32, i32* @B
-    %add_84 = add i32 %A_57, %B_56
-    %sub_54 = sub i32 %add_83, %add_84
-    %sub_55 = sub i32 %sub_52, %sub_54
-    %C_30 = load i32, i32* @C
-    %A_58 = load i32, i32* @A
-    %sub_56 = sub i32 %C_30, %A_58
-    %B_57 = load i32, i32* @B
-    %add_85 = add i32 %sub_56, %B_57
-    %A_59 = load i32, i32* @A
-    %B_58 = load i32, i32* @B
-    %add_86 = add i32 %A_59, %B_58
-    %sub_57 = sub i32 %add_85, %add_86
-    %C_31 = load i32, i32* @C
-    %A_60 = load i32, i32* @A
-    %sub_58 = sub i32 %C_31, %A_60
-    %B_59 = load i32, i32* @B
-    %add_87 = add i32 %sub_58, %B_59
-    %add_88 = add i32 %sub_57, %add_87
-    %A_61 = load i32, i32* @A
-    %B_60 = load i32, i32* @B
-    %add_89 = add i32 %A_61, %B_60
-    %C_32 = load i32, i32* @C
-    %A_62 = load i32, i32* @A
-    %sub_59 = sub i32 %C_32, %A_62
-    %B_61 = load i32, i32* @B
-    %add_90 = add i32 %sub_59, %B_61
-    %add_91 = add i32 %add_89, %add_90
-    %A_63 = load i32, i32* @A
-    %B_62 = load i32, i32* @B
-    %add_92 = add i32 %A_63, %B_62
-    %sub_60 = sub i32 %add_91, %add_92
-    %sub_61 = sub i32 %add_88, %sub_60
-    %add_93 = add i32 %sub_55, %sub_61
-    %C_33 = load i32, i32* @C
-    %A_64 = load i32, i32* @A
-    %sub_62 = sub i32 %C_33, %A_64
-    %B_63 = load i32, i32* @B
-    %add_94 = add i32 %sub_62, %B_63
-    %A_65 = load i32, i32* @A
-    %B_64 = load i32, i32* @B
-    %add_95 = add i32 %A_65, %B_64
-    %sub_63 = sub i32 %add_94, %add_95
-    %C_34 = load i32, i32* @C
-    %A_66 = load i32, i32* @A
-    %sub_64 = sub i32 %C_34, %A_66
-    %B_65 = load i32, i32* @B
-    %add_96 = add i32 %sub_64, %B_65
-    %add_97 = add i32 %sub_63, %add_96
-    %A_67 = load i32, i32* @A
-    %B_66 = load i32, i32* @B
-    %add_98 = add i32 %A_67, %B_66
-    %C_35 = load i32, i32* @C
-    %A_68 = load i32, i32* @A
-    %sub_65 = sub i32 %C_35, %A_68
-    %B_67 = load i32, i32* @B
-    %add_99 = add i32 %sub_65, %B_67
-    %add_100 = add i32 %add_98, %add_99
-    %A_69 = load i32, i32* @A
-    %B_68 = load i32, i32* @B
-    %add_101 = add i32 %A_69, %B_68
-    %sub_66 = sub i32 %add_100, %add_101
-    %sub_67 = sub i32 %add_97, %sub_66
-    %C_36 = load i32, i32* @C
-    %A_70 = load i32, i32* @A
-    %sub_68 = sub i32 %C_36, %A_70
-    %B_69 = load i32, i32* @B
-    %add_102 = add i32 %sub_68, %B_69
-    %A_71 = load i32, i32* @A
-    %B_70 = load i32, i32* @B
-    %add_103 = add i32 %A_71, %B_70
-    %sub_69 = sub i32 %add_102, %add_103
-    %C_37 = load i32, i32* @C
-    %A_72 = load i32, i32* @A
-    %sub_70 = sub i32 %C_37, %A_72
-    %B_71 = load i32, i32* @B
-    %add_104 = add i32 %sub_70, %B_71
-    %add_105 = add i32 %sub_69, %add_104
-    %A_73 = load i32, i32* @A
-    %B_72 = load i32, i32* @B
-    %add_106 = add i32 %A_73, %B_72
-    %C_38 = load i32, i32* @C
-    %A_74 = load i32, i32* @A
-    %sub_71 = sub i32 %C_38, %A_74
-    %B_73 = load i32, i32* @B
-    %add_107 = add i32 %sub_71, %B_73
-    %add_108 = add i32 %add_106, %add_107
-    %A_75 = load i32, i32* @A
-    %B_74 = load i32, i32* @B
-    %add_109 = add i32 %A_75, %B_74
-    %sub_72 = sub i32 %add_108, %add_109
-    %sub_73 = sub i32 %add_105, %sub_72
-    %add_110 = add i32 %sub_67, %sub_73
-    %add_111 = add i32 %add_93, %add_110
-    %C_39 = load i32, i32* @C
-    %A_76 = load i32, i32* @A
-    %sub_74 = sub i32 %C_39, %A_76
-    %B_75 = load i32, i32* @B
-    %add_112 = add i32 %sub_74, %B_75
-    %A_77 = load i32, i32* @A
-    %B_76 = load i32, i32* @B
-    %add_113 = add i32 %A_77, %B_76
-    %sub_75 = sub i32 %add_112, %add_113
-    %C_40 = load i32, i32* @C
-    %A_78 = load i32, i32* @A
-    %sub_76 = sub i32 %C_40, %A_78
-    %B_77 = load i32, i32* @B
-    %add_114 = add i32 %sub_76, %B_77
-    %A_79 = load i32, i32* @A
-    %B_78 = load i32, i32* @B
-    %add_115 = add i32 %A_79, %B_78
-    %sub_77 = sub i32 %add_114, %add_115
-    %add_116 = add i32 %sub_75, %sub_77
-    %C_41 = load i32, i32* @C
-    %A_80 = load i32, i32* @A
-    %sub_78 = sub i32 %C_41, %A_80
-    %B_79 = load i32, i32* @B
-    %add_117 = add i32 %sub_78, %B_79
-    %A_81 = load i32, i32* @A
-    %B_80 = load i32, i32* @B
-    %add_118 = add i32 %A_81, %B_80
-    %sub_79 = sub i32 %add_117, %add_118
-    %C_42 = load i32, i32* @C
-    %A_82 = load i32, i32* @A
-    %sub_80 = sub i32 %C_42, %A_82
-    %B_81 = load i32, i32* @B
-    %add_119 = add i32 %sub_80, %B_81
-    %add_120 = add i32 %sub_79, %add_119
-    %add_121 = add i32 %add_116, %add_120
-    %A_83 = load i32, i32* @A
-    %B_82 = load i32, i32* @B
-    %add_122 = add i32 %A_83, %B_82
-    %C_43 = load i32, i32* @C
-    %A_84 = load i32, i32* @A
-    %sub_81 = sub i32 %C_43, %A_84
-    %B_83 = load i32, i32* @B
-    %add_123 = add i32 %sub_81, %B_83
-    %add_124 = add i32 %add_122, %add_123
-    %A_85 = load i32, i32* @A
-    %B_84 = load i32, i32* @B
-    %add_125 = add i32 %A_85, %B_84
-    %sub_82 = sub i32 %add_124, %add_125
-    %C_44 = load i32, i32* @C
-    %A_86 = load i32, i32* @A
-    %sub_83 = sub i32 %C_44, %A_86
-    %B_85 = load i32, i32* @B
-    %add_126 = add i32 %sub_83, %B_85
-    %A_87 = load i32, i32* @A
-    %B_86 = load i32, i32* @B
-    %add_127 = add i32 %A_87, %B_86
-    %sub_84 = sub i32 %add_126, %add_127
-    %C_45 = load i32, i32* @C
-    %A_88 = load i32, i32* @A
-    %sub_85 = sub i32 %C_45, %A_88
-    %B_87 = load i32, i32* @B
-    %add_128 = add i32 %sub_85, %B_87
-    %add_129 = add i32 %sub_84, %add_128
-    %add_130 = add i32 %sub_82, %add_129
-    %sub_86 = sub i32 %add_121, %add_130
-    %A_89 = load i32, i32* @A
-    %B_88 = load i32, i32* @B
-    %add_131 = add i32 %A_89, %B_88
-    %C_46 = load i32, i32* @C
-    %A_90 = load i32, i32* @A
-    %sub_87 = sub i32 %C_46, %A_90
-    %B_89 = load i32, i32* @B
-    %add_132 = add i32 %sub_87, %B_89
-    %add_133 = add i32 %add_131, %add_132
-    %A_91 = load i32, i32* @A
-    %B_90 = load i32, i32* @B
-    %add_134 = add i32 %A_91, %B_90
-    %sub_88 = sub i32 %add_133, %add_134
-    %C_47 = load i32, i32* @C
-    %A_92 = load i32, i32* @A
-    %sub_89 = sub i32 %C_47, %A_92
-    %B_91 = load i32, i32* @B
-    %add_135 = add i32 %sub_89, %B_91
-    %A_93 = load i32, i32* @A
-    %B_92 = load i32, i32* @B
-    %add_136 = add i32 %A_93, %B_92
-    %sub_90 = sub i32 %add_135, %add_136
-    %C_48 = load i32, i32* @C
-    %A_94 = load i32, i32* @A
-    %sub_91 = sub i32 %C_48, %A_94
-    %B_93 = load i32, i32* @B
-    %add_137 = add i32 %sub_91, %B_93
-    %add_138 = add i32 %sub_90, %add_137
-    %add_139 = add i32 %sub_88, %add_138
-    %A_95 = load i32, i32* @A
-    %B_94 = load i32, i32* @B
-    %add_140 = add i32 %A_95, %B_94
-    %C_49 = load i32, i32* @C
-    %A_96 = load i32, i32* @A
-    %sub_92 = sub i32 %C_49, %A_96
-    %B_95 = load i32, i32* @B
-    %add_141 = add i32 %sub_92, %B_95
-    %add_142 = add i32 %add_140, %add_141
-    %A_97 = load i32, i32* @A
-    %B_96 = load i32, i32* @B
-    %add_143 = add i32 %A_97, %B_96
-    %sub_93 = sub i32 %add_142, %add_143
-    %C_50 = load i32, i32* @C
-    %A_98 = load i32, i32* @A
-    %sub_94 = sub i32 %C_50, %A_98
-    %B_97 = load i32, i32* @B
-    %add_144 = add i32 %sub_94, %B_97
-    %A_99 = load i32, i32* @A
-    %B_98 = load i32, i32* @B
-    %add_145 = add i32 %A_99, %B_98
-    %sub_95 = sub i32 %add_144, %add_145
-    %C_51 = load i32, i32* @C
-    %A_100 = load i32, i32* @A
-    %sub_96 = sub i32 %C_51, %A_100
-    %B_99 = load i32, i32* @B
-    %add_146 = add i32 %sub_96, %B_99
-    %add_147 = add i32 %sub_95, %add_146
-    %add_148 = add i32 %sub_93, %add_147
-    %sub_97 = sub i32 %add_139, %add_148
-    %sub_98 = sub i32 %sub_86, %sub_97
-    %add_149 = add i32 %add_111, %sub_98
-    %sub_99 = sub i32 %add_74, %add_149
-    store i32 %sub_99, i32* @A
-    %B_100 = load i32, i32* @B
-    %C_52 = load i32, i32* @C
-    %A_101 = load i32, i32* @A
-    %sub_100 = sub i32 %C_52, %A_101
-    %B_101 = load i32, i32* @B
-    %add_150 = add i32 %sub_100, %B_101
-    %A_102 = load i32, i32* @A
-    %B_102 = load i32, i32* @B
-    %add_151 = add i32 %A_102, %B_102
-    %sub_101 = sub i32 %add_150, %add_151
-    %C_53 = load i32, i32* @C
-    %A_103 = load i32, i32* @A
-    %sub_102 = sub i32 %C_53, %A_103
-    %B_103 = load i32, i32* @B
-    %add_152 = add i32 %sub_102, %B_103
-    %A_104 = load i32, i32* @A
-    %B_104 = load i32, i32* @B
-    %add_153 = add i32 %A_104, %B_104
-    %sub_103 = sub i32 %add_152, %add_153
-    %add_154 = add i32 %sub_101, %sub_103
-    %C_54 = load i32, i32* @C
-    %A_105 = load i32, i32* @A
-    %sub_104 = sub i32 %C_54, %A_105
-    %B_105 = load i32, i32* @B
-    %add_155 = add i32 %sub_104, %B_105
-    %A_106 = load i32, i32* @A
-    %B_106 = load i32, i32* @B
-    %add_156 = add i32 %A_106, %B_106
-    %sub_105 = sub i32 %add_155, %add_156
-    %C_55 = load i32, i32* @C
-    %A_107 = load i32, i32* @A
-    %sub_106 = sub i32 %C_55, %A_107
-    %B_107 = load i32, i32* @B
-    %add_157 = add i32 %sub_106, %B_107
-    %add_158 = add i32 %sub_105, %add_157
-    %add_159 = add i32 %add_154, %add_158
-    %A_108 = load i32, i32* @A
-    %B_108 = load i32, i32* @B
-    %add_160 = add i32 %A_108, %B_108
-    %C_56 = load i32, i32* @C
-    %A_109 = load i32, i32* @A
-    %sub_107 = sub i32 %C_56, %A_109
-    %B_109 = load i32, i32* @B
-    %add_161 = add i32 %sub_107, %B_109
-    %add_162 = add i32 %add_160, %add_161
-    %A_110 = load i32, i32* @A
-    %B_110 = load i32, i32* @B
-    %add_163 = add i32 %A_110, %B_110
-    %sub_108 = sub i32 %add_162, %add_163
-    %C_57 = load i32, i32* @C
-    %A_111 = load i32, i32* @A
-    %sub_109 = sub i32 %C_57, %A_111
-    %B_111 = load i32, i32* @B
-    %add_164 = add i32 %sub_109, %B_111
-    %A_112 = load i32, i32* @A
-    %B_112 = load i32, i32* @B
-    %add_165 = add i32 %A_112, %B_112
-    %sub_110 = sub i32 %add_164, %add_165
-    %C_58 = load i32, i32* @C
-    %A_113 = load i32, i32* @A
-    %sub_111 = sub i32 %C_58, %A_113
-    %B_113 = load i32, i32* @B
-    %add_166 = add i32 %sub_111, %B_113
-    %add_167 = add i32 %sub_110, %add_166
-    %add_168 = add i32 %sub_108, %add_167
-    %sub_112 = sub i32 %add_159, %add_168
-    %A_114 = load i32, i32* @A
-    %B_114 = load i32, i32* @B
-    %add_169 = add i32 %A_114, %B_114
-    %C_59 = load i32, i32* @C
-    %A_115 = load i32, i32* @A
-    %sub_113 = sub i32 %C_59, %A_115
-    %B_115 = load i32, i32* @B
-    %add_170 = add i32 %sub_113, %B_115
-    %add_171 = add i32 %add_169, %add_170
-    %A_116 = load i32, i32* @A
-    %B_116 = load i32, i32* @B
-    %add_172 = add i32 %A_116, %B_116
-    %C_60 = load i32, i32* @C
-    %A_117 = load i32, i32* @A
-    %sub_114 = sub i32 %C_60, %A_117
-    %B_117 = load i32, i32* @B
-    %add_173 = add i32 %sub_114, %B_117
-    %add_174 = add i32 %add_172, %add_173
-    %sub_115 = sub i32 %add_171, %add_174
-    %A_118 = load i32, i32* @A
-    %B_118 = load i32, i32* @B
-    %add_175 = add i32 %A_118, %B_118
-    %C_61 = load i32, i32* @C
-    %A_119 = load i32, i32* @A
-    %sub_116 = sub i32 %C_61, %A_119
-    %B_119 = load i32, i32* @B
-    %add_176 = add i32 %sub_116, %B_119
-    %add_177 = add i32 %add_175, %add_176
-    %A_120 = load i32, i32* @A
-    %B_120 = load i32, i32* @B
-    %add_178 = add i32 %A_120, %B_120
-    %sub_117 = sub i32 %add_177, %add_178
-    %sub_118 = sub i32 %sub_115, %sub_117
-    %C_62 = load i32, i32* @C
-    %A_121 = load i32, i32* @A
-    %sub_119 = sub i32 %C_62, %A_121
-    %B_121 = load i32, i32* @B
-    %add_179 = add i32 %sub_119, %B_121
-    %A_122 = load i32, i32* @A
-    %B_122 = load i32, i32* @B
-    %add_180 = add i32 %A_122, %B_122
-    %sub_120 = sub i32 %add_179, %add_180
-    %C_63 = load i32, i32* @C
-    %A_123 = load i32, i32* @A
-    %sub_121 = sub i32 %C_63, %A_123
-    %B_123 = load i32, i32* @B
-    %add_181 = add i32 %sub_121, %B_123
-    %add_182 = add i32 %sub_120, %add_181
-    %A_124 = load i32, i32* @A
-    %B_124 = load i32, i32* @B
-    %add_183 = add i32 %A_124, %B_124
-    %C_64 = load i32, i32* @C
-    %A_125 = load i32, i32* @A
-    %sub_122 = sub i32 %C_64, %A_125
-    %B_125 = load i32, i32* @B
-    %add_184 = add i32 %sub_122, %B_125
-    %add_185 = add i32 %add_183, %add_184
-    %A_126 = load i32, i32* @A
-    %B_126 = load i32, i32* @B
-    %add_186 = add i32 %A_126, %B_126
-    %sub_123 = sub i32 %add_185, %add_186
-    %sub_124 = sub i32 %add_182, %sub_123
-    %add_187 = add i32 %sub_118, %sub_124
-    %sub_125 = sub i32 %sub_112, %add_187
-    %C_65 = load i32, i32* @C
-    %A_127 = load i32, i32* @A
-    %sub_126 = sub i32 %C_65, %A_127
-    %B_127 = load i32, i32* @B
-    %add_188 = add i32 %sub_126, %B_127
-    %A_128 = load i32, i32* @A
-    %B_128 = load i32, i32* @B
-    %add_189 = add i32 %A_128, %B_128
-    %sub_127 = sub i32 %add_188, %add_189
-    %C_66 = load i32, i32* @C
-    %A_129 = load i32, i32* @A
-    %sub_128 = sub i32 %C_66, %A_129
-    %B_129 = load i32, i32* @B
-    %add_190 = add i32 %sub_128, %B_129
-    %A_130 = load i32, i32* @A
-    %B_130 = load i32, i32* @B
-    %add_191 = add i32 %A_130, %B_130
-    %sub_129 = sub i32 %add_190, %add_191
-    %add_192 = add i32 %sub_127, %sub_129
-    %C_67 = load i32, i32* @C
-    %A_131 = load i32, i32* @A
-    %sub_130 = sub i32 %C_67, %A_131
-    %B_131 = load i32, i32* @B
-    %add_193 = add i32 %sub_130, %B_131
-    %A_132 = load i32, i32* @A
-    %B_132 = load i32, i32* @B
-    %add_194 = add i32 %A_132, %B_132
-    %sub_131 = sub i32 %add_193, %add_194
-    %C_68 = load i32, i32* @C
-    %A_133 = load i32, i32* @A
-    %sub_132 = sub i32 %C_68, %A_133
-    %B_133 = load i32, i32* @B
-    %add_195 = add i32 %sub_132, %B_133
-    %add_196 = add i32 %sub_131, %add_195
-    %add_197 = add i32 %add_192, %add_196
-    %A_134 = load i32, i32* @A
-    %B_134 = load i32, i32* @B
-    %add_198 = add i32 %A_134, %B_134
-    %C_69 = load i32, i32* @C
-    %A_135 = load i32, i32* @A
-    %sub_133 = sub i32 %C_69, %A_135
-    %B_135 = load i32, i32* @B
-    %add_199 = add i32 %sub_133, %B_135
-    %add_200 = add i32 %add_198, %add_199
-    %A_136 = load i32, i32* @A
-    %B_136 = load i32, i32* @B
-    %add_201 = add i32 %A_136, %B_136
-    %sub_134 = sub i32 %add_200, %add_201
-    %C_70 = load i32, i32* @C
-    %A_137 = load i32, i32* @A
-    %sub_135 = sub i32 %C_70, %A_137
-    %B_137 = load i32, i32* @B
-    %add_202 = add i32 %sub_135, %B_137
-    %A_138 = load i32, i32* @A
-    %B_138 = load i32, i32* @B
-    %add_203 = add i32 %A_138, %B_138
-    %sub_136 = sub i32 %add_202, %add_203
-    %C_71 = load i32, i32* @C
-    %A_139 = load i32, i32* @A
-    %sub_137 = sub i32 %C_71, %A_139
-    %B_139 = load i32, i32* @B
-    %add_204 = add i32 %sub_137, %B_139
-    %add_205 = add i32 %sub_136, %add_204
-    %add_206 = add i32 %sub_134, %add_205
-    %sub_138 = sub i32 %add_197, %add_206
-    %A_140 = load i32, i32* @A
-    %B_140 = load i32, i32* @B
-    %add_207 = add i32 %A_140, %B_140
-    %C_72 = load i32, i32* @C
-    %A_141 = load i32, i32* @A
-    %sub_139 = sub i32 %C_72, %A_141
-    %B_141 = load i32, i32* @B
-    %add_208 = add i32 %sub_139, %B_141
-    %add_209 = add i32 %add_207, %add_208
-    %A_142 = load i32, i32* @A
-    %B_142 = load i32, i32* @B
-    %add_210 = add i32 %A_142, %B_142
-    %sub_140 = sub i32 %add_209, %add_210
-    %C_73 = load i32, i32* @C
-    %A_143 = load i32, i32* @A
-    %sub_141 = sub i32 %C_73, %A_143
-    %B_143 = load i32, i32* @B
-    %add_211 = add i32 %sub_141, %B_143
-    %A_144 = load i32, i32* @A
-    %B_144 = load i32, i32* @B
-    %add_212 = add i32 %A_144, %B_144
-    %sub_142 = sub i32 %add_211, %add_212
-    %C_74 = load i32, i32* @C
-    %A_145 = load i32, i32* @A
-    %sub_143 = sub i32 %C_74, %A_145
-    %B_145 = load i32, i32* @B
-    %add_213 = add i32 %sub_143, %B_145
-    %add_214 = add i32 %sub_142, %add_213
-    %add_215 = add i32 %sub_140, %add_214
-    %A_146 = load i32, i32* @A
-    %B_146 = load i32, i32* @B
-    %add_216 = add i32 %A_146, %B_146
-    %C_75 = load i32, i32* @C
-    %A_147 = load i32, i32* @A
-    %sub_144 = sub i32 %C_75, %A_147
-    %B_147 = load i32, i32* @B
-    %add_217 = add i32 %sub_144, %B_147
-    %add_218 = add i32 %add_216, %add_217
-    %A_148 = load i32, i32* @A
-    %B_148 = load i32, i32* @B
-    %add_219 = add i32 %A_148, %B_148
-    %sub_145 = sub i32 %add_218, %add_219
-    %C_76 = load i32, i32* @C
-    %A_149 = load i32, i32* @A
-    %sub_146 = sub i32 %C_76, %A_149
-    %B_149 = load i32, i32* @B
-    %add_220 = add i32 %sub_146, %B_149
-    %A_150 = load i32, i32* @A
-    %B_150 = load i32, i32* @B
-    %add_221 = add i32 %A_150, %B_150
-    %sub_147 = sub i32 %add_220, %add_221
-    %C_77 = load i32, i32* @C
-    %A_151 = load i32, i32* @A
-    %sub_148 = sub i32 %C_77, %A_151
-    %B_151 = load i32, i32* @B
-    %add_222 = add i32 %sub_148, %B_151
-    %add_223 = add i32 %sub_147, %add_222
-    %add_224 = add i32 %sub_145, %add_223
-    %sub_149 = sub i32 %add_215, %add_224
-    %sub_150 = sub i32 %sub_138, %sub_149
-    %add_225 = add i32 %sub_125, %sub_150
-    %A_152 = load i32, i32* @A
-    %B_152 = load i32, i32* @B
-    %add_226 = add i32 %A_152, %B_152
-    %C_78 = load i32, i32* @C
-    %A_153 = load i32, i32* @A
-    %sub_151 = sub i32 %C_78, %A_153
-    %B_153 = load i32, i32* @B
-    %add_227 = add i32 %sub_151, %B_153
-    %add_228 = add i32 %add_226, %add_227
-    %A_154 = load i32, i32* @A
-    %B_154 = load i32, i32* @B
-    %add_229 = add i32 %A_154, %B_154
-    %C_79 = load i32, i32* @C
-    %A_155 = load i32, i32* @A
-    %sub_152 = sub i32 %C_79, %A_155
-    %B_155 = load i32, i32* @B
-    %add_230 = add i32 %sub_152, %B_155
-    %add_231 = add i32 %add_229, %add_230
-    %sub_153 = sub i32 %add_228, %add_231
-    %A_156 = load i32, i32* @A
-    %B_156 = load i32, i32* @B
-    %add_232 = add i32 %A_156, %B_156
-    %C_80 = load i32, i32* @C
-    %A_157 = load i32, i32* @A
-    %sub_154 = sub i32 %C_80, %A_157
-    %B_157 = load i32, i32* @B
-    %add_233 = add i32 %sub_154, %B_157
-    %add_234 = add i32 %add_232, %add_233
-    %A_158 = load i32, i32* @A
-    %B_158 = load i32, i32* @B
-    %add_235 = add i32 %A_158, %B_158
-    %sub_155 = sub i32 %add_234, %add_235
-    %sub_156 = sub i32 %sub_153, %sub_155
-    %C_81 = load i32, i32* @C
-    %A_159 = load i32, i32* @A
-    %sub_157 = sub i32 %C_81, %A_159
-    %B_159 = load i32, i32* @B
-    %add_236 = add i32 %sub_157, %B_159
-    %A_160 = load i32, i32* @A
-    %B_160 = load i32, i32* @B
-    %add_237 = add i32 %A_160, %B_160
-    %sub_158 = sub i32 %add_236, %add_237
-    %C_82 = load i32, i32* @C
-    %A_161 = load i32, i32* @A
-    %sub_159 = sub i32 %C_82, %A_161
-    %B_161 = load i32, i32* @B
-    %add_238 = add i32 %sub_159, %B_161
-    %add_239 = add i32 %sub_158, %add_238
-    %A_162 = load i32, i32* @A
-    %B_162 = load i32, i32* @B
-    %add_240 = add i32 %A_162, %B_162
-    %C_83 = load i32, i32* @C
-    %A_163 = load i32, i32* @A
-    %sub_160 = sub i32 %C_83, %A_163
-    %B_163 = load i32, i32* @B
-    %add_241 = add i32 %sub_160, %B_163
-    %add_242 = add i32 %add_240, %add_241
-    %A_164 = load i32, i32* @A
-    %B_164 = load i32, i32* @B
-    %add_243 = add i32 %A_164, %B_164
-    %sub_161 = sub i32 %add_242, %add_243
-    %sub_162 = sub i32 %add_239, %sub_161
-    %add_244 = add i32 %sub_156, %sub_162
-    %C_84 = load i32, i32* @C
-    %A_165 = load i32, i32* @A
-    %sub_163 = sub i32 %C_84, %A_165
-    %B_165 = load i32, i32* @B
-    %add_245 = add i32 %sub_163, %B_165
-    %A_166 = load i32, i32* @A
-    %B_166 = load i32, i32* @B
-    %add_246 = add i32 %A_166, %B_166
-    %sub_164 = sub i32 %add_245, %add_246
-    %C_85 = load i32, i32* @C
-    %A_167 = load i32, i32* @A
-    %sub_165 = sub i32 %C_85, %A_167
-    %B_167 = load i32, i32* @B
-    %add_247 = add i32 %sub_165, %B_167
-    %add_248 = add i32 %sub_164, %add_247
-    %A_168 = load i32, i32* @A
-    %B_168 = load i32, i32* @B
-    %add_249 = add i32 %A_168, %B_168
-    %C_86 = load i32, i32* @C
-    %A_169 = load i32, i32* @A
-    %sub_166 = sub i32 %C_86, %A_169
-    %B_169 = load i32, i32* @B
-    %add_250 = add i32 %sub_166, %B_169
-    %add_251 = add i32 %add_249, %add_250
-    %A_170 = load i32, i32* @A
-    %B_170 = load i32, i32* @B
-    %add_252 = add i32 %A_170, %B_170
-    %sub_167 = sub i32 %add_251, %add_252
-    %sub_168 = sub i32 %add_248, %sub_167
-    %C_87 = load i32, i32* @C
-    %A_171 = load i32, i32* @A
-    %sub_169 = sub i32 %C_87, %A_171
-    %B_171 = load i32, i32* @B
-    %add_253 = add i32 %sub_169, %B_171
-    %A_172 = load i32, i32* @A
-    %B_172 = load i32, i32* @B
-    %add_254 = add i32 %A_172, %B_172
-    %sub_170 = sub i32 %add_253, %add_254
-    %C_88 = load i32, i32* @C
-    %A_173 = load i32, i32* @A
-    %sub_171 = sub i32 %C_88, %A_173
-    %B_173 = load i32, i32* @B
-    %add_255 = add i32 %sub_171, %B_173
-    %add_256 = add i32 %sub_170, %add_255
-    %A_174 = load i32, i32* @A
-    %B_174 = load i32, i32* @B
-    %add_257 = add i32 %A_174, %B_174
-    %C_89 = load i32, i32* @C
-    %A_175 = load i32, i32* @A
-    %sub_172 = sub i32 %C_89, %A_175
-    %B_175 = load i32, i32* @B
-    %add_258 = add i32 %sub_172, %B_175
-    %add_259 = add i32 %add_257, %add_258
-    %A_176 = load i32, i32* @A
-    %B_176 = load i32, i32* @B
-    %add_260 = add i32 %A_176, %B_176
-    %sub_173 = sub i32 %add_259, %add_260
-    %sub_174 = sub i32 %add_256, %sub_173
-    %add_261 = add i32 %sub_168, %sub_174
-    %add_262 = add i32 %add_244, %add_261
-    %C_90 = load i32, i32* @C
-    %A_177 = load i32, i32* @A
-    %sub_175 = sub i32 %C_90, %A_177
-    %B_177 = load i32, i32* @B
-    %add_263 = add i32 %sub_175, %B_177
-    %A_178 = load i32, i32* @A
-    %B_178 = load i32, i32* @B
-    %add_264 = add i32 %A_178, %B_178
-    %sub_176 = sub i32 %add_263, %add_264
-    %C_91 = load i32, i32* @C
-    %A_179 = load i32, i32* @A
-    %sub_177 = sub i32 %C_91, %A_179
-    %B_179 = load i32, i32* @B
-    %add_265 = add i32 %sub_177, %B_179
-    %A_180 = load i32, i32* @A
-    %B_180 = load i32, i32* @B
-    %add_266 = add i32 %A_180, %B_180
-    %sub_178 = sub i32 %add_265, %add_266
-    %add_267 = add i32 %sub_176, %sub_178
-    %C_92 = load i32, i32* @C
-    %A_181 = load i32, i32* @A
-    %sub_179 = sub i32 %C_92, %A_181
-    %B_181 = load i32, i32* @B
-    %add_268 = add i32 %sub_179, %B_181
-    %A_182 = load i32, i32* @A
-    %B_182 = load i32, i32* @B
-    %add_269 = add i32 %A_182, %B_182
-    %sub_180 = sub i32 %add_268, %add_269
-    %C_93 = load i32, i32* @C
-    %A_183 = load i32, i32* @A
-    %sub_181 = sub i32 %C_93, %A_183
-    %B_183 = load i32, i32* @B
-    %add_270 = add i32 %sub_181, %B_183
-    %add_271 = add i32 %sub_180, %add_270
-    %add_272 = add i32 %add_267, %add_271
-    %A_184 = load i32, i32* @A
-    %B_184 = load i32, i32* @B
-    %add_273 = add i32 %A_184, %B_184
-    %C_94 = load i32, i32* @C
-    %A_185 = load i32, i32* @A
-    %sub_182 = sub i32 %C_94, %A_185
-    %B_185 = load i32, i32* @B
-    %add_274 = add i32 %sub_182, %B_185
-    %add_275 = add i32 %add_273, %add_274
-    %A_186 = load i32, i32* @A
-    %B_186 = load i32, i32* @B
-    %add_276 = add i32 %A_186, %B_186
-    %sub_183 = sub i32 %add_275, %add_276
-    %C_95 = load i32, i32* @C
-    %A_187 = load i32, i32* @A
-    %sub_184 = sub i32 %C_95, %A_187
-    %B_187 = load i32, i32* @B
-    %add_277 = add i32 %sub_184, %B_187
-    %A_188 = load i32, i32* @A
-    %B_188 = load i32, i32* @B
-    %add_278 = add i32 %A_188, %B_188
-    %sub_185 = sub i32 %add_277, %add_278
-    %C_96 = load i32, i32* @C
-    %A_189 = load i32, i32* @A
-    %sub_186 = sub i32 %C_96, %A_189
-    %B_189 = load i32, i32* @B
-    %add_279 = add i32 %sub_186, %B_189
-    %add_280 = add i32 %sub_185, %add_279
-    %add_281 = add i32 %sub_183, %add_280
-    %sub_187 = sub i32 %add_272, %add_281
-    %A_190 = load i32, i32* @A
-    %B_190 = load i32, i32* @B
-    %add_282 = add i32 %A_190, %B_190
-    %C_97 = load i32, i32* @C
-    %A_191 = load i32, i32* @A
-    %sub_188 = sub i32 %C_97, %A_191
-    %B_191 = load i32, i32* @B
-    %add_283 = add i32 %sub_188, %B_191
-    %add_284 = add i32 %add_282, %add_283
-    %A_192 = load i32, i32* @A
-    %B_192 = load i32, i32* @B
-    %add_285 = add i32 %A_192, %B_192
-    %sub_189 = sub i32 %add_284, %add_285
-    %C_98 = load i32, i32* @C
-    %A_193 = load i32, i32* @A
-    %sub_190 = sub i32 %C_98, %A_193
-    %B_193 = load i32, i32* @B
-    %add_286 = add i32 %sub_190, %B_193
-    %A_194 = load i32, i32* @A
-    %B_194 = load i32, i32* @B
-    %add_287 = add i32 %A_194, %B_194
-    %sub_191 = sub i32 %add_286, %add_287
-    %C_99 = load i32, i32* @C
-    %A_195 = load i32, i32* @A
-    %sub_192 = sub i32 %C_99, %A_195
-    %B_195 = load i32, i32* @B
-    %add_288 = add i32 %sub_192, %B_195
-    %add_289 = add i32 %sub_191, %add_288
-    %add_290 = add i32 %sub_189, %add_289
-    %A_196 = load i32, i32* @A
-    %B_196 = load i32, i32* @B
-    %add_291 = add i32 %A_196, %B_196
-    %C_100 = load i32, i32* @C
-    %A_197 = load i32, i32* @A
-    %sub_193 = sub i32 %C_100, %A_197
-    %B_197 = load i32, i32* @B
-    %add_292 = add i32 %sub_193, %B_197
-    %add_293 = add i32 %add_291, %add_292
-    %A_198 = load i32, i32* @A
-    %B_198 = load i32, i32* @B
-    %add_294 = add i32 %A_198, %B_198
-    %sub_194 = sub i32 %add_293, %add_294
-    %C_101 = load i32, i32* @C
-    %A_199 = load i32, i32* @A
-    %sub_195 = sub i32 %C_101, %A_199
-    %B_199 = load i32, i32* @B
-    %add_295 = add i32 %sub_195, %B_199
-    %A_200 = load i32, i32* @A
-    %B_200 = load i32, i32* @B
-    %add_296 = add i32 %A_200, %B_200
-    %sub_196 = sub i32 %add_295, %add_296
-    %C_102 = load i32, i32* @C
-    %A_201 = load i32, i32* @A
-    %sub_197 = sub i32 %C_102, %A_201
-    %B_201 = load i32, i32* @B
-    %add_297 = add i32 %sub_197, %B_201
-    %add_298 = add i32 %sub_196, %add_297
-    %add_299 = add i32 %sub_194, %add_298
-    %sub_198 = sub i32 %add_290, %add_299
-    %sub_199 = sub i32 %sub_187, %sub_198
-    %add_300 = add i32 %add_262, %sub_199
-    %sub_200 = sub i32 %add_225, %add_300
-    store i32 %sub_200, i32* @B
-    %C_103 = load i32, i32* @C
-    %C_104 = load i32, i32* @C
-    %A_202 = load i32, i32* @A
-    %sub_201 = sub i32 %C_104, %A_202
-    %B_202 = load i32, i32* @B
-    %add_301 = add i32 %sub_201, %B_202
-    %A_203 = load i32, i32* @A
-    %B_203 = load i32, i32* @B
-    %add_302 = add i32 %A_203, %B_203
-    %sub_202 = sub i32 %add_301, %add_302
-    %C_105 = load i32, i32* @C
-    %A_204 = load i32, i32* @A
-    %sub_203 = sub i32 %C_105, %A_204
-    %B_204 = load i32, i32* @B
-    %add_303 = add i32 %sub_203, %B_204
-    %A_205 = load i32, i32* @A
-    %B_205 = load i32, i32* @B
-    %add_304 = add i32 %A_205, %B_205
-    %sub_204 = sub i32 %add_303, %add_304
-    %add_305 = add i32 %sub_202, %sub_204
-    %C_106 = load i32, i32* @C
-    %A_206 = load i32, i32* @A
-    %sub_205 = sub i32 %C_106, %A_206
-    %B_206 = load i32, i32* @B
-    %add_306 = add i32 %sub_205, %B_206
-    %A_207 = load i32, i32* @A
-    %B_207 = load i32, i32* @B
-    %add_307 = add i32 %A_207, %B_207
-    %sub_206 = sub i32 %add_306, %add_307
-    %C_107 = load i32, i32* @C
-    %A_208 = load i32, i32* @A
-    %sub_207 = sub i32 %C_107, %A_208
-    %B_208 = load i32, i32* @B
-    %add_308 = add i32 %sub_207, %B_208
-    %add_309 = add i32 %sub_206, %add_308
-    %add_310 = add i32 %add_305, %add_309
-    %A_209 = load i32, i32* @A
-    %B_209 = load i32, i32* @B
-    %add_311 = add i32 %A_209, %B_209
-    %C_108 = load i32, i32* @C
-    %A_210 = load i32, i32* @A
-    %sub_208 = sub i32 %C_108, %A_210
-    %B_210 = load i32, i32* @B
-    %add_312 = add i32 %sub_208, %B_210
-    %add_313 = add i32 %add_311, %add_312
-    %A_211 = load i32, i32* @A
-    %B_211 = load i32, i32* @B
-    %add_314 = add i32 %A_211, %B_211
-    %sub_209 = sub i32 %add_313, %add_314
-    %C_109 = load i32, i32* @C
-    %A_212 = load i32, i32* @A
-    %sub_210 = sub i32 %C_109, %A_212
-    %B_212 = load i32, i32* @B
-    %add_315 = add i32 %sub_210, %B_212
-    %A_213 = load i32, i32* @A
-    %B_213 = load i32, i32* @B
-    %add_316 = add i32 %A_213, %B_213
-    %sub_211 = sub i32 %add_315, %add_316
-    %C_110 = load i32, i32* @C
-    %A_214 = load i32, i32* @A
-    %sub_212 = sub i32 %C_110, %A_214
-    %B_214 = load i32, i32* @B
-    %add_317 = add i32 %sub_212, %B_214
-    %add_318 = add i32 %sub_211, %add_317
-    %add_319 = add i32 %sub_209, %add_318
-    %sub_213 = sub i32 %add_310, %add_319
-    %A_215 = load i32, i32* @A
-    %B_215 = load i32, i32* @B
-    %add_320 = add i32 %A_215, %B_215
-    %C_111 = load i32, i32* @C
-    %A_216 = load i32, i32* @A
-    %sub_214 = sub i32 %C_111, %A_216
-    %B_216 = load i32, i32* @B
-    %add_321 = add i32 %sub_214, %B_216
-    %add_322 = add i32 %add_320, %add_321
-    %A_217 = load i32, i32* @A
-    %B_217 = load i32, i32* @B
-    %add_323 = add i32 %A_217, %B_217
-    %C_112 = load i32, i32* @C
-    %A_218 = load i32, i32* @A
-    %sub_215 = sub i32 %C_112, %A_218
-    %B_218 = load i32, i32* @B
-    %add_324 = add i32 %sub_215, %B_218
-    %add_325 = add i32 %add_323, %add_324
-    %sub_216 = sub i32 %add_322, %add_325
-    %A_219 = load i32, i32* @A
-    %B_219 = load i32, i32* @B
-    %add_326 = add i32 %A_219, %B_219
-    %C_113 = load i32, i32* @C
-    %A_220 = load i32, i32* @A
-    %sub_217 = sub i32 %C_113, %A_220
-    %B_220 = load i32, i32* @B
-    %add_327 = add i32 %sub_217, %B_220
-    %add_328 = add i32 %add_326, %add_327
-    %A_221 = load i32, i32* @A
-    %B_221 = load i32, i32* @B
-    %add_329 = add i32 %A_221, %B_221
-    %sub_218 = sub i32 %add_328, %add_329
-    %sub_219 = sub i32 %sub_216, %sub_218
-    %C_114 = load i32, i32* @C
-    %A_222 = load i32, i32* @A
-    %sub_220 = sub i32 %C_114, %A_222
-    %B_222 = load i32, i32* @B
-    %add_330 = add i32 %sub_220, %B_222
-    %A_223 = load i32, i32* @A
-    %B_223 = load i32, i32* @B
-    %add_331 = add i32 %A_223, %B_223
-    %sub_221 = sub i32 %add_330, %add_331
-    %C_115 = load i32, i32* @C
-    %A_224 = load i32, i32* @A
-    %sub_222 = sub i32 %C_115, %A_224
-    %B_224 = load i32, i32* @B
-    %add_332 = add i32 %sub_222, %B_224
-    %add_333 = add i32 %sub_221, %add_332
-    %A_225 = load i32, i32* @A
-    %B_225 = load i32, i32* @B
-    %add_334 = add i32 %A_225, %B_225
-    %C_116 = load i32, i32* @C
-    %A_226 = load i32, i32* @A
-    %sub_223 = sub i32 %C_116, %A_226
-    %B_226 = load i32, i32* @B
-    %add_335 = add i32 %sub_223, %B_226
-    %add_336 = add i32 %add_334, %add_335
-    %A_227 = load i32, i32* @A
-    %B_227 = load i32, i32* @B
-    %add_337 = add i32 %A_227, %B_227
-    %sub_224 = sub i32 %add_336, %add_337
-    %sub_225 = sub i32 %add_333, %sub_224
-    %add_338 = add i32 %sub_219, %sub_225
-    %sub_226 = sub i32 %sub_213, %add_338
-    %C_117 = load i32, i32* @C
-    %A_228 = load i32, i32* @A
-    %sub_227 = sub i32 %C_117, %A_228
-    %B_228 = load i32, i32* @B
-    %add_339 = add i32 %sub_227, %B_228
-    %A_229 = load i32, i32* @A
-    %B_229 = load i32, i32* @B
-    %add_340 = add i32 %A_229, %B_229
-    %sub_228 = sub i32 %add_339, %add_340
-    %C_118 = load i32, i32* @C
-    %A_230 = load i32, i32* @A
-    %sub_229 = sub i32 %C_118, %A_230
-    %B_230 = load i32, i32* @B
-    %add_341 = add i32 %sub_229, %B_230
-    %A_231 = load i32, i32* @A
-    %B_231 = load i32, i32* @B
-    %add_342 = add i32 %A_231, %B_231
-    %sub_230 = sub i32 %add_341, %add_342
-    %add_343 = add i32 %sub_228, %sub_230
-    %C_119 = load i32, i32* @C
-    %A_232 = load i32, i32* @A
-    %sub_231 = sub i32 %C_119, %A_232
-    %B_232 = load i32, i32* @B
-    %add_344 = add i32 %sub_231, %B_232
-    %A_233 = load i32, i32* @A
-    %B_233 = load i32, i32* @B
-    %add_345 = add i32 %A_233, %B_233
-    %sub_232 = sub i32 %add_344, %add_345
-    %C_120 = load i32, i32* @C
-    %A_234 = load i32, i32* @A
-    %sub_233 = sub i32 %C_120, %A_234
-    %B_234 = load i32, i32* @B
-    %add_346 = add i32 %sub_233, %B_234
-    %add_347 = add i32 %sub_232, %add_346
-    %add_348 = add i32 %add_343, %add_347
-    %A_235 = load i32, i32* @A
-    %B_235 = load i32, i32* @B
-    %add_349 = add i32 %A_235, %B_235
-    %C_121 = load i32, i32* @C
-    %A_236 = load i32, i32* @A
-    %sub_234 = sub i32 %C_121, %A_236
-    %B_236 = load i32, i32* @B
-    %add_350 = add i32 %sub_234, %B_236
-    %add_351 = add i32 %add_349, %add_350
-    %A_237 = load i32, i32* @A
-    %B_237 = load i32, i32* @B
-    %add_352 = add i32 %A_237, %B_237
-    %sub_235 = sub i32 %add_351, %add_352
-    %C_122 = load i32, i32* @C
-    %A_238 = load i32, i32* @A
-    %sub_236 = sub i32 %C_122, %A_238
-    %B_238 = load i32, i32* @B
-    %add_353 = add i32 %sub_236, %B_238
-    %A_239 = load i32, i32* @A
-    %B_239 = load i32, i32* @B
-    %add_354 = add i32 %A_239, %B_239
-    %sub_237 = sub i32 %add_353, %add_354
-    %C_123 = load i32, i32* @C
-    %A_240 = load i32, i32* @A
-    %sub_238 = sub i32 %C_123, %A_240
-    %B_240 = load i32, i32* @B
-    %add_355 = add i32 %sub_238, %B_240
-    %add_356 = add i32 %sub_237, %add_355
-    %add_357 = add i32 %sub_235, %add_356
-    %sub_239 = sub i32 %add_348, %add_357
-    %A_241 = load i32, i32* @A
-    %B_241 = load i32, i32* @B
-    %add_358 = add i32 %A_241, %B_241
-    %C_124 = load i32, i32* @C
-    %A_242 = load i32, i32* @A
-    %sub_240 = sub i32 %C_124, %A_242
-    %B_242 = load i32, i32* @B
-    %add_359 = add i32 %sub_240, %B_242
-    %add_360 = add i32 %add_358, %add_359
-    %A_243 = load i32, i32* @A
-    %B_243 = load i32, i32* @B
-    %add_361 = add i32 %A_243, %B_243
-    %sub_241 = sub i32 %add_360, %add_361
-    %C_125 = load i32, i32* @C
-    %A_244 = load i32, i32* @A
-    %sub_242 = sub i32 %C_125, %A_244
-    %B_244 = load i32, i32* @B
-    %add_362 = add i32 %sub_242, %B_244
-    %A_245 = load i32, i32* @A
-    %B_245 = load i32, i32* @B
-    %add_363 = add i32 %A_245, %B_245
-    %sub_243 = sub i32 %add_362, %add_363
-    %C_126 = load i32, i32* @C
-    %A_246 = load i32, i32* @A
-    %sub_244 = sub i32 %C_126, %A_246
-    %B_246 = load i32, i32* @B
-    %add_364 = add i32 %sub_244, %B_246
-    %add_365 = add i32 %sub_243, %add_364
-    %add_366 = add i32 %sub_241, %add_365
-    %A_247 = load i32, i32* @A
-    %B_247 = load i32, i32* @B
-    %add_367 = add i32 %A_247, %B_247
-    %C_127 = load i32, i32* @C
-    %A_248 = load i32, i32* @A
-    %sub_245 = sub i32 %C_127, %A_248
-    %B_248 = load i32, i32* @B
-    %add_368 = add i32 %sub_245, %B_248
-    %add_369 = add i32 %add_367, %add_368
-    %A_249 = load i32, i32* @A
-    %B_249 = load i32, i32* @B
-    %add_370 = add i32 %A_249, %B_249
-    %sub_246 = sub i32 %add_369, %add_370
-    %C_128 = load i32, i32* @C
-    %A_250 = load i32, i32* @A
-    %sub_247 = sub i32 %C_128, %A_250
-    %B_250 = load i32, i32* @B
-    %add_371 = add i32 %sub_247, %B_250
-    %A_251 = load i32, i32* @A
-    %B_251 = load i32, i32* @B
-    %add_372 = add i32 %A_251, %B_251
-    %sub_248 = sub i32 %add_371, %add_372
-    %C_129 = load i32, i32* @C
-    %A_252 = load i32, i32* @A
-    %sub_249 = sub i32 %C_129, %A_252
-    %B_252 = load i32, i32* @B
-    %add_373 = add i32 %sub_249, %B_252
-    %add_374 = add i32 %sub_248, %add_373
-    %add_375 = add i32 %sub_246, %add_374
-    %sub_250 = sub i32 %add_366, %add_375
-    %sub_251 = sub i32 %sub_239, %sub_250
-    %add_376 = add i32 %sub_226, %sub_251
-    %A_253 = load i32, i32* @A
-    %B_253 = load i32, i32* @B
-    %add_377 = add i32 %A_253, %B_253
-    %C_130 = load i32, i32* @C
-    %A_254 = load i32, i32* @A
-    %sub_252 = sub i32 %C_130, %A_254
-    %B_254 = load i32, i32* @B
-    %add_378 = add i32 %sub_252, %B_254
-    %add_379 = add i32 %add_377, %add_378
-    %A_255 = load i32, i32* @A
-    %B_255 = load i32, i32* @B
-    %add_380 = add i32 %A_255, %B_255
-    %C_131 = load i32, i32* @C
-    %A_256 = load i32, i32* @A
-    %sub_253 = sub i32 %C_131, %A_256
-    %B_256 = load i32, i32* @B
-    %add_381 = add i32 %sub_253, %B_256
-    %add_382 = add i32 %add_380, %add_381
-    %sub_254 = sub i32 %add_379, %add_382
-    %A_257 = load i32, i32* @A
-    %B_257 = load i32, i32* @B
-    %add_383 = add i32 %A_257, %B_257
-    %C_132 = load i32, i32* @C
-    %A_258 = load i32, i32* @A
-    %sub_255 = sub i32 %C_132, %A_258
-    %B_258 = load i32, i32* @B
-    %add_384 = add i32 %sub_255, %B_258
-    %add_385 = add i32 %add_383, %add_384
-    %A_259 = load i32, i32* @A
-    %B_259 = load i32, i32* @B
-    %add_386 = add i32 %A_259, %B_259
-    %sub_256 = sub i32 %add_385, %add_386
-    %sub_257 = sub i32 %sub_254, %sub_256
-    %C_133 = load i32, i32* @C
-    %A_260 = load i32, i32* @A
-    %sub_258 = sub i32 %C_133, %A_260
-    %B_260 = load i32, i32* @B
-    %add_387 = add i32 %sub_258, %B_260
-    %A_261 = load i32, i32* @A
-    %B_261 = load i32, i32* @B
-    %add_388 = add i32 %A_261, %B_261
-    %sub_259 = sub i32 %add_387, %add_388
-    %C_134 = load i32, i32* @C
-    %A_262 = load i32, i32* @A
-    %sub_260 = sub i32 %C_134, %A_262
-    %B_262 = load i32, i32* @B
-    %add_389 = add i32 %sub_260, %B_262
-    %add_390 = add i32 %sub_259, %add_389
-    %A_263 = load i32, i32* @A
-    %B_263 = load i32, i32* @B
-    %add_391 = add i32 %A_263, %B_263
-    %C_135 = load i32, i32* @C
-    %A_264 = load i32, i32* @A
-    %sub_261 = sub i32 %C_135, %A_264
-    %B_264 = load i32, i32* @B
-    %add_392 = add i32 %sub_261, %B_264
-    %add_393 = add i32 %add_391, %add_392
-    %A_265 = load i32, i32* @A
-    %B_265 = load i32, i32* @B
-    %add_394 = add i32 %A_265, %B_265
-    %sub_262 = sub i32 %add_393, %add_394
-    %sub_263 = sub i32 %add_390, %sub_262
-    %add_395 = add i32 %sub_257, %sub_263
-    %C_136 = load i32, i32* @C
-    %A_266 = load i32, i32* @A
-    %sub_264 = sub i32 %C_136, %A_266
-    %B_266 = load i32, i32* @B
-    %add_396 = add i32 %sub_264, %B_266
-    %A_267 = load i32, i32* @A
-    %B_267 = load i32, i32* @B
-    %add_397 = add i32 %A_267, %B_267
-    %sub_265 = sub i32 %add_396, %add_397
-    %C_137 = load i32, i32* @C
-    %A_268 = load i32, i32* @A
-    %sub_266 = sub i32 %C_137, %A_268
-    %B_268 = load i32, i32* @B
-    %add_398 = add i32 %sub_266, %B_268
-    %add_399 = add i32 %sub_265, %add_398
-    %A_269 = load i32, i32* @A
-    %B_269 = load i32, i32* @B
-    %add_400 = add i32 %A_269, %B_269
-    %C_138 = load i32, i32* @C
-    %A_270 = load i32, i32* @A
-    %sub_267 = sub i32 %C_138, %A_270
-    %B_270 = load i32, i32* @B
-    %add_401 = add i32 %sub_267, %B_270
-    %add_402 = add i32 %add_400, %add_401
-    %A_271 = load i32, i32* @A
-    %B_271 = load i32, i32* @B
-    %add_403 = add i32 %A_271, %B_271
-    %sub_268 = sub i32 %add_402, %add_403
-    %sub_269 = sub i32 %add_399, %sub_268
-    %C_139 = load i32, i32* @C
-    %A_272 = load i32, i32* @A
-    %sub_270 = sub i32 %C_139, %A_272
-    %B_272 = load i32, i32* @B
-    %add_404 = add i32 %sub_270, %B_272
-    %A_273 = load i32, i32* @A
-    %B_273 = load i32, i32* @B
-    %add_405 = add i32 %A_273, %B_273
-    %sub_271 = sub i32 %add_404, %add_405
-    %C_140 = load i32, i32* @C
-    %A_274 = load i32, i32* @A
-    %sub_272 = sub i32 %C_140, %A_274
-    %B_274 = load i32, i32* @B
-    %add_406 = add i32 %sub_272, %B_274
-    %add_407 = add i32 %sub_271, %add_406
-    %A_275 = load i32, i32* @A
-    %B_275 = load i32, i32* @B
-    %add_408 = add i32 %A_275, %B_275
-    %C_141 = load i32, i32* @C
-    %A_276 = load i32, i32* @A
-    %sub_273 = sub i32 %C_141, %A_276
-    %B_276 = load i32, i32* @B
-    %add_409 = add i32 %sub_273, %B_276
-    %add_410 = add i32 %add_408, %add_409
-    %A_277 = load i32, i32* @A
-    %B_277 = load i32, i32* @B
-    %add_411 = add i32 %A_277, %B_277
-    %sub_274 = sub i32 %add_410, %add_411
-    %sub_275 = sub i32 %add_407, %sub_274
-    %add_412 = add i32 %sub_269, %sub_275
-    %add_413 = add i32 %add_395, %add_412
-    %C_142 = load i32, i32* @C
-    %A_278 = load i32, i32* @A
-    %sub_276 = sub i32 %C_142, %A_278
-    %B_278 = load i32, i32* @B
-    %add_414 = add i32 %sub_276, %B_278
-    %A_279 = load i32, i32* @A
-    %B_279 = load i32, i32* @B
-    %add_415 = add i32 %A_279, %B_279
-    %sub_277 = sub i32 %add_414, %add_415
-    %C_143 = load i32, i32* @C
-    %A_280 = load i32, i32* @A
-    %sub_278 = sub i32 %C_143, %A_280
-    %B_280 = load i32, i32* @B
-    %add_416 = add i32 %sub_278, %B_280
-    %A_281 = load i32, i32* @A
-    %B_281 = load i32, i32* @B
-    %add_417 = add i32 %A_281, %B_281
-    %sub_279 = sub i32 %add_416, %add_417
-    %add_418 = add i32 %sub_277, %sub_279
-    %C_144 = load i32, i32* @C
-    %A_282 = load i32, i32* @A
-    %sub_280 = sub i32 %C_144, %A_282
-    %B_282 = load i32, i32* @B
-    %add_419 = add i32 %sub_280, %B_282
-    %A_283 = load i32, i32* @A
-    %B_283 = load i32, i32* @B
-    %add_420 = add i32 %A_283, %B_283
-    %sub_281 = sub i32 %add_419, %add_420
-    %C_145 = load i32, i32* @C
-    %A_284 = load i32, i32* @A
-    %sub_282 = sub i32 %C_145, %A_284
-    %B_284 = load i32, i32* @B
-    %add_421 = add i32 %sub_282, %B_284
-    %add_422 = add i32 %sub_281, %add_421
-    %add_423 = add i32 %add_418, %add_422
-    %A_285 = load i32, i32* @A
-    %B_285 = load i32, i32* @B
-    %add_424 = add i32 %A_285, %B_285
-    %C_146 = load i32, i32* @C
-    %A_286 = load i32, i32* @A
-    %sub_283 = sub i32 %C_146, %A_286
-    %B_286 = load i32, i32* @B
-    %add_425 = add i32 %sub_283, %B_286
-    %add_426 = add i32 %add_424, %add_425
-    %A_287 = load i32, i32* @A
-    %B_287 = load i32, i32* @B
-    %add_427 = add i32 %A_287, %B_287
-    %sub_284 = sub i32 %add_426, %add_427
-    %C_147 = load i32, i32* @C
-    %A_288 = load i32, i32* @A
-    %sub_285 = sub i32 %C_147, %A_288
-    %B_288 = load i32, i32* @B
-    %add_428 = add i32 %sub_285, %B_288
-    %A_289 = load i32, i32* @A
-    %B_289 = load i32, i32* @B
-    %add_429 = add i32 %A_289, %B_289
-    %sub_286 = sub i32 %add_428, %add_429
-    %C_148 = load i32, i32* @C
-    %A_290 = load i32, i32* @A
-    %sub_287 = sub i32 %C_148, %A_290
-    %B_290 = load i32, i32* @B
-    %add_430 = add i32 %sub_287, %B_290
-    %add_431 = add i32 %sub_286, %add_430
-    %add_432 = add i32 %sub_284, %add_431
-    %sub_288 = sub i32 %add_423, %add_432
-    %A_291 = load i32, i32* @A
-    %B_291 = load i32, i32* @B
-    %add_433 = add i32 %A_291, %B_291
-    %C_149 = load i32, i32* @C
-    %A_292 = load i32, i32* @A
-    %sub_289 = sub i32 %C_149, %A_292
-    %B_292 = load i32, i32* @B
-    %add_434 = add i32 %sub_289, %B_292
-    %add_435 = add i32 %add_433, %add_434
-    %A_293 = load i32, i32* @A
-    %B_293 = load i32, i32* @B
-    %add_436 = add i32 %A_293, %B_293
-    %sub_290 = sub i32 %add_435, %add_436
-    %C_150 = load i32, i32* @C
-    %A_294 = load i32, i32* @A
-    %sub_291 = sub i32 %C_150, %A_294
-    %B_294 = load i32, i32* @B
-    %add_437 = add i32 %sub_291, %B_294
-    %A_295 = load i32, i32* @A
-    %B_295 = load i32, i32* @B
-    %add_438 = add i32 %A_295, %B_295
-    %sub_292 = sub i32 %add_437, %add_438
-    %C_151 = load i32, i32* @C
-    %A_296 = load i32, i32* @A
-    %sub_293 = sub i32 %C_151, %A_296
-    %B_296 = load i32, i32* @B
-    %add_439 = add i32 %sub_293, %B_296
-    %add_440 = add i32 %sub_292, %add_439
-    %add_441 = add i32 %sub_290, %add_440
-    %A_297 = load i32, i32* @A
-    %B_297 = load i32, i32* @B
-    %add_442 = add i32 %A_297, %B_297
-    %C_152 = load i32, i32* @C
-    %A_298 = load i32, i32* @A
-    %sub_294 = sub i32 %C_152, %A_298
-    %B_298 = load i32, i32* @B
-    %add_443 = add i32 %sub_294, %B_298
-    %add_444 = add i32 %add_442, %add_443
-    %A_299 = load i32, i32* @A
-    %B_299 = load i32, i32* @B
-    %add_445 = add i32 %A_299, %B_299
-    %sub_295 = sub i32 %add_444, %add_445
-    %C_153 = load i32, i32* @C
-    %A_300 = load i32, i32* @A
-    %sub_296 = sub i32 %C_153, %A_300
-    %B_300 = load i32, i32* @B
-    %add_446 = add i32 %sub_296, %B_300
-    %A_301 = load i32, i32* @A
-    %B_301 = load i32, i32* @B
-    %add_447 = add i32 %A_301, %B_301
-    %sub_297 = sub i32 %add_446, %add_447
-    %C_154 = load i32, i32* @C
-    %A_302 = load i32, i32* @A
-    %sub_298 = sub i32 %C_154, %A_302
-    %B_302 = load i32, i32* @B
-    %add_448 = add i32 %sub_298, %B_302
-    %add_449 = add i32 %sub_297, %add_448
-    %add_450 = add i32 %sub_295, %add_449
-    %sub_299 = sub i32 %add_441, %add_450
-    %sub_300 = sub i32 %sub_288, %sub_299
-    %add_451 = add i32 %add_413, %sub_300
-    %sub_301 = sub i32 %add_376, %add_451
-    store i32 %sub_301, i32* @C
-    br label %while_condition
-
-while_end_merge:                                             ; preds = entrance_block0 short_circuit_AND_end_AND 
-    %A_303 = load i32, i32* @A
-    %call_toString = call i8* @toString(i32 %A_303)
-    %const_string_pointer = getelementptr inbounds [2 x i8], [2 x i8]* @const_string0, i32 0, i32 0
-    %string_add = call i8* @_str_concatenate(i8* %call_toString, i8* %const_string_pointer)
-    %B_303 = load i32, i32* @B
-    %call_toString_0 = call i8* @toString(i32 %B_303)
-    %string_add_0 = call i8* @_str_concatenate(i8* %string_add, i8* %call_toString_0)
-    %const_string_pointer_0 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string0, i32 0, i32 0
-    %string_add_1 = call i8* @_str_concatenate(i8* %string_add_0, i8* %const_string_pointer_0)
-    %C_155 = load i32, i32* @C
-    %call_toString_1 = call i8* @toString(i32 %C_155)
-    %string_add_2 = call i8* @_str_concatenate(i8* %string_add_1, i8* %call_toString_1)
-    call void @println(i8* %string_add_2)
+    %count = load i32*, i32** @count
+    %getelementptr_reg = getelementptr inbounds i32, i32* %count, i32 0
+    %load_result = load i32, i32* %getelementptr_reg
+    store i32 0, i32* %getelementptr_reg
+    call void @origin(i32 3)
+    call void @search(i32 0, i32 0, i32 0)
+    %count_0 = load i32*, i32** @count
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %count_0, i32 0
+    %load_result_0 = load i32, i32* %getelementptr_reg_0
+    %call_toString = call i8* @toString(i32 %load_result_0)
+    call void @println(i8* %call_toString)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-short_circuit_AND_end_AND:                                   ; preds = while_condition short_circuit_AND_branch_AND 
-    %AND_short_circuit = load i1, i1* %AND_addr
-    br i1 %AND_short_circuit, label %while_body, label %while_end_merge
-
-short_circuit_AND_branch_AND:                                ; preds = while_condition 
-    %C_0 = load i32, i32* @C
-    %shl_0 = shl i32 1, 29
-    %SUB_single_front = mul i32 %shl_0, -1
-    %sgt = icmp sgt i32 %C_0, %SUB_single_front
-    store i1 %sgt, i1* %AND_addr
-    br label %short_circuit_AND_end_AND
-
-return_block0:                                               ; preds = while_end_merge 
+return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }
 define dso_local void @GLOBAL__sub_I_main_mx() {
 entrance_block0:                                             
-    store i32 1, i32* @A
-    store i32 1, i32* @B
-    store i32 1, i32* @C
+    %mul_bytes = mul i32 10, 4
+    %sum_bytes = add i32 %mul_bytes, 4
+    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
+    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
+    store i32 10, i32* %array_cast_i8_to_i32
+    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32*
+    store i32* %array_addr, i32** @color
+    %mul_bytes_0 = mul i32 1, 4
+    %sum_bytes_0 = add i32 %mul_bytes_0, 4
+    %malloca_0 = call i8* @_f_malloc(i32 %sum_bytes_0)
+    %array_cast_i8_to_i32_0 = bitcast i8* %malloca_0 to i32*
+    store i32 1, i32* %array_cast_i8_to_i32_0
+    %array_tmp_begin_i32_0 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32_0, i32 1
+    %array_addr_0 = bitcast i32* %array_tmp_begin_i32_0 to i32*
+    store i32* %array_addr_0, i32** @count
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
