@@ -27,7 +27,7 @@ public class ASMprinter implements ASMVisitor {
 
     public IRmodule iRmodule;
 
-    private final Physical_Register s0, sp, ra;
+    private final Physical_Register s0, sp, ra, s2;
 
     public ASMprinter(IRmodule iRmodule_, ASM_Module asm_module_) throws FileNotFoundException {
         iRmodule = iRmodule_;
@@ -35,6 +35,7 @@ public class ASMprinter implements ASMVisitor {
         s0 = asm_module_.physical_registers.get(8);
         sp = asm_module_.physical_registers.get(2);
         ra = asm_module_.physical_registers.get(1);
+        s2 = asm_module_.physical_registers.get(18);
 
     }
 
@@ -76,21 +77,60 @@ public class ASMprinter implements ASMVisitor {
         f_println(it.asm_function_name + ":");
         for (int i = 0; i < it.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = it.asm_basicblock_in_function.get(i);
+            int stack_offset = it.virtual_reg_offset;
             if (i == 0) {
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, s0, new Immediate((it.virtual_reg_offset + 12))));
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s0, new Immediate(it.virtual_reg_offset + 4)));
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, ra, new Immediate(it.virtual_reg_offset + 8)));
-                asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate(-(it.virtual_reg_offset + 12))));
+                if (!checkrange(stack_offset)) {
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s0, null));
+
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, s0, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s2, new Immediate(0)));
+
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 8))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, ra, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s2, new Immediate(0)));
+
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate(-(stack_offset + 12))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, sp, null));
+                } else {
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, s0, new Immediate((stack_offset + 12))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s0, new Immediate(stack_offset + 4)));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, ra, new Immediate(stack_offset + 8)));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate(-(stack_offset + 12))));
+                }
             } else if (i == it.asm_basicblock_in_function.size() - 1) {
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, s0, new Immediate(it.virtual_reg_offset + 4)));
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, ra, new Immediate(it.virtual_reg_offset + 8)));
-                asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate((it.virtual_reg_offset + 12))));
+                if (!checkrange(stack_offset)) {
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, s0, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Load(4, sp, s2, new Immediate(0)));
+
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 8))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, ra, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Load(4, sp, s2, new Immediate(0)));
+
+
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, sp, null));
+
+
+                } else {
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, s0, new Immediate(stack_offset + 4)));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, sp, ra, new Immediate(stack_offset + 8)));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate((stack_offset + 12))));
+                }
                 asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Ret());
+
             }
             asm_basicblock.accept(this);
         }
         f_println("# end function : " + it.asm_function_name);
         f_println("");
+    }
+
+    private boolean checkrange(int stack) {
+        return stack >= -2024 && stack < 2024;
+
     }
 
     @Override
