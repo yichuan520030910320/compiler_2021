@@ -80,19 +80,19 @@ public class ASMprinter implements ASMVisitor {
             int stack_offset = it.virtual_reg_offset;
             if (i == 0) {
                 if (!checkrange(stack_offset)) {
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s0, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
 
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, s2, s0, new Immediate(0)));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s2, null));
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, s0, s2, null));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s2, new Immediate(0)));
 
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, s2, ra, new Immediate(0)));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s2, null));
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 8))));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, ra, s2, null));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s2, new Immediate(0)));
 
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate(-(stack_offset + 12))));
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, sp, null));
+                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate(-(stack_offset + 12))));
                 } else {
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, s0, new Immediate((stack_offset + 12))));
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Store(4, sp, s0, new Immediate(stack_offset + 4)));
@@ -101,17 +101,17 @@ public class ASMprinter implements ASMVisitor {
                 }
             } else if (i == it.asm_basicblock_in_function.size() - 1) {
                 if (!checkrange(stack_offset)) {
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, s0, s2, null));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Load(4, sp, s2, new Immediate(0)));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, s2, s0, new Immediate(0)));
 
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 8))));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, ra, s2, null));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Load(4, sp, s2, new Immediate(0)));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 8))));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s2, null));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Load(4, s2, ra, new Immediate(0)));
 
 
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
-                    asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, sp, null));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 12))));
+                    asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, sp, null));
 
 
                 } else {
