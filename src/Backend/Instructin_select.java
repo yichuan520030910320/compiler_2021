@@ -322,6 +322,10 @@ public class Instructin_select implements IRvisitor {
             Virtual_Register constli = new Virtual_Register("virtual_reg_const_li", 4);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(constli, new Immediate(((ConstOperand_Integer) iropreand).value)));
             return constli;
+        }
+        else if (iropreand instanceof ConstOperand_Null) {
+           return cur_module.physical_registers.get(0);
+
         } else if (iropreand instanceof Global_variable) {
             assert ((Global_variable) iropreand).initoperand instanceof ConstOperand_String;
             if (!(((Global_variable) iropreand).initoperand instanceof ConstOperand_String))

@@ -237,7 +237,7 @@ public class IRbuilder implements ASTvisitor {
                         }
                     }
                 }
-                nowclass.prefix_sum_bytenum_in_ast=classtype.prefix_sum_bytenum;
+                nowclass.prefix_sum_bytenum_in_ast = classtype.prefix_sum_bytenum;
                 for (int j = 0; j < nowclass.constructerlist.size(); j++) {
                     Constructdecl_ASTnode constru = nowclass.constructerlist.get(j);
                     //add function paraments
@@ -589,8 +589,8 @@ public class IRbuilder implements ASTvisitor {
             para_gep.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
             Register gep_in_id = new Register(new PointerType(member_type), current_class_detail.classname + "." + it.index + "_gep_in_id");
             current_function.renaming_add(gep_in_id);
-            GetElementPtrInstruction gep=new GetElementPtrInstruction(current_basicblock, gep_in_id, thisreg, para_gep);
-            gep.prefix_sum_bytenum= current_class_detail.prefix_sum_bytenum_in_ast;
+            GetElementPtrInstruction gep = new GetElementPtrInstruction(current_basicblock, gep_in_id, thisreg, para_gep);
+            gep.prefix_sum_bytenum = current_class_detail.prefix_sum_bytenum_in_ast;
             current_basicblock.instruction_add(gep);
             current_ir_scope.id_map.put(it.index, gep_in_id);
 
@@ -678,8 +678,8 @@ public class IRbuilder implements ASTvisitor {
         ArrayList<BaseOperand> getelementptr_para = new ArrayList<>();
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
-        GetElementPtrInstruction geptmp=new GetElementPtrInstruction(current_basicblock, class_mem_gep_reg, it.classcall.ir_operand, getelementptr_para);
-        geptmp.prefix_sum_bytenum= class_decl.prefix_sum_bytenum_in_ast;
+        GetElementPtrInstruction geptmp = new GetElementPtrInstruction(current_basicblock, class_mem_gep_reg, it.classcall.ir_operand, getelementptr_para);
+        geptmp.prefix_sum_bytenum = class_decl.prefix_sum_bytenum_in_ast;
         current_basicblock.instruction_add(geptmp);
         //load it
         Register load_member = new Register(member_type, "load_member");
@@ -1337,8 +1337,8 @@ public class IRbuilder implements ASTvisitor {
             current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, ((PointerType) this_addr.type).get_low_dim_type(), this_addr));
         current_ir_scope.id_map.put("this_addr", this_addr);
         //fix a bug in instruction selector
-Register thispara_reg=new Register(Function.function_type.parament_list.get(0).type,"thispara_reg");
-current_function.renaming_add(this_addr);
+        Register thispara_reg = new Register(Function.function_type.parament_list.get(0).type, "this");
+        current_function.renaming_add(this_addr);
         current_basicblock.instruction_add(new StoreInstruction(current_basicblock, thispara_reg, this_addr));
         current_function.para_map_fic_for_codegen.put("this", thispara_reg);
 
