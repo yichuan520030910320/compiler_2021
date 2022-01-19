@@ -95,8 +95,6 @@ public class Main {
             System.err.println(er.toString());
             System.out.println("Fail");
             throw new RuntimeException();
-
-
         }
     }
 }

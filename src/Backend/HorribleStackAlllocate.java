@@ -64,13 +64,37 @@ public class HorribleStackAlllocate {
                 curfunction.alloca((Virtual_Register) operand1, ((Virtual_Register) operand1).byte_num);
             }
             int imm_ = -curfunction.Virtual_to_offset.get(operand1);
-            if (load_or_store) {
-                it.previous();
-                it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num,  s0, (Base_RISCV_Register) operand2,new Immediate(imm_)));
-                it.next();
-            } else
-                it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));
+            if (checkimmrange(imm_)){
+                if (load_or_store) {
+                    it.previous();
+                    it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));
+                    it.next();
+                } else
+                    it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, s0, (Base_RISCV_Register) operand2, new Immediate(imm_)));
+            }
+            else{
+                if (load_or_store) {
+                    it.previous();
+                    outofrange_get_offset(imm_);
+                     it.add(new RISCV_Instruction_Load(((Virtual_Register) operand1).byte_num, t6, (Base_RISCV_Register) operand2, new Immediate(0)));
+                    it.next();
+                } else
+                    outofrange_get_offset(imm_);
+                    it.add(new RISCV_Instruction_Store(((Virtual_Register) operand1).byte_num, t6, (Base_RISCV_Register) operand2, new Immediate(0)));
+
+            }
+
             return operand2;
         }
+    }
+    private void outofrange_get_offset(int imm_){
+        it.add(new RISCV_Instruction_Li(t6,new Immediate(imm_)));
+        it.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add,s0,t6,t6,null));
+
+    }
+
+
+    public boolean checkimmrange(int imm_) {
+        return imm_ >= -2048 && imm_ < 2048;
     }
 }

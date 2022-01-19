@@ -11,7 +11,6 @@ import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
 import RISCV.Instruction.*;
-import RISCV.Operand.Base_RISCV_Operand;
 import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
@@ -156,7 +155,6 @@ public class Instructin_select implements IRvisitor {
                     //rs2=M[t]
                     Virtual_Register immreg = outofrangeadd(stackoffset);
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, immreg, transreg(it.destination_register), new Immediate(0)));
-
                 }
             } else {
                 //when the reg haven't be alloca before (it's also a virtual register)
@@ -210,9 +208,7 @@ public class Instructin_select implements IRvisitor {
                 //here the imm is important it's related to rs1
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(it.source_operand.type.byte_num(), asm_rs1, asm_rs2, new Immediate(0)));
             }
-
         }
-
     }
 
     @Override
@@ -235,6 +231,7 @@ public class Instructin_select implements IRvisitor {
         cur_module.all_function.put(it.functionname, cur_function);
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
+
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
             String para_name = it.function_type.parament_list.get(i).paraname;
             BaseOperand para = it.para_map_fic_for_codegen.get(para_name);
@@ -251,8 +248,6 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock = cur_function.asm_basicblock_in_function.get(i);
             it.block_list.get(i).accept(this);
         }
-
-
     }
 
     @Override
@@ -278,7 +273,7 @@ public class Instructin_select implements IRvisitor {
                 //change offset=byte_in_gep*offset
 
                 Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep,new Immediate(offset_in_gep.type.byte_num())));
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep, new Immediate(offset_in_gep.type.byte_num())));
                 Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
                 //rd=rs+changeoffset

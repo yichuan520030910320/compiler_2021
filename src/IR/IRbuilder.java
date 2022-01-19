@@ -769,7 +769,7 @@ public class IRbuilder implements ASTvisitor {
                 Register tmp_para = new Register(type_trans.asttype_to_irtype(tmp.type), tmp.name + "_para");
                 current_ir_scope.id_map.put(tmp.name + "_para", tmp_para);
                 current_function.para_map_fic_for_codegen.put(tmp.name + "_para", tmp_para);
-                current_function.paramentlist.add(tmp_para);
+                //current_function.paramentlist.add(tmp_para);
                 it.paralist_infuction.paralist.get(i).accept(this);
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, current_ir_scope.id_map.get(tmp.name + "_para"), current_ir_scope.id_map.get(tmp.name)));
             }
@@ -1337,8 +1337,10 @@ public class IRbuilder implements ASTvisitor {
             current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, ((PointerType) this_addr.type).get_low_dim_type(), this_addr));
         current_ir_scope.id_map.put("this_addr", this_addr);
         //fix a bug in instruction selector
-        current_function.para_map_fic_for_codegen.put("this", this_addr);
+Register thispara_reg=new Register(Function.function_type.parament_list.get(0).type,"thispara_reg");
+current_function.renaming_add(this_addr);
+        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, thispara_reg, this_addr));
+        current_function.para_map_fic_for_codegen.put("this", thispara_reg);
 
-        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, Function.function_type.parament_list.get(0), this_addr));
     }
 }
