@@ -26,9 +26,10 @@ public class Main {
 
         //chose the read option
         boolean localjudge =false;
+        boolean local_test_ir=false;
         String name;
         InputStream input = null;boolean onlysemnatic=false;
-        if (localjudge ) {
+        if (localjudge&&(!local_test_ir) ) {
             name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
             input = new FileInputStream(name);
         } else {
@@ -72,7 +73,7 @@ public class Main {
             if (localjudge){//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
 
-                //llvm_naive.stdout=true;
+                if (local_test_ir==true)llvm_naive.stdout=true;
                 llvm_naive.visit(irbuilder.module_in_irbuilder);
             }
             //System.out.println("IRbuild Success");

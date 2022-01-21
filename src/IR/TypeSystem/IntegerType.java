@@ -21,7 +21,7 @@ public class IntegerType extends Typesystem {
 
     @Override
     public int byte_num() {
-        if (Inttype==IntegerSubType.i1||Inttype==IntegerSubType.i8)return 4;
+        if (Inttype==IntegerSubType.i1||Inttype==IntegerSubType.i8)return 1;
         else return 4;
     }
 }
