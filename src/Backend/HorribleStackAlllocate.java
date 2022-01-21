@@ -31,7 +31,7 @@ public class HorribleStackAlllocate {
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
             for (int i = 0; i < entry.getValue().asm_basicblock_in_function.size(); i++) {
                 curfunction = entry.getValue();
-                for (int j = 0; j < curfunction.asm_basicblock_in_function.size(); j++) {
+
                     curbasicblock = curfunction.asm_basicblock_in_function.get(i);
                     it = curbasicblock.Riscv_instruction_in_block.listIterator(0);
                     while (it.hasNext()) {
@@ -47,7 +47,7 @@ public class HorribleStackAlllocate {
                             instruction.rd = (Base_RISCV_Register) Horrible_LoadStore_onStack(instruction.rd, t5, false);
                         }
                     }
-                }
+
             }
         }
     }
