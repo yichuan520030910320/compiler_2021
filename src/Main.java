@@ -3,6 +3,7 @@ import Backend.HorribleStackAlllocate;
 import Backend.Instructin_select;
 import IR.IRbuilder;
 import IR.IRprinter;
+import Optimize.Graph_Coloring;
 import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
@@ -25,7 +26,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =false;
+        boolean localjudge =true;
         boolean local_test_ir=false;
         String name;
         InputStream input = null;boolean onlysemnatic=false;
@@ -43,8 +44,6 @@ public class Main {
             }
         }
         try {
-
-
             //lexer and parser
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
@@ -63,7 +62,6 @@ public class Main {
             //semantic check
             Semanticcheck semanticchecker = new Semanticcheck(gScope);
             semanticchecker.visit(ASTRoot);
-            //System.out.println("Semantic Success");
             if (onlysemnatic)return;
 
             //ir builder
@@ -76,24 +74,20 @@ public class Main {
                 if (local_test_ir==true)llvm_naive.stdout=true;
                 llvm_naive.visit(irbuilder.module_in_irbuilder);
             }
-            //System.out.println("IRbuild Success");
-
 
             //instrunction select
             Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
 
             //reg allocate
-            HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            Graph_Coloring graph_coloring=new Graph_Coloring(instructin_select.cur_module);
 
             //asm printer
-            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
-
+            //ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
+            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,graph_coloring.asm_module);
             if (localjudge)asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
             else asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();
-
-
-
         } catch (Error er) {
             System.err.println(er.toString());
             System.out.println("Fail");

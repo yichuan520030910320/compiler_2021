@@ -103,10 +103,8 @@ public class Instructin_select implements IRvisitor {
         RISCV_Instruction_Cmp.RISCVCompareType cmp_type;
         Virtual_Register xor_result = new Virtual_Register("sub_virtual_reg", it.operand1.type.byte_num());
         switch (it.cmp_operation) {
-            case slt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
-            case sgt -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
-            case sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
-            case sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
+            case slt, sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
+            case sgt, sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
             case eq -> {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.seqz;

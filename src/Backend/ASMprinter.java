@@ -1,6 +1,5 @@
 package Backend;
 
-import IR.IRfunction.IRfunction;
 import IR.IRmodule.IRmodule;
 import IR.Operand.ConstOperand_String;
 import IR.Operand.Global_variable;
@@ -13,7 +12,6 @@ import RISCV.Operand.Imm.Immediate;
 import RISCV.Operand.Register.Physical_Register;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -129,6 +127,7 @@ public class ASMprinter implements ASMVisitor {
     }
 
     private boolean checkrange(int stack) {
+        //to do it because my stackframe need to add 12 or 8
         return stack >= -2024 && stack < 2024;
 
     }

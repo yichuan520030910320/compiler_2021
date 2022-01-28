@@ -15,7 +15,6 @@ import IR.Operand.*;
 import IR.TypeSystem.*;
 import IR.Utils.AST_to_IR_trans;
 import IR.Utils.IR_scope;
-import RISCV.Instruction.Base_RISCV_Instruction;
 import Utils.error.IRbuilderError;
 import Utils.globalscope;
 

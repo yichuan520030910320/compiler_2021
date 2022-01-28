@@ -54,10 +54,8 @@ public class HorribleStackAlllocate {
 
     //true for load && false for store
     private Base_RISCV_Operand Horrible_LoadStore_onStack(Base_RISCV_Operand operand1, Base_RISCV_Operand operand2, boolean load_or_store) {
-        //todo
         //cope with the global var condition
         //cope with stackframe size out of range
-
         if (operand1 instanceof Physical_Register) return operand1;
         else {
             assert operand1 instanceof Virtual_Register;
