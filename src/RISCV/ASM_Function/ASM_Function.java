@@ -36,6 +36,15 @@ public class ASM_Function {
             iRbasicblockASM_basicblockHashMap.put(tmpbb, asm_basicblock);
             asm_basicblock_in_function.add(asm_basicblock);
         }
+
+        //cope with the pass from ir to asm
+        for (int i = 0; i < iRfunction.block_list.size(); i++) {
+            IRbasicblock tmpbb = iRfunction.block_list.get(i);
+            ASM_Basicblock asm_basicblock=asm_basicblock_in_function.get(i);
+            for (IRbasicblock nxt_basic_block:tmpbb.nxt_basic_block)asm_basicblock.nxt_basicblock.add(iRbasicblockASM_basicblockHashMap.get(nxt_basic_block));
+            for (IRbasicblock pre_basic_block:tmpbb.pre_basicblock)asm_basicblock.pre_basicblock.add(iRbasicblockASM_basicblockHashMap.get(pre_basic_block));
+        }
+
         head_basicblock=asm_basicblock_in_function.getFirst();
 
     }

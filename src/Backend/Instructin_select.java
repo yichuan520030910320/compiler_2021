@@ -88,7 +88,9 @@ public class Instructin_select implements IRvisitor {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(tmp_para.type.byte_num(), sp, transreg(tmp_para), new Immediate((i - 8) * 4)));
             }
         }
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Call(it.call_fuction.functionname));
+        RISCV_Instruction_Call riscv_instruction_call = new RISCV_Instruction_Call(it.call_fuction.functionname);
+        riscv_instruction_call.def_reg.addAll(cur_module.caller_registers);
+        cur_basicblock.add_tail_instru(riscv_instruction_call);
         if (!(it.call_fuction.function_type.returntype instanceof VoidType)) {
             Base_RISCV_Register call_result = transreg(it.call_result);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(a0, call_result));
@@ -180,9 +182,9 @@ public class Instructin_select implements IRvisitor {
     public void visit(StoreInstruction it) {
         //eg M[R[rs1]+imm](7:0)=R[rs2](7:0)
         if (it.dest_operand instanceof Global_variable) {
-            Virtual_Register la=new Virtual_Register("la",4);
-            cur_basicblock.add_tail_instru(new RISCV_Instruction_La(((Global_variable) it.dest_operand).GlobalVariableName,la));
-            cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4,la,transreg(it.source_operand),new Immediate(0)));
+            Virtual_Register la = new Virtual_Register("la", 4);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_La(((Global_variable) it.dest_operand).GlobalVariableName, la));
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, la, transreg(it.source_operand), new Immediate(0)));
         } else {
             Base_RISCV_Register asm_rs1 = transreg(it.dest_operand);
             Base_RISCV_Register asm_rs2 = transreg(it.source_operand);
@@ -319,9 +321,8 @@ public class Instructin_select implements IRvisitor {
             Virtual_Register constli = new Virtual_Register("virtual_reg_const_li", 4);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(constli, new Immediate(((ConstOperand_Integer) iropreand).value)));
             return constli;
-        }
-        else if (iropreand instanceof ConstOperand_Null) {
-           return cur_module.physical_registers.get(0);
+        } else if (iropreand instanceof ConstOperand_Null) {
+            return cur_module.physical_registers.get(0);
 
         } else if (iropreand instanceof Global_variable) {
             assert ((Global_variable) iropreand).initoperand instanceof ConstOperand_String;

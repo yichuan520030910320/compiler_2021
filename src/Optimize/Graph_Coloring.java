@@ -40,7 +40,6 @@ public class Graph_Coloring {
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
             Graph_Coloring_on_Function(entry.getValue());
 
-
         }
     }
 
