@@ -21,23 +21,23 @@ public class Graph_Coloring {
 
     public LivenessAnalysis livenessAnalysis;
     //every vertex can only in one set or sheet
-    public HashSet<Base_RISCV_Register> precolored = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> initialed = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> simplifyWorklist = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> freezeWorklist = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> spillWorklist = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> spilledNodes = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> coalescedNodes = new LinkedHashSet<>();
-    public HashSet<Base_RISCV_Register> coloredNodes = new LinkedHashSet<>();
+    public HashSet<Base_RISCV_Register> precolored = new HashSet<>();
+    public HashSet<Base_RISCV_Register> initialed = new HashSet<>();
+    public HashSet<Base_RISCV_Register> simplifyWorklist = new HashSet<>();
+    public HashSet<Base_RISCV_Register> freezeWorklist = new HashSet<>();
+    public HashSet<Base_RISCV_Register> spillWorklist = new HashSet<>();
+    public HashSet<Base_RISCV_Register> spilledNodes = new HashSet<>();
+    public HashSet<Base_RISCV_Register> coalescedNodes = new HashSet<>();
+    public HashSet<Base_RISCV_Register> coloredNodes = new HashSet<>();
     public Stack<Base_RISCV_Register> selectStack = new Stack<>();
 
     //for move instructions
     //every move can only in one set
-    public HashSet<RISCV_Instruction_Move> coalescedMoves = new LinkedHashSet<>();
-    public HashSet<RISCV_Instruction_Move> constrainedMoves = new LinkedHashSet<>();
-    public HashSet<RISCV_Instruction_Move> frozenMoves = new LinkedHashSet<>();
-    public HashSet<RISCV_Instruction_Move> worklistMoves = new LinkedHashSet<>();
-    public HashSet<RISCV_Instruction_Move> activeMoves = new LinkedHashSet<>();
+    public HashSet<RISCV_Instruction_Move> coalescedMoves = new HashSet<>();
+    public HashSet<RISCV_Instruction_Move> constrainedMoves = new HashSet<>();
+    public HashSet<RISCV_Instruction_Move> frozenMoves = new HashSet<>();
+    public HashSet<RISCV_Instruction_Move> worklistMoves = new HashSet<>();
+    public HashSet<RISCV_Instruction_Move> activeMoves = new HashSet<>();
 
     //other data structure
     public HashSet<Pair<Base_RISCV_Register, Base_RISCV_Register>> adjSet = new HashSet<>();
@@ -83,25 +83,24 @@ public class Graph_Coloring {
 
     private void SetInitialed() {
         //initial
-        precolored = new LinkedHashSet<>();
-        initialed = new LinkedHashSet<>();
-        simplifyWorklist = new LinkedHashSet<>();
-        freezeWorklist = new LinkedHashSet<>();
-        spillWorklist = new LinkedHashSet<>();
-        spilledNodes = new LinkedHashSet<>();
-        coalescedNodes = new LinkedHashSet<>();
-        coloredNodes = new LinkedHashSet<>();
+        precolored = new HashSet<>();
+        initialed = new HashSet<>();
+        simplifyWorklist = new HashSet<>();
+        freezeWorklist = new HashSet<>();
+        spillWorklist = new HashSet<>();
+        spilledNodes = new HashSet<>();
+        coalescedNodes = new HashSet<>();
+        coloredNodes = new HashSet<>();
         selectStack = new Stack<>();
 
         //for move instructions
         //every move can only in one set
-        coalescedMoves = new LinkedHashSet<>();
-        constrainedMoves = new LinkedHashSet<>();
-        frozenMoves = new LinkedHashSet<>();
-        worklistMoves = new LinkedHashSet<>();
+        coalescedMoves = new HashSet<>();
+        constrainedMoves = new HashSet<>();
+        frozenMoves = new HashSet<>();
+        worklistMoves = new HashSet<>();
 //        the move instructions that failed to the briggs test
-        activeMoves = new LinkedHashSet<>();
-
+        activeMoves = new HashSet<>();
         //other data structure
         adjSet = new HashSet<>();
         adjList = new HashMap<>();
@@ -113,7 +112,7 @@ public class Graph_Coloring {
         for (int i = 0; i < cur_function.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = cur_function.asm_basicblock_in_function.get(i);
             for (int j = 0; j < asm_basicblock.Riscv_instruction_in_block.size(); j++) {
-                Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(i);
+                Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(j);
                 initialed.addAll(base_riscv_instruction.def_reg);
                 initialed.addAll(base_riscv_instruction.use_reg);
             }
@@ -184,8 +183,8 @@ public class Graph_Coloring {
     }
 
     private void MakeWorklist() {
-        for (Base_RISCV_Register base_riscv_register : initialed) {
-            initialed.remove(base_riscv_register);
+        for (var base_riscv_register : initialed) {
+            //initialed.remove(base_riscv_register);
             if (degree.get(base_riscv_register) >= K) spillWorklist.add(base_riscv_register);
             else if (MoveRelated(base_riscv_register)) freezeWorklist.add(base_riscv_register);
             else simplifyWorklist.add(base_riscv_register);
