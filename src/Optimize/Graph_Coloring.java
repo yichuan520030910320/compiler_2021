@@ -167,7 +167,7 @@ public class Graph_Coloring {
             ASM_Basicblock asm_basicblock = cur_function.asm_basicblock_in_function.get(i);
             double loop_factor = Math.pow(10, Math.min(asm_basicblock.nxt_basicblock.size(), asm_basicblock.pre_basicblock.size()));
             for (int j = 0; j < asm_basicblock.Riscv_instruction_in_block.size(); j++) {
-                Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(i);
+                Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(j);
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
                     base_riscv_register.spill_factor += loop_factor;
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.use_reg)
