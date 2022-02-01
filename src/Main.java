@@ -79,12 +79,12 @@ public class Main {
             Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
 
             //reg allocate
-            //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
-            Graph_Coloring graph_coloring=new Graph_Coloring(instructin_select.cur_module);
+            HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            //Graph_Coloring graph_coloring=new Graph_Coloring(instructin_select.cur_module);
 
             //asm printer
-            //ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
-            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,graph_coloring.asm_module);
+            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
+            //ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,graph_coloring.asm_module);
             if (localjudge)asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
             else asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();

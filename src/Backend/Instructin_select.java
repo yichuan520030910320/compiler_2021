@@ -17,6 +17,7 @@ import RISCV.Operand.Register.Physical_Register;
 import RISCV.Operand.Register.Virtual_Register;
 import Utils.error.IRbuilderError;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class Instructin_select implements IRvisitor {
     //record the corresponding relationship with irregister and virtual register
     public HashMap<BaseOperand, Base_RISCV_Register> IRreg_to_ASMreg = new HashMap<>();
     Physical_Register ra, sp, s0, a0;
+
+    public ArrayList<Virtual_Register>callee_saved_virtual_reg=new ArrayList<>();
 
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
@@ -170,6 +173,13 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(RetInstruction it) {
+
+        //recover the calleesaved
+        for (int i = 0; i <cur_module.callee_registers.size() ; i++) {
+            Virtual_Register virtual_register=callee_saved_virtual_reg.get(i);
+            Physical_Register physical_register=cur_module.caller_registers.get(i);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register,physical_register));
+        }
         if (it.Ret_Type instanceof VoidType) {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
             return;
@@ -230,6 +240,15 @@ public class Instructin_select implements IRvisitor {
         cur_module.all_function.put(it.functionname, cur_function);
         cur_basicblock = cur_function.head_basicblock;
         //mv the parament to the virtual reg
+
+        // ------ Save callee-save registers ------
+        callee_saved_virtual_reg.clear();
+        for (int i = 0; i < cur_module.callee_registers.size(); i++) {
+            Physical_Register physical_register = cur_module.caller_registers.get(i);
+            Virtual_Register virtual_register = new Virtual_Register("callee_saved" + i, 4);
+            callee_saved_virtual_reg.add(virtual_register);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(physical_register,virtual_register));
+        }
 
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
             String para_name = it.function_type.parament_list.get(i).paraname;

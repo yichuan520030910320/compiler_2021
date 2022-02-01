@@ -19,15 +19,22 @@ public class ASM_Module {
     public ArrayList<Physical_Register> physical_registers=new ArrayList<>();
     public ArrayList<Physical_Register> caller_registers=new ArrayList<>();
     public ArrayList<Physical_Register> callee_registers=new ArrayList<>();
+    //used for graph coloring in the assign color function
+    public ArrayList<Physical_Register>okColors=new ArrayList<>();
+    //used as a tool for graphcoloring
+    public HashMap<Physical_Register,Integer> physical_registerIntegerHashMap=new HashMap<>();
     public HashMap<String, ASM_Function> all_function=new HashMap<>();
     public void accept(ASMVisitor visitor) {
         visitor.visit(this);
     }
+
     public ASM_Module(){
         for (String s : PhyRegName) {
             physical_registers.add(new Physical_Register(s));
         }
         for (int i = 0; i <RegPrivilege.size() ; i++) {
+            physical_registerIntegerHashMap.put(physical_registers.get(i),i);
+            if (RegPrivilege.get(i)!=0)okColors.add(physical_registers.get(i));
             if (RegPrivilege.get(i)==1)caller_registers.add(physical_registers.get(i));
             else if (RegPrivilege.get(i)==2)callee_registers.add(physical_registers.get(i));
         }

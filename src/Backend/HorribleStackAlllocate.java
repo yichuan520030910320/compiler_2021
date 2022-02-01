@@ -1,5 +1,6 @@
 package Backend;
 
+import Optimize.LivenessAnalysis;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
@@ -21,6 +22,7 @@ public class HorribleStackAlllocate {
     public ListIterator<Base_RISCV_Instruction> it;
 
     public HorribleStackAlllocate(ASM_Module asm_module_) {
+
         asm_module = asm_module_;
         t3 = asm_module_.physical_registers.get(28);
         t4 = asm_module_.physical_registers.get(29);
@@ -28,7 +30,9 @@ public class HorribleStackAlllocate {
         t6 = asm_module_.physical_registers.get(31);
         sp = asm_module_.physical_registers.get(2);
         s0 = asm_module_.physical_registers.get(8);
+
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
+            new LivenessAnalysis(entry.getValue());
             for (int i = 0; i < entry.getValue().asm_basicblock_in_function.size(); i++) {
                 curfunction = entry.getValue();
 

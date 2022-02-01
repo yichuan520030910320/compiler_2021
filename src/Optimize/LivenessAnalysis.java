@@ -7,8 +7,6 @@ import RISCV.Operand.Register.Base_RISCV_Register;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class LivenessAnalysis {
     public ASM_Function asm_function;

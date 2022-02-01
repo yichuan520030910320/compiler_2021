@@ -44,9 +44,7 @@ public class ASM_Function {
             for (IRbasicblock nxt_basic_block:tmpbb.nxt_basic_block)asm_basicblock.nxt_basicblock.add(iRbasicblockASM_basicblockHashMap.get(nxt_basic_block));
             for (IRbasicblock pre_basic_block:tmpbb.pre_basicblock)asm_basicblock.pre_basicblock.add(iRbasicblockASM_basicblockHashMap.get(pre_basic_block));
         }
-
         head_basicblock=asm_basicblock_in_function.getFirst();
-
     }
 
     public void alloca(Virtual_Register reg, int bytes) {
