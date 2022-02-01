@@ -4,7 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 
-@const_string0 = private unnamed_addr constant [13 x i8] c"Hello World!\00", align 1
+@const_string0 = private unnamed_addr constant [12 x i8] c"Hello World\00", align 1
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
 declare i1 @_str_le(i8* %lhs,i8* %rhs)
@@ -30,7 +30,7 @@ define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
     %return_register_infunction_addr = alloca i32
-    %const_string_pointer = getelementptr inbounds [13 x i8], [13 x i8]* @const_string0, i32 0, i32 0
+    %const_string_pointer = getelementptr inbounds [12 x i8], [12 x i8]* @const_string0, i32 0, i32 0
     call void @println(i8* %const_string_pointer)
     br label %return_block0
 

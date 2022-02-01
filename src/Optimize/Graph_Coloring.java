@@ -72,11 +72,31 @@ public class Graph_Coloring {
                 else if (!worklistMoves.isEmpty()) Coalesce();
                 else if (!freezeWorklist.isEmpty()) Freeze();
                 else if (!spillWorklist.isEmpty()) SelectSpill();
-            } while (!(simplifyWorklist.isEmpty() || worklistMoves.isEmpty() || freezeWorklist.isEmpty() || spillWorklist.isEmpty()));
+            } while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty()));
             AssignColors();
             if (!spillWorklist.isEmpty()) {
                 ReWritePrograms();
             } else break;
+        }
+
+        for (int i = 0; i < asm_function.asm_basicblock_in_function.size(); i++) {
+            ASM_Basicblock asm_basicblock = asm_function.asm_basicblock_in_function.get(i);
+            LinkedList<Base_RISCV_Instruction> base_riscv_instructions = new LinkedList<>();
+            for (int j = 0; j < asm_basicblock.Riscv_instruction_in_block.size(); j++) {
+
+                Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(j);
+                if (base_riscv_instruction.rs1 instanceof Virtual_Register)
+                    base_riscv_instruction.rs1 = asm_module.physical_registers.get(color_.get(base_riscv_instruction.rs1));
+                if (base_riscv_instruction.rs2 instanceof Virtual_Register)
+                    base_riscv_instruction.rs2 = asm_module.physical_registers.get(color_.get(base_riscv_instruction.rs2));
+                if (base_riscv_instruction.rd instanceof Virtual_Register)
+                    base_riscv_instruction.rd = asm_module.physical_registers.get(color_.get(base_riscv_instruction.rd));
+                if (base_riscv_instruction instanceof RISCV_Instruction_Move && base_riscv_instruction.rs1 == base_riscv_instruction.rd) {
+                    continue;
+                }
+                base_riscv_instructions.add(base_riscv_instruction);
+            }
+            asm_basicblock.Riscv_instruction_in_block = base_riscv_instructions;
         }
 
     }
@@ -121,7 +141,6 @@ public class Graph_Coloring {
         for (int i = 0; i < asm_module.physical_registers.size(); i++) {
             Base_RISCV_Register base_riscv_register = asm_module.physical_registers.get(i);
             precolored.add(base_riscv_register);
-
             adjList.put(base_riscv_register, new HashSet<>());
             degree.put(base_riscv_register, Integer.MAX_VALUE);
             moveList.put(base_riscv_register, new HashSet<>());

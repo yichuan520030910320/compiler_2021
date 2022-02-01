@@ -177,7 +177,7 @@ public class Instructin_select implements IRvisitor {
         //recover the calleesaved
         for (int i = 0; i <cur_module.callee_registers.size() ; i++) {
             Virtual_Register virtual_register=callee_saved_virtual_reg.get(i);
-            Physical_Register physical_register=cur_module.caller_registers.get(i);
+            Physical_Register physical_register=cur_module.callee_registers.get(i);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register,physical_register));
         }
         if (it.Ret_Type instanceof VoidType) {
@@ -244,7 +244,7 @@ public class Instructin_select implements IRvisitor {
         // ------ Save callee-save registers ------
         callee_saved_virtual_reg.clear();
         for (int i = 0; i < cur_module.callee_registers.size(); i++) {
-            Physical_Register physical_register = cur_module.caller_registers.get(i);
+            Physical_Register physical_register = cur_module.callee_registers.get(i);
             Virtual_Register virtual_register = new Virtual_Register("callee_saved" + i, 4);
             callee_saved_virtual_reg.add(virtual_register);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(physical_register,virtual_register));
