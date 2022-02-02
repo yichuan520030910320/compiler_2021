@@ -8,6 +8,7 @@ import RISCV.Operand.Register.Physical_Register;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Stack;
 
 public class LivenessAnalysis {
@@ -44,9 +45,9 @@ public class LivenessAnalysis {
             kill.add(s0_);
 
 
-            System.out.println("kill and gen in asm: " + asm_basicblock.asm_basic_block_label);
-            System.out.println(gen);
-            System.out.println(kill);
+//            System.out.println("kill and gen in asm: " + asm_basicblock.asm_basic_block_label);
+//            System.out.println(gen);
+//            System.out.println(kill);
 
 
             blockuse.put(asm_basicblock, gen);
@@ -124,6 +125,12 @@ public class LivenessAnalysis {
             for (ASM_Basicblock asm_basicblock_pre : cur_asm_basicblock.pre_basicblock)
                 asm_basicblockStack.push(asm_basicblock_pre);
         }
+//        for (Map.Entry<ASM_Basicblock,HashSet<Base_RISCV_Register>> entry:block_liveout.entrySet()){
+//            System.out.println("bbbbb: "+entry.getKey().asm_basic_block_label);
+//            System.out.println(entry.getValue());
+//            System.out.println("");
+//
+//        }
 
 
     }

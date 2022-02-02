@@ -193,12 +193,12 @@ public class Graph_Coloring {
                         moveList.get(base_riscv_register).add((RISCV_Instruction_Move) base_riscv_instruction);
                     worklistMoves.add((RISCV_Instruction_Move) base_riscv_instruction);
                 }
-                System.out.println("");
-                System.out.println(base_riscv_instruction);
-                System.out.println(live);
+//                System.out.println("");
+//                System.out.println(base_riscv_instruction);
+//                System.out.println(live);
                 live.addAll(base_riscv_instruction.def_reg);
-                System.out.println(base_riscv_instruction.def_reg);
-                System.out.println(live);
+//                System.out.println(base_riscv_instruction.def_reg);
+//                System.out.println(live);
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
                     for (Base_RISCV_Register base_riscv_register1 : live)
                         AddEdge(base_riscv_register1, base_riscv_register);
@@ -244,7 +244,7 @@ public class Graph_Coloring {
             //when u==v we coalesce it directly
             coalescedMoves.remove(m);
             AddWorklist(u);
-        } else if (precolored.contains(u) || adjSet.contains(new Pair<>(u, v))) {
+        } else if (precolored.contains(v) || adjSet.contains(new Pair<>(u, v))) {
             //the registers of the move instructions is constrained (in other work these two registers are contracted)
             constrainedMoves.add(m);
             AddWorklist(u);
@@ -469,8 +469,8 @@ public class Graph_Coloring {
     //find the external merge node
     private Base_RISCV_Register GetAlias(Base_RISCV_Register n) {
         if (coalescedNodes.contains(n)) {
-            alias.replace(n,alias.get(n));
-            return GetAlias(alias.get(n));
+            alias.replace(n,GetAlias(alias.get(n)));
+            return alias.get(n);
         }
         else return n;
     }
