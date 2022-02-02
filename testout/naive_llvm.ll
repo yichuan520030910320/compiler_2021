@@ -28,51 +28,11 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %i_addr = alloca i32
-    %f2_addr = alloca i32
-    %f1_addr = alloca i32
-    %f0_addr = alloca i32
-    %n_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    store i32 10, i32* %n_addr
-    store i32 0, i32* %f0_addr
-    store i32 1, i32* %f1_addr
-    %i = load i32, i32* %i_addr
-    store i32 1, i32* %i_addr
-    br label %for_condition
-
-for_condition:                                               ; preds = entrance_block0 for_step 
-    %i_0 = load i32, i32* %i_addr
-    %n = load i32, i32* %n_addr
-    %slt = icmp slt i32 %i_0, %n
-    br i1 %slt, label %for_body, label %for_end_merge
-
-for_step:                                                    ; preds = for_body 
-    %i_1 = load i32, i32* %i_addr
-    %add_0 = add i32 %i_1, 1
-    store i32 %add_0, i32* %i_addr
-    br label %for_condition
-
-for_body:                                                    ; preds = for_condition 
-    %f2 = load i32, i32* %f2_addr
-    %f0 = load i32, i32* %f0_addr
-    %f1 = load i32, i32* %f1_addr
-    %add = add i32 %f0, %f1
-    store i32 %add, i32* %f2_addr
-    %f0_0 = load i32, i32* %f0_addr
-    %f1_0 = load i32, i32* %f1_addr
-    store i32 %f1_0, i32* %f0_addr
-    %f1_1 = load i32, i32* %f1_addr
-    %f2_0 = load i32, i32* %f2_addr
-    store i32 %f2_0, i32* %f1_addr
-    br label %for_step
-
-for_end_merge:                                               ; preds = for_condition 
-    %f2_1 = load i32, i32* %f2_addr
-    call void @printlnInt(i32 %f2_1)
+    call void @printlnInt(i32 1)
     br label %return_block0
 
-return_block0:                                               ; preds = for_end_merge 
+return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

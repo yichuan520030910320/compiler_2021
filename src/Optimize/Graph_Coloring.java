@@ -64,7 +64,9 @@ public class Graph_Coloring {
         while (true) {
             SetInitialed();
             Compute_SpillCost();
-            livenessAnalysis = new LivenessAnalysis(asm_function);
+            Physical_Register ra=asm_module.physical_registers.get(1);
+            Physical_Register s0=asm_module.physical_registers.get(9);
+            livenessAnalysis = new LivenessAnalysis(asm_function,ra,s0);
             Build();
             MakeWorklist();
             do {
@@ -194,7 +196,7 @@ public class Graph_Coloring {
                 live.addAll(base_riscv_instruction.def_reg);
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
                     for (Base_RISCV_Register base_riscv_register1 : live)
-                        AddEdge(base_riscv_register, base_riscv_register1);
+                        AddEdge(base_riscv_register1, base_riscv_register);
                 live.removeAll(base_riscv_instruction.def_reg);
                 live.addAll(base_riscv_instruction.use_reg);
             }
@@ -461,7 +463,10 @@ public class Graph_Coloring {
 
     //find the external merge node
     private Base_RISCV_Register GetAlias(Base_RISCV_Register n) {
-        if (coalescedNodes.contains(n)) return GetAlias(alias.get(n));
+        if (coalescedNodes.contains(n)) {
+            alias.replace(n,alias.get(n));
+            return GetAlias(alias.get(n));
+        }
         else return n;
     }
 

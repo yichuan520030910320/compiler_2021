@@ -18,7 +18,7 @@ public class HorribleStackAlllocate {
     public ASM_Module asm_module;
     public ASM_Basicblock curbasicblock;
     public ASM_Function curfunction;
-    public Physical_Register t3, t4, t5, t6, sp, s0;
+    public Physical_Register t3, t4, t5, t6, sp, s0,ra;
     public ListIterator<Base_RISCV_Instruction> it;
 
     public HorribleStackAlllocate(ASM_Module asm_module_) {
@@ -30,9 +30,10 @@ public class HorribleStackAlllocate {
         t6 = asm_module_.physical_registers.get(31);
         sp = asm_module_.physical_registers.get(2);
         s0 = asm_module_.physical_registers.get(8);
+        ra=asm_module_.physical_registers.get(1);
 
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
-            new LivenessAnalysis(entry.getValue());
+            new LivenessAnalysis(entry.getValue(),ra,s0);
             for (int i = 0; i < entry.getValue().asm_basicblock_in_function.size(); i++) {
                 curfunction = entry.getValue();
 
