@@ -193,7 +193,12 @@ public class Graph_Coloring {
                         moveList.get(base_riscv_register).add((RISCV_Instruction_Move) base_riscv_instruction);
                     worklistMoves.add((RISCV_Instruction_Move) base_riscv_instruction);
                 }
+                System.out.println("");
+                System.out.println(base_riscv_instruction);
+                System.out.println(live);
                 live.addAll(base_riscv_instruction.def_reg);
+                System.out.println(base_riscv_instruction.def_reg);
+                System.out.println(live);
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
                     for (Base_RISCV_Register base_riscv_register1 : live)
                         AddEdge(base_riscv_register1, base_riscv_register);

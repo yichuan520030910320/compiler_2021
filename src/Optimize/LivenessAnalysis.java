@@ -43,9 +43,14 @@ public class LivenessAnalysis {
             kill.add(s0_);
 
 
+            System.out.println("kill and gen in asm: "+asm_basicblock.asm_basic_block_label);
+            System.out.println(gen);
+            System.out.println(kill);
+
+
             blockuse.put(asm_basicblock, gen);
             blockdef.put(asm_basicblock, kill);
-            block_livein.put(asm_basicblock, new HashSet<>());
+            block_livein.put(asm_basicblock, gen);
             block_liveout.put(asm_basicblock, new HashSet<>());
         }
         for (int i = 0; i < asm_function.asm_basicblock_in_function.size(); i++) {
@@ -55,6 +60,8 @@ public class LivenessAnalysis {
 
                 HashSet<Base_RISCV_Register> livein_prime = block_livein.get(asm_basicblock);
                 HashSet<Base_RISCV_Register> liveout_prime = block_liveout.get(asm_basicblock);
+                System.out.println("asmbb : "+asm_basicblock.asm_basic_block_label);
+                System.out.println(liveout_prime);
 
                 HashSet<Base_RISCV_Register> new_in = new HashSet<>(liveout_prime);
                 new_in.removeAll(blockdef.get(asm_basicblock));

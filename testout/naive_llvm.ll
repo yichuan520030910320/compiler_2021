@@ -3,6 +3,11 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
+@r = dso_local global i32 0
+@c = dso_local global i32 0
+@i = dso_local global i32 0
+@j = dso_local global i32 0
+@n = dso_local global i32 0
 
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
@@ -25,11 +30,36 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
+define dso_local i32 @abs(i32 %c_para) {
+entrance_block0:                                             
+    %c_addr = alloca i32
+    %return_register_infunction_addr = alloca i32
+    store i32 %c_para, i32* %c_addr
+    %c = load i32, i32* %c_addr
+    store i32 %c, i32* %return_register_infunction_addr
+    br label %return_block0
+
+return_block0:                                               ; preds = entrance_block0 
+    %returnval = load i32, i32* %return_register_infunction_addr
+    ret i32 %returnval
+}
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
     %return_register_infunction_addr = alloca i32
-    call void @printlnInt(i32 1)
+    %r = load i32, i32* @r
+    store i32 2, i32* @r
+    %c = load i32, i32* @c
+    store i32 1, i32* @c
+    %r_0 = load i32, i32* @r
+    %sub = sub i32 2, %r_0
+    %call_abs = call i32 @abs(i32 %sub)
+    %c_0 = load i32, i32* @c
+    %sub_0 = sub i32 2, %c_0
+    %call_abs_0 = call i32 @abs(i32 %sub_0)
+    %add = add i32 %call_abs, %call_abs_0
+    call void @printlnInt(i32 %add)
+    store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
