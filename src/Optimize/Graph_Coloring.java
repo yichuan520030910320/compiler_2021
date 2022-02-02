@@ -197,6 +197,7 @@ public class Graph_Coloring {
 //                System.out.println(base_riscv_instruction);
 //                System.out.println(live);
                 live.addAll(base_riscv_instruction.def_reg);
+                live.add(asm_module.physical_registers.get(0));
 //                System.out.println(base_riscv_instruction.def_reg);
 //                System.out.println(live);
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
@@ -244,7 +245,9 @@ public class Graph_Coloring {
             //when u==v we coalesce it directly
             coalescedMoves.remove(m);
             AddWorklist(u);
-        } else if (precolored.contains(v) || adjSet.contains(new Pair<>(u, v))) {
+        } else if (precolored.contains(v) || adjSet.contains(new Pair<>(u, v))||u==asm_module.physical_registers.get(0)||v==asm_module.physical_registers.get(0)) {
+            //the third check condition is added my self because I find my asm print: mv	zero,s2
+            //this condition is constrained because the zero is const
             //the registers of the move instructions is constrained (in other work these two registers are contracted)
             constrainedMoves.add(m);
             AddWorklist(u);
