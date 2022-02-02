@@ -53,29 +53,37 @@ public class LivenessAnalysis {
             block_livein.put(asm_basicblock, gen);
             block_liveout.put(asm_basicblock, new HashSet<>());
         }
-        for (int i = 0; i < asm_function.asm_basicblock_in_function.size(); i++) {
+
             //chapter 10 iteration function
-            ASM_Basicblock asm_basicblock = asm_function.asm_basicblock_in_function.get(i);
+
             while (true) {
+                boolean flag=false;
+                for (int i = asm_function.asm_basicblock_in_function.size()-1; i >=0 ; i--) {
+                    ASM_Basicblock asm_basicblock = asm_function.asm_basicblock_in_function.get(i);
+                    HashSet<Base_RISCV_Register> livein_prime = block_livein.get(asm_basicblock);
+                    HashSet<Base_RISCV_Register> liveout_prime = block_liveout.get(asm_basicblock);
+                    System.out.println("asmbb : "+asm_basicblock.asm_basic_block_label);
+                    System.out.println(liveout_prime);
 
-                HashSet<Base_RISCV_Register> livein_prime = block_livein.get(asm_basicblock);
-                HashSet<Base_RISCV_Register> liveout_prime = block_liveout.get(asm_basicblock);
-                System.out.println("asmbb : "+asm_basicblock.asm_basic_block_label);
-                System.out.println(liveout_prime);
+                    HashSet<Base_RISCV_Register> new_in = new HashSet<>(liveout_prime);
+                    new_in.removeAll(blockdef.get(asm_basicblock));
+                    new_in.addAll(blockuse.get(asm_basicblock));
 
-                HashSet<Base_RISCV_Register> new_in = new HashSet<>(liveout_prime);
-                new_in.removeAll(blockdef.get(asm_basicblock));
-                new_in.addAll(blockuse.get(asm_basicblock));
+                    HashSet<Base_RISCV_Register> new_out = new HashSet<>();
+                    for (ASM_Basicblock asmBasicblocknxt : asm_basicblock.nxt_basicblock)
+                        new_out.addAll(block_livein.get(asmBasicblocknxt));
 
-                HashSet<Base_RISCV_Register> new_out = new HashSet<>();
-                for (ASM_Basicblock asmBasicblocknxt : asm_basicblock.nxt_basicblock)
-                    new_out.addAll(block_livein.get(asmBasicblocknxt));
-
-                if (equals(livein_prime, new_in) && equals(liveout_prime, new_out)) break;
-                block_livein.replace(asm_basicblock, new_in);
-                block_liveout.replace(asm_basicblock, new_out);
+                    if (equals(livein_prime, new_in) && equals(liveout_prime, new_out)) {
+                        flag=true;
+                        continue;
+                    }
+                    flag=false;
+                    block_livein.replace(asm_basicblock, new_in);
+                    block_liveout.replace(asm_basicblock, new_out);
+                }
+                if (flag)break;
             }
-        }
+
     }
 
     public static boolean equals(HashSet<?> set1, HashSet<?> set2) {
