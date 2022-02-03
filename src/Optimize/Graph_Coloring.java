@@ -17,7 +17,7 @@ public class Graph_Coloring {
     public ASM_Module asm_module;
     private ASM_Function cur_function;
     // Except zero, sp, gp and tp.
-    private static final int K = 28;
+    private static final int K = 27;
 
     public LivenessAnalysis livenessAnalysis;
     //every vertex can only in one set or sheet
@@ -170,10 +170,12 @@ public class Graph_Coloring {
             double loop_factor = Math.pow(10, Math.min(asm_basicblock.nxt_basicblock.size(), asm_basicblock.pre_basicblock.size()));
             for (int j = 0; j < asm_basicblock.Riscv_instruction_in_block.size(); j++) {
                 Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(j);
-                for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
+                for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg) {
                     base_riscv_register.spill_factor += loop_factor;
-                for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.use_reg)
+                }
+                for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.use_reg) {
                     base_riscv_register.spill_factor += loop_factor;
+                }
             }
         }
     }

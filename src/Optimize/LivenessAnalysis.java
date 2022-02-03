@@ -30,8 +30,8 @@ public class LivenessAnalysis {
             //for the instruction :sw	ra,20(sp)
             //    sw	s0,16(sp)
             //    addi	s0,sp,24
-            kill.add(ra_);
-            kill.add(s0_);
+//            kill.add(ra_);
+//            kill.add(s0_);
 
             for (int j = 0; j < asm_basicblock.Riscv_instruction_in_block.size(); j++) {
                 Base_RISCV_Instruction base_riscv_instruction = asm_basicblock.Riscv_instruction_in_block.get(j);
@@ -41,8 +41,8 @@ public class LivenessAnalysis {
                 kill.addAll(base_riscv_instruction.def_reg);
             }
 
-            kill.add(ra_);
-            kill.add(s0_);
+//            kill.add(ra_);
+//            kill.add(s0_);
 
 
 //            System.out.println("kill and gen in asm: " + asm_basicblock.asm_basic_block_label);

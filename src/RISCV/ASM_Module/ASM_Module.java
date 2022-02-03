@@ -15,7 +15,7 @@ public class ASM_Module {
             "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7",
             "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"));
     //0 stand for special reg && 1 stand for caller saved && 2 stand for calle saved
-    public static ArrayList<Integer> RegPrivilege=new ArrayList<>(Arrays.asList(0, 1, 0, 0, 0, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1 ,1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1));
+    public static ArrayList<Integer> RegPrivilege=new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1 ,1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1));
 
     public ArrayList<Physical_Register> physical_registers=new ArrayList<>();
     public ArrayList<Physical_Register> caller_registers=new ArrayList<>();
