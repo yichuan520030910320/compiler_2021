@@ -157,7 +157,7 @@ public class Graph_Coloring {
             degree.put(base_riscv_register, 0);
             moveList.put(base_riscv_register, new HashSet<>());
             alias.put(base_riscv_register, null);
-            color_.put(base_riscv_register, 0);
+            color_.put(base_riscv_register, null);
         }
     }
 
@@ -323,7 +323,6 @@ public class Graph_Coloring {
             while (it.hasNext()) {
                 //note that the first it.next mean the first element
                 Base_RISCV_Instruction instruction = it.next();
-
                 Virtual_Register add_to_def = null;
                 for (Base_RISCV_Register reg : instruction.def_reg) {
                     if (spilledNodes.contains(reg)) {
@@ -354,7 +353,7 @@ public class Graph_Coloring {
                     if (spilledNodes.contains(reg)) {
                         assert reg instanceof Virtual_Register;
                         Virtual_Register virtual_register_spill = new Virtual_Register("virtual_register_spill_use", ((Virtual_Register) reg).byte_num);
-                        if (cur_function.Virtual_to_offset.containsKey(reg))
+                        if (!cur_function.Virtual_to_offset.containsKey(reg))
                             cur_function.alloca((Virtual_Register) reg, ((Virtual_Register) reg).byte_num);
                         int imm_ = -cur_function.Virtual_to_offset.get(reg);
                         it.previous();
