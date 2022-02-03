@@ -35,7 +35,9 @@ public class ASM_Module {
         }
         for (int i = 0; i <RegPrivilege.size() ; i++) {
             physical_registerIntegerHashMap.put(physical_registers.get(i),i);
+
             if (RegPrivilege.get(i)!=0)okColors.add(physical_registers.get(i));
+
             if (RegPrivilege.get(i)==1)caller_registers.add(physical_registers.get(i));
             else if (RegPrivilege.get(i)==2)callee_registers.add(physical_registers.get(i));
         }

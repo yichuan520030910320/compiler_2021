@@ -76,7 +76,7 @@ public class Graph_Coloring {
                 else if (!spillWorklist.isEmpty()) SelectSpill();
             } while (!(simplifyWorklist.isEmpty() && worklistMoves.isEmpty() && freezeWorklist.isEmpty() && spillWorklist.isEmpty()));
             AssignColors();
-            if (!spillWorklist.isEmpty()) {
+            if (!spilledNodes.isEmpty()) {
                 ReWritePrograms();
             } else break;
         }
@@ -329,7 +329,7 @@ public class Graph_Coloring {
                     if (spilledNodes.contains(reg)) {
                         assert reg instanceof Virtual_Register;
                         Virtual_Register virtual_register_spill = new Virtual_Register("virtual_register_spill_def", ((Virtual_Register) reg).byte_num);
-                        if (cur_function.Virtual_to_offset.containsKey(reg))
+                        if (!cur_function.Virtual_to_offset.containsKey(reg))
                             cur_function.alloca((Virtual_Register) reg, ((Virtual_Register) reg).byte_num);
                         int imm_ = -cur_function.Virtual_to_offset.get(reg);
                         if (checkimmrange(imm_)) {
