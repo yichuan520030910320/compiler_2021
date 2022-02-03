@@ -1,7 +1,7 @@
-int gcd(int x, int y, int j0 , int j1 , int j2 , int j3 , int j4 , int j5 , int j6 , int j7 , int j8 , int j9 , int j10 , int j11 ) {
-    return   (x+y+j0 +j1 +j2 +j3 +j4 +j5 +j6 +j7 +j8 +j9 +j10 +j11  );
+int gcd(int x, int y, int j0 , int j1 , int j2 , int j3 , int j4 , int j5 , int j6 , int j7 , int j8 , int j9 , int j10 , int j11 ,int j12,int j13,int j14,int j15,int j16,int j17) {
+    return   (x+y+j0 +j1 +j2 +j3 +j4 +j5 +j6 +j7 +j8 +j9 +j10 +j11 +j12+j13+j14+j15+j16+j17 );
   }
 int main() {
-    printlnInt((gcd(1,2, 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10 , 11 , 12 , 13 , 14 ) ));
+    printlnInt((gcd(1,1, 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1,1,1,1,1,1,1 ) ));
     return 0;
 }

@@ -80,7 +80,8 @@ public class Instructin_select implements IRvisitor {
 
     @Override
     public void visit(CallInstruction it) {
-
+        //for the bug 2022/2/3 in the log
+        int spill_para_byte=0;
         if (it.paralist != null) {
             for (int i = 0; i < Math.min(8, it.paralist.size()); i++) {
                 Base_RISCV_Register rs1 = transreg(it.paralist.get(i));
@@ -88,9 +89,13 @@ public class Instructin_select implements IRvisitor {
             }
             for (int i = 8; i < it.paralist.size(); i++) {
                 BaseOperand tmp_para = it.paralist.get(i);
+                spill_para_byte+=tmp_para.type.byte_num();
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(tmp_para.type.byte_num(), sp, transreg(tmp_para), new Immediate((i - 8) * 4)));
             }
         }
+
+        cur_function.max_call_para=Math.max(spill_para_byte,cur_function.max_call_para);
+
         RISCV_Instruction_Call riscv_instruction_call = new RISCV_Instruction_Call(it.call_fuction.functionname);
         riscv_instruction_call.def_reg.addAll(cur_module.caller_registers);
         cur_basicblock.add_tail_instru(riscv_instruction_call);

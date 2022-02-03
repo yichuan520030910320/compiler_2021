@@ -20,6 +20,8 @@ public class ASM_Function {
 
     //record the frame size
     public int virtual_reg_offset;
+
+    public int max_call_para=0;
     //record the virtual reg and the offset
     public HashMap<Base_RISCV_Register, Integer> Virtual_to_offset = new HashMap<>();
     //record bb to lbael(string)

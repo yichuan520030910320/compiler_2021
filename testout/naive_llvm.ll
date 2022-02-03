@@ -25,8 +25,14 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
-define dso_local i32 @gcd(i32 %x_para,i32 %y_para,i32 %j0_para,i32 %j1_para,i32 %j2_para,i32 %j3_para,i32 %j4_para,i32 %j5_para,i32 %j6_para,i32 %j7_para,i32 %j8_para,i32 %j9_para,i32 %j10_para,i32 %j11_para) {
+define dso_local i32 @gcd(i32 %x_para,i32 %y_para,i32 %j0_para,i32 %j1_para,i32 %j2_para,i32 %j3_para,i32 %j4_para,i32 %j5_para,i32 %j6_para,i32 %j7_para,i32 %j8_para,i32 %j9_para,i32 %j10_para,i32 %j11_para,i32 %j12_para,i32 %j13_para,i32 %j14_para,i32 %j15_para,i32 %j16_para,i32 %j17_para) {
 entrance_block0:                                             
+    %j17_addr = alloca i32
+    %j16_addr = alloca i32
+    %j15_addr = alloca i32
+    %j14_addr = alloca i32
+    %j13_addr = alloca i32
+    %j12_addr = alloca i32
     %j11_addr = alloca i32
     %j10_addr = alloca i32
     %j9_addr = alloca i32
@@ -56,6 +62,12 @@ entrance_block0:
     store i32 %j9_para, i32* %j9_addr
     store i32 %j10_para, i32* %j10_addr
     store i32 %j11_para, i32* %j11_addr
+    store i32 %j12_para, i32* %j12_addr
+    store i32 %j13_para, i32* %j13_addr
+    store i32 %j14_para, i32* %j14_addr
+    store i32 %j15_para, i32* %j15_addr
+    store i32 %j16_para, i32* %j16_addr
+    store i32 %j17_para, i32* %j17_addr
     %x = load i32, i32* %x_addr
     %y = load i32, i32* %y_addr
     %add = add i32 %x, %y
@@ -83,7 +95,19 @@ entrance_block0:
     %add_10 = add i32 %add_9, %j10
     %j11 = load i32, i32* %j11_addr
     %add_11 = add i32 %add_10, %j11
-    store i32 %add_11, i32* %return_register_infunction_addr
+    %j12 = load i32, i32* %j12_addr
+    %add_12 = add i32 %add_11, %j12
+    %j13 = load i32, i32* %j13_addr
+    %add_13 = add i32 %add_12, %j13
+    %j14 = load i32, i32* %j14_addr
+    %add_14 = add i32 %add_13, %j14
+    %j15 = load i32, i32* %j15_addr
+    %add_15 = add i32 %add_14, %j15
+    %j16 = load i32, i32* %j16_addr
+    %add_16 = add i32 %add_15, %j16
+    %j17 = load i32, i32* %j17_addr
+    %add_17 = add i32 %add_16, %j17
+    store i32 %add_17, i32* %return_register_infunction_addr
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
@@ -94,7 +118,7 @@ define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
     %return_register_infunction_addr = alloca i32
-    %call_gcd = call i32 @gcd(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i32 10, i32 11, i32 12, i32 13, i32 14)
+    %call_gcd = call i32 @gcd(i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1, i32 1)
     call void @printlnInt(i32 %call_gcd)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0

@@ -404,7 +404,6 @@ public class Graph_Coloring {
 
     private boolean MoveRelated(Base_RISCV_Register base_riscv_register) {
         return NodeMoves(base_riscv_register).size() != 0;
-
     }
 
     //still active move instructions
