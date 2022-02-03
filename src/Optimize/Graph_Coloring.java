@@ -61,7 +61,10 @@ public class Graph_Coloring {
 
     public void Graph_Coloring_on_Function(ASM_Function asm_function) {
         cur_function = asm_function;
+        System.out.println(cur_function.asm_function_name);
+        int rollcnt=0;
         while (true) {
+            System.out.println(rollcnt++);
             SetInitialed();
             Compute_SpillCost();
             Physical_Register ra=asm_module.physical_registers.get(1);
