@@ -28,6 +28,6 @@ public class PointerType extends Typesystem {
 
     @Override
     public int byte_num() {
-        return 8;
+        return 4;
     }
 }

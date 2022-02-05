@@ -53,7 +53,7 @@ public class Graph_Coloring {
     public Physical_Register s0;
     public ListIterator<Base_RISCV_Instruction> it;
 
-    public HashSet<Base_RISCV_Register> already_spilled_register_with_shortlive=new HashSet<>();
+    public HashSet<Base_RISCV_Register> already_spilled_register_with_shortlive = new HashSet<>();
 
 
     public PrintWriter debug_file_print;
@@ -73,11 +73,8 @@ public class Graph_Coloring {
 
     public void Graph_Coloring_on_Function(ASM_Function asm_function) {
         cur_function = asm_function;
-        System.out.println(cur_function.asm_function_name);
-        rollcnt=0;
+        rollcnt = 0;
         while (true) {
-            System.out.println(rollcnt+++" ****************************************************************");
-            debug_file_print.println((rollcnt-1)+" ****************************************************************");
             SetInitialed();
             Compute_SpillCost();
             Physical_Register ra = asm_module.physical_registers.get(1);
@@ -290,27 +287,21 @@ public class Graph_Coloring {
     }
 
     private void SelectSpill() {
+        //when I first write thhis part I get a poor perfermance so I get that there is one sentence in tiger bokk that
+        //we should avoid select the virtual register that is spilled before with short live
+        //so I first select the register that is not already spilled
+        //these already spilled register has the lowest priority to be selected
         Base_RISCV_Register m = null;
         double MIN = Double.POSITIVE_INFINITY;
         for (Base_RISCV_Register tmp : spillWorklist) {
-            debug_file_print.println("vr name: "+tmp);
-            debug_file_print.println(tmp.spill_factor);
-            debug_file_print.println(degree.get(tmp));
-            if ((tmp.spill_factor / degree.get(tmp)) < MIN&&(!already_spilled_register_with_shortlive.contains(tmp))) {
+
+            if ((tmp.spill_factor / degree.get(tmp)) < MIN && (!already_spilled_register_with_shortlive.contains(tmp))) {
                 m = tmp;
                 MIN = tmp.spill_factor / degree.get(tmp);
             }
-            if (m==null)m=tmp;
+            if (m == null) m = tmp;
         }
 
-
-        debug_file_print.println("roll cnt : "+rollcnt);
-        debug_file_print.println("==========================================");
-        debug_file_print.println("final name" + m);
-
-        System.out.println("roll cnt : "+rollcnt);
-        System.out.println("==========================================");
-        System.out.println("final name" + m);
 
         spillWorklist.remove(m);
         simplifyWorklist.add(m);
@@ -552,6 +543,4 @@ public class Graph_Coloring {
         }
 
     }
-
-
 }
