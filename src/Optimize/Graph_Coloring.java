@@ -10,6 +10,9 @@ import RISCV.Operand.Register.Physical_Register;
 import RISCV.Operand.Register.Virtual_Register;
 import org.antlr.v4.runtime.misc.Pair;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class Graph_Coloring {
@@ -50,8 +53,17 @@ public class Graph_Coloring {
     public Physical_Register s0;
     public ListIterator<Base_RISCV_Instruction> it;
 
-    public Graph_Coloring(ASM_Module asm_module_) {
+    public HashSet<Base_RISCV_Register> already_spilled_register_with_shortlive=new HashSet<>();
+
+
+    public PrintWriter debug_file_print;
+    public int rollcnt = 0;
+
+    public Graph_Coloring(ASM_Module asm_module_) throws FileNotFoundException {
         asm_module = asm_module_;
+        debug_file_print = new PrintWriter(new FileOutputStream
+                ("C:\\Users\\18303\\IdeaProjects\\Mx\\testout\\debug.txt"));
+
         s0 = asm_module_.physical_registers.get(8);
         for (Map.Entry<String, ASM_Function> entry : asm_module.all_function.entrySet()) {
             Graph_Coloring_on_Function(entry.getValue());
@@ -62,14 +74,15 @@ public class Graph_Coloring {
     public void Graph_Coloring_on_Function(ASM_Function asm_function) {
         cur_function = asm_function;
         System.out.println(cur_function.asm_function_name);
-        int rollcnt=0;
+        rollcnt=0;
         while (true) {
-            System.out.println(rollcnt++);
+            System.out.println(rollcnt+++" ****************************************************************");
+            debug_file_print.println((rollcnt-1)+" ****************************************************************");
             SetInitialed();
             Compute_SpillCost();
-            Physical_Register ra=asm_module.physical_registers.get(1);
-            Physical_Register s0=asm_module.physical_registers.get(9);
-            livenessAnalysis = new LivenessAnalysis(asm_function,ra,s0);
+            Physical_Register ra = asm_module.physical_registers.get(1);
+            Physical_Register s0 = asm_module.physical_registers.get(9);
+            livenessAnalysis = new LivenessAnalysis(asm_function, ra, s0);
             Build();
             MakeWorklist();
             do {
@@ -133,6 +146,7 @@ public class Graph_Coloring {
         moveList = new HashMap<>();
         alias = new HashMap<>();
         color_ = new HashMap<>();
+
         //collect all the register (either physic or virtual)
         for (int i = 0; i < cur_function.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = cur_function.asm_basicblock_in_function.get(i);
@@ -198,13 +212,10 @@ public class Graph_Coloring {
                         moveList.get(base_riscv_register).add((RISCV_Instruction_Move) base_riscv_instruction);
                     worklistMoves.add((RISCV_Instruction_Move) base_riscv_instruction);
                 }
-//                System.out.println("");
-//                System.out.println(base_riscv_instruction);
-//                System.out.println(live);
+
                 live.addAll(base_riscv_instruction.def_reg);
                 live.add(asm_module.physical_registers.get(0));
-//                System.out.println(base_riscv_instruction.def_reg);
-//                System.out.println(live);
+
                 for (Base_RISCV_Register base_riscv_register : base_riscv_instruction.def_reg)
                     for (Base_RISCV_Register base_riscv_register1 : live)
                         AddEdge(base_riscv_register1, base_riscv_register);
@@ -250,7 +261,7 @@ public class Graph_Coloring {
             //when u==v we coalesce it directly
             coalescedMoves.remove(m);
             AddWorklist(u);
-        } else if (precolored.contains(v) || adjSet.contains(new Pair<>(u, v))||u==asm_module.physical_registers.get(0)||v==asm_module.physical_registers.get(0)) {
+        } else if (precolored.contains(v) || adjSet.contains(new Pair<>(u, v)) || u == asm_module.physical_registers.get(0) || v == asm_module.physical_registers.get(0)) {
             //the third check condition is added my self because I find my asm print: mv	zero,s2
             //this condition is constrained because the zero is const
             //the registers of the move instructions is constrained (in other work these two registers are contracted)
@@ -280,13 +291,26 @@ public class Graph_Coloring {
 
     private void SelectSpill() {
         Base_RISCV_Register m = null;
-        double MAX = Double.POSITIVE_INFINITY;
+        double MIN = Double.POSITIVE_INFINITY;
         for (Base_RISCV_Register tmp : spillWorklist) {
-            if ((tmp.spill_factor / degree.get(tmp)) < MAX) {
+            debug_file_print.println("vr name: "+tmp);
+            debug_file_print.println(tmp.spill_factor);
+            debug_file_print.println(degree.get(tmp));
+            if ((tmp.spill_factor / degree.get(tmp)) < MIN&&(!already_spilled_register_with_shortlive.contains(tmp))) {
                 m = tmp;
-                MAX = tmp.spill_factor / degree.get(tmp);
+                MIN = tmp.spill_factor / degree.get(tmp);
             }
+            if (m==null)m=tmp;
         }
+
+
+        debug_file_print.println("roll cnt : "+rollcnt);
+        debug_file_print.println("==========================================");
+        debug_file_print.println("final name" + m);
+
+        System.out.println("roll cnt : "+rollcnt);
+        System.out.println("==========================================");
+        System.out.println("final name" + m);
 
         spillWorklist.remove(m);
         simplifyWorklist.add(m);
@@ -314,6 +338,7 @@ public class Graph_Coloring {
                 color_.replace(n, c);
             }
         }
+
         //assign the color for the coalesced node
         for (Base_RISCV_Register n : coalescedNodes) color_.replace(n, color_.get(GetAlias(n)));
 
@@ -331,6 +356,7 @@ public class Graph_Coloring {
                     if (spilledNodes.contains(reg)) {
                         assert reg instanceof Virtual_Register;
                         Virtual_Register virtual_register_spill = new Virtual_Register("virtual_register_spill_def", ((Virtual_Register) reg).byte_num);
+                        already_spilled_register_with_shortlive.add(virtual_register_spill);
                         if (!cur_function.Virtual_to_offset.containsKey(reg))
                             cur_function.alloca((Virtual_Register) reg, ((Virtual_Register) reg).byte_num);
                         int imm_ = -cur_function.Virtual_to_offset.get(reg);
@@ -338,6 +364,7 @@ public class Graph_Coloring {
                             it.add(new RISCV_Instruction_Store(virtual_register_spill.byte_num, s0, virtual_register_spill, new Immediate(imm_)));
                         } else {
                             Virtual_Register li_dest_in_graphcoloring = new Virtual_Register("li_dest_in_graphcoloring_def", 4);
+                            already_spilled_register_with_shortlive.add(li_dest_in_graphcoloring);
                             it.add(new RISCV_Instruction_Li(li_dest_in_graphcoloring, new Immediate(imm_)));
                             it.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s0, li_dest_in_graphcoloring, li_dest_in_graphcoloring, null));
                             it.add(new RISCV_Instruction_Store(virtual_register_spill.byte_num, li_dest_in_graphcoloring, virtual_register_spill, new Immediate(0)));
@@ -356,6 +383,7 @@ public class Graph_Coloring {
                     if (spilledNodes.contains(reg)) {
                         assert reg instanceof Virtual_Register;
                         Virtual_Register virtual_register_spill = new Virtual_Register("virtual_register_spill_use", ((Virtual_Register) reg).byte_num);
+                        already_spilled_register_with_shortlive.add(virtual_register_spill);
                         if (!cur_function.Virtual_to_offset.containsKey(reg))
                             cur_function.alloca((Virtual_Register) reg, ((Virtual_Register) reg).byte_num);
                         int imm_ = -cur_function.Virtual_to_offset.get(reg);
@@ -364,6 +392,7 @@ public class Graph_Coloring {
                             it.add(new RISCV_Instruction_Load(virtual_register_spill.byte_num, s0, virtual_register_spill, new Immediate(imm_)));
                         } else {
                             Virtual_Register li_dest_in_graphcoloring = new Virtual_Register("li_dest_in_graphcoloring_use", 4);
+                            already_spilled_register_with_shortlive.add(li_dest_in_graphcoloring);
                             it.add(new RISCV_Instruction_Li(li_dest_in_graphcoloring, new Immediate(imm_)));
                             it.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s0, li_dest_in_graphcoloring, li_dest_in_graphcoloring, null));
                             it.add(new RISCV_Instruction_Load(virtual_register_spill.byte_num, li_dest_in_graphcoloring, virtual_register_spill, new Immediate(0)));
@@ -475,10 +504,9 @@ public class Graph_Coloring {
     //find the external merge node
     private Base_RISCV_Register GetAlias(Base_RISCV_Register n) {
         if (coalescedNodes.contains(n)) {
-            alias.replace(n,GetAlias(alias.get(n)));
+            alias.replace(n, GetAlias(alias.get(n)));
             return alias.get(n);
-        }
-        else return n;
+        } else return n;
     }
 
     private void Combine(Base_RISCV_Register u, Base_RISCV_Register v) {

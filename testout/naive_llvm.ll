@@ -146,9 +146,6 @@ define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
     %return_register_infunction_addr = alloca i32
-    %call_gcd = call i32 @gcd(i32 10, i32 1, i32 0, i32 2, i32 4, i32 6, i32 8, i32 10, i32 12, i32 14, i32 16, i32 18, i32 20, i32 22, i32 24, i32 26, i32 28, i32 30, i32 32, i32 34, i32 36, i32 38, i32 40, i32 42, i32 44, i32 46, i32 48, i32 50)
-    %call_toString = call i8* @toString(i32 %call_gcd)
-    call void @println(i8* %call_toString)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
