@@ -31,7 +31,7 @@ public class Instructin_select implements IRvisitor {
     public HashMap<BaseOperand, Base_RISCV_Register> IRreg_to_ASMreg = new HashMap<>();
     Physical_Register ra, sp, s0, a0;
 
-    public ArrayList<Virtual_Register>callee_saved_virtual_reg=new ArrayList<>();
+    public ArrayList<Virtual_Register> callee_saved_virtual_reg = new ArrayList<>();
 
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
@@ -49,58 +49,83 @@ public class Instructin_select implements IRvisitor {
     public void visit(BinaryInstruction it) {
         Base_RISCV_Register rd = transreg(it.result_operand);
         Base_RISCV_Register rs1 = transreg(it.operand1);
-        Base_RISCV_Register rs2=null;
-        BaseOperand const_llvm=null;
-        if (it.operand2 instanceof ConstOperand_Bool||(it.operand2 instanceof ConstOperand_Integer&&checkimmrange(((ConstOperand_Integer) it.operand2).value))){
-            const_llvm=it.operand2;
-        }
-        else {
-            rs2 = transreg(it.operand2);
-        }
+        Base_RISCV_Register rs2 = null;
+
         RISCV_Instruction_Binary.RISCVBinarytype op;
         switch (it.op) {
             case add -> {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.add;
-                if (!(const_llvm==null)) {
-                    assert const_llvm instanceof ConstOperand_Integer;
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd,new Immediate(((ConstOperand_Integer) const_llvm).value)) );
-                } }
-            case sub -> {
-                op = RISCV_Instruction_Binary.RISCVBinarytype.sub;
-                if (!(const_llvm==null)) {
-                    assert const_llvm instanceof ConstOperand_Integer;
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd,new Immediate(-((ConstOperand_Integer) const_llvm).value)) );
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
                 }
             }
-            case mul -> op = RISCV_Instruction_Binary.RISCVBinarytype.mul;
-            case sdiv -> op = RISCV_Instruction_Binary.RISCVBinarytype.div;
-            case srem -> op = RISCV_Instruction_Binary.RISCVBinarytype.rem;
-            case shl -> op = RISCV_Instruction_Binary.RISCVBinarytype.sll;
-            case ashr -> op = RISCV_Instruction_Binary.RISCVBinarytype.sra;
+            case sub -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.sub;
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd, new Immediate(-((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
+                }
+            }
+            case mul -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.mul;
+                rs2 = transreg(it.operand2);
+            }
+            case sdiv -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.div;
+                rs2 = transreg(it.operand2);
+            }
+            case srem -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.rem;
+                rs2 = transreg(it.operand2);
+            }
+            case shl -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.sll;
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.slli, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
+                }
+            }
+            case ashr -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.sra;
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.srai, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
+                }
+            }
             case and -> {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.and;
-                if (!(const_llvm==null)) {
-                    assert const_llvm instanceof ConstOperand_Bool;
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                if (it.operand2 instanceof ConstOperand_Bool) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else {
+                    rs2 = transreg(it.operand2);
+
                 }
             }
             case or -> {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.or;
-                if (!(const_llvm==null)) {
-                    assert const_llvm instanceof ConstOperand_Bool;
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.ori, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                if (it.operand2 instanceof ConstOperand_Bool) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.ori, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else {
+                    rs2 = transreg(it.operand2);
+
                 }
             }
             case xor -> {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.xor;
-                if (!(const_llvm==null)) {
-                    assert const_llvm instanceof ConstOperand_Bool;
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                if (it.operand2 instanceof ConstOperand_Bool) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else {
+                    rs2 = transreg(it.operand2);
                 }
             }
             default -> throw new IllegalStateException("Unexpected value: " + it.op);
         }
-        if (!(rs2==null))cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(op, rs1, rs2, rd, null));
+        if (!(rs2 == null)) cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(op, rs1, rs2, rd, null));
     }
 
     // br l1         -> j l1
@@ -117,7 +142,7 @@ public class Instructin_select implements IRvisitor {
     @Override
     public void visit(CallInstruction it) {
         //for the bug 2022/2/3 in the log
-        int spill_para_byte=0;
+        int spill_para_byte = 0;
         if (it.paralist != null) {
             for (int i = 0; i < Math.min(8, it.paralist.size()); i++) {
                 Base_RISCV_Register rs1 = transreg(it.paralist.get(i));
@@ -125,12 +150,12 @@ public class Instructin_select implements IRvisitor {
             }
             for (int i = 8; i < it.paralist.size(); i++) {
                 BaseOperand tmp_para = it.paralist.get(i);
-                spill_para_byte+=tmp_para.type.byte_num();
+                spill_para_byte += tmp_para.type.byte_num();
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(tmp_para.type.byte_num(), sp, transreg(tmp_para), new Immediate((i - 8) * 4)));
             }
         }
 
-        cur_function.max_call_para=Math.max(spill_para_byte,cur_function.max_call_para);
+        cur_function.max_call_para = Math.max(spill_para_byte, cur_function.max_call_para);
 
         RISCV_Instruction_Call riscv_instruction_call = new RISCV_Instruction_Call(it.call_fuction.functionname);
         riscv_instruction_call.def_reg.addAll(cur_module.caller_registers);
@@ -216,10 +241,10 @@ public class Instructin_select implements IRvisitor {
     public void visit(RetInstruction it) {
 
         //recover the calleesaved
-        for (int i = 0; i <cur_module.callee_registers.size() ; i++) {
-            Virtual_Register virtual_register=callee_saved_virtual_reg.get(i);
-            Physical_Register physical_register=cur_module.callee_registers.get(i);
-            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register,physical_register));
+        for (int i = 0; i < cur_module.callee_registers.size(); i++) {
+            Virtual_Register virtual_register = callee_saved_virtual_reg.get(i);
+            Physical_Register physical_register = cur_module.callee_registers.get(i);
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register, physical_register));
         }
         if (it.Ret_Type instanceof VoidType) {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
@@ -288,7 +313,7 @@ public class Instructin_select implements IRvisitor {
             Physical_Register physical_register = cur_module.callee_registers.get(i);
             Virtual_Register virtual_register = new Virtual_Register("callee_saved" + i, 4);
             callee_saved_virtual_reg.add(virtual_register);
-            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(physical_register,virtual_register));
+            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(physical_register, virtual_register));
         }
 
         for (int i = 0; i < Math.min(it.function_type.parament_list.size(), 8); i++) {
