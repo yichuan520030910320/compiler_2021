@@ -16,6 +16,7 @@ import RISCV.Operand.Register.Base_RISCV_Register;
 import RISCV.Operand.Register.Physical_Register;
 import RISCV.Operand.Register.Virtual_Register;
 import Utils.error.IRbuilderError;
+import Utils.error.InstSelectError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -246,7 +247,6 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register, physical_register));
         }
         if (it.Ret_Type instanceof VoidType) {
-            //cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
             return;
         }
         cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(IRreg_to_ASMreg.get(it.Ret_Operand), cur_module.physical_registers.get(10)));
@@ -349,18 +349,23 @@ public class Instructin_select implements IRvisitor {
         } else {
             Base_RISCV_Register rd = transreg(it.result_register);
             if (it.prefix_sum_bytenum.size() == 0) {
-                //may be wrong
                 //is in the array
 
                 BaseOperand offset_in_gep = it.index_offset.get(0);
                 //change offset=byte_in_gep*offset
 
-                Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep, new Immediate(offset_in_gep.type.byte_num())));
-                Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
-                //rd=rs+changeoffset
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, transreg(it.source_ptr), change_offset, rd, null));
+                if (offset_in_gep instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) offset_in_gep).value * offset_in_gep.type.byte_num())) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, transreg(it.source_ptr), null, rd, new Immediate(((ConstOperand_Integer) offset_in_gep).value * offset_in_gep.type.byte_num())));
+
+
+                } else {
+                    Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep, new Immediate(offset_in_gep.type.byte_num())));
+                    Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
+                    //rd=rs+changeoffset
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, transreg(it.source_ptr), change_offset, rd, null));
+                }
             }
 
             if (it.index_offset.size() > 1) {
@@ -369,6 +374,7 @@ public class Instructin_select implements IRvisitor {
                 assert offset_in_gep1 instanceof ConstOperand_Integer;
                 int offset_class = ((ConstOperand_Integer) offset_in_gep1).value;
                 int total_byte_offset = it.prefix_sum_bytenum.get(offset_class);
+                if (!checkimmrange(total_byte_offset)) throw new InstSelectError("class too big", null);
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, transreg(it.source_ptr), null, rd, new Immediate(total_byte_offset)));
             }
         }
