@@ -6,6 +6,8 @@ import IR.IRmodule.IRmodule;
 import IR.IRvisitor;
 import IR.Instru.*;
 import IR.Operand.*;
+import IR.TypeSystem.PointerType;
+import IR.TypeSystem.Typesystem;
 import IR.TypeSystem.VoidType;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
@@ -352,16 +354,15 @@ public class Instructin_select implements IRvisitor {
                 //is in the array
 
                 BaseOperand offset_in_gep = it.index_offset.get(0);
+                Typesystem reg_type=((PointerType) it.result_register.type).get_low_dim_type();
                 //change offset=byte_in_gep*offset
-
-                if (offset_in_gep instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) offset_in_gep).value * offset_in_gep.type.byte_num())) {
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, transreg(it.source_ptr), null, rd, new Immediate(((ConstOperand_Integer) offset_in_gep).value * offset_in_gep.type.byte_num())));
-
-
+                assert it.result_register.type instanceof PointerType;
+                if (offset_in_gep instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) offset_in_gep).value * reg_type.byte_num())) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, transreg(it.source_ptr), null, rd, new Immediate(((ConstOperand_Integer) offset_in_gep).value * reg_type.byte_num())));
                 } else {
-                    Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", offset_in_gep.type.byte_num());
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep, new Immediate(offset_in_gep.type.byte_num())));
-                    Virtual_Register change_offset = new Virtual_Register("change_offset", offset_in_gep.type.byte_num());
+                    Virtual_Register byte_in_gep = new Virtual_Register("gep_byte", reg_type.byte_num());
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Li(byte_in_gep, new Immediate(reg_type.byte_num())));
+                    Virtual_Register change_offset = new Virtual_Register("change_offset", reg_type.byte_num());
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.mul, byte_in_gep, transreg(offset_in_gep), change_offset, null));
                     //rd=rs+changeoffset
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, transreg(it.source_ptr), change_offset, rd, null));

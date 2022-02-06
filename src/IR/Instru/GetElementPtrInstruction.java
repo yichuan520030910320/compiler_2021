@@ -17,7 +17,7 @@ public class GetElementPtrInstruction extends BaseInstru {
     //for codegen
     public ArrayList<Integer> prefix_sum_bytenum=new ArrayList<>();
 
-
+//the result reg must be point type
     public GetElementPtrInstruction(IRbasicblock iRbasicblock, Register result_register_, BaseOperand source_ptr_, ArrayList<BaseOperand> index_offset_) {
         super(iRbasicblock);
 
