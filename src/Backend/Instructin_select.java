@@ -49,22 +49,58 @@ public class Instructin_select implements IRvisitor {
     public void visit(BinaryInstruction it) {
         Base_RISCV_Register rd = transreg(it.result_operand);
         Base_RISCV_Register rs1 = transreg(it.operand1);
-        Base_RISCV_Register rs2 = transreg(it.operand2);
+        Base_RISCV_Register rs2=null;
+        BaseOperand const_llvm=null;
+        if (it.operand2 instanceof ConstOperand_Bool||(it.operand2 instanceof ConstOperand_Integer&&checkimmrange(((ConstOperand_Integer) it.operand2).value))){
+            const_llvm=it.operand2;
+        }
+        else {
+            rs2 = transreg(it.operand2);
+        }
         RISCV_Instruction_Binary.RISCVBinarytype op;
         switch (it.op) {
-            case add -> op = RISCV_Instruction_Binary.RISCVBinarytype.add;
-            case sub -> op = RISCV_Instruction_Binary.RISCVBinarytype.sub;
+            case add -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.add;
+                if (!(const_llvm==null)) {
+                    assert const_llvm instanceof ConstOperand_Integer;
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd,new Immediate(((ConstOperand_Integer) const_llvm).value)) );
+                } }
+            case sub -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.sub;
+                if (!(const_llvm==null)) {
+                    assert const_llvm instanceof ConstOperand_Integer;
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, rs1, null, rd,new Immediate(-((ConstOperand_Integer) const_llvm).value)) );
+                }
+            }
             case mul -> op = RISCV_Instruction_Binary.RISCVBinarytype.mul;
             case sdiv -> op = RISCV_Instruction_Binary.RISCVBinarytype.div;
             case srem -> op = RISCV_Instruction_Binary.RISCVBinarytype.rem;
             case shl -> op = RISCV_Instruction_Binary.RISCVBinarytype.sll;
             case ashr -> op = RISCV_Instruction_Binary.RISCVBinarytype.sra;
-            case and -> op = RISCV_Instruction_Binary.RISCVBinarytype.and;
-            case or -> op = RISCV_Instruction_Binary.RISCVBinarytype.or;
-            case xor -> op = RISCV_Instruction_Binary.RISCVBinarytype.xor;
+            case and -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.and;
+                if (!(const_llvm==null)) {
+                    assert const_llvm instanceof ConstOperand_Bool;
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                }
+            }
+            case or -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.or;
+                if (!(const_llvm==null)) {
+                    assert const_llvm instanceof ConstOperand_Bool;
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.ori, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                }
+            }
+            case xor -> {
+                op = RISCV_Instruction_Binary.RISCVBinarytype.xor;
+                if (!(const_llvm==null)) {
+                    assert const_llvm instanceof ConstOperand_Bool;
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd,new Immediate(((ConstOperand_Bool) const_llvm).bool_value?1:0)));
+                }
+            }
             default -> throw new IllegalStateException("Unexpected value: " + it.op);
         }
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(op, rs1, rs2, rd, null));
+        if (!(rs2==null))cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(op, rs1, rs2, rd, null));
     }
 
     // br l1         -> j l1
