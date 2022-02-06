@@ -245,10 +245,10 @@ public class Instructin_select implements IRvisitor {
             Physical_Register physical_register = cur_module.callee_registers.get(i);
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(virtual_register, physical_register));
         }
-//        if (it.Ret_Type instanceof VoidType) {
-//            cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
-//            return;
-//        }
+        if (it.Ret_Type instanceof VoidType) {
+            //cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(cur_module.physical_registers.get(0), cur_module.physical_registers.get(10)));
+            return;
+        }
         cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(IRreg_to_ASMreg.get(it.Ret_Operand), cur_module.physical_registers.get(10)));
         //put the ret in the printer
     }
