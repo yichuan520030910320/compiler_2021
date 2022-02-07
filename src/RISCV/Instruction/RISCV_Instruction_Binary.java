@@ -14,7 +14,7 @@ public class RISCV_Instruction_Binary extends Base_RISCV_Instruction{
         and,or,xor,
         addi, slli, slti, sltiu, xori, srli, srai, ori, andi,
     }
-    RISCVBinarytype riscvBinarytype;
+    public RISCVBinarytype riscvBinarytype;
 
     public RISCV_Instruction_Binary(RISCVBinarytype riscvBinarytype_,Base_RISCV_Register rs1_, Base_RISCV_Register rs2_, Base_RISCV_Register rd_,Immediate imm_) {
         super(rs1_, rs2_, rd_, imm_);

@@ -3,11 +3,14 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-@check = dso_local global i1* null
-@M = dso_local global i32 0
-@N = dso_local global i32 0
+@color = dso_local global i32* null
+@count = dso_local global i32* null
+@i = dso_local global i32 0
+@j = dso_local global i32 0
+@make = dso_local global i32** null
 
-@const_string0 = private unnamed_addr constant [4 x i8] c"yep\00", align 1
+@const_string0 = private unnamed_addr constant [2 x i8] c" \00", align 1
+@const_string1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
 declare i1 @_str_le(i8* %lhs,i8* %rhs)
@@ -29,288 +32,743 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
-define dso_local i32 @main() {
+define dso_local void @search(i32 %x_para,i32 %y_para,i32 %z_para) {
 entrance_block0:                                             
-    call void @GLOBAL__sub_I_main_mx()
-    %cnt_addr = alloca i32
-    %tmp_addr = alloca i32
+    %AND_addr_7 = alloca i1
+    %AND_addr_6 = alloca i1
+    %AND_addr_5 = alloca i1
+    %AND_addr_4 = alloca i1
+    %AND_addr_3 = alloca i1
+    %AND_addr_2 = alloca i1
+    %AND_addr_1 = alloca i1
+    %AND_addr_0 = alloca i1
     %AND_addr = alloca i1
-    %i_addr_0 = alloca i32
-    %k_addr = alloca i32
-    %P_addr = alloca i32*
-    %phi_addr = alloca i32*
+    %OR_addr_1 = alloca i1
+    %OR_addr_0 = alloca i1
+    %OR_addr = alloca i1
+    %j_addr = alloca i32
     %i_addr = alloca i32
-    %return_register_infunction_addr = alloca i32
-    %N = load i32, i32* @N
-    %call_getInt = call i32 @getInt()
-    store i32 %call_getInt, i32* @N
-    %check = load i1*, i1** @check
-    %N_0 = load i32, i32* @N
-    %add = add i32 %N_0, 5
-    %mul_bytes = mul i32 %add, 1
+    %s_addr = alloca i32
+    %z_addr = alloca i32
+    %y_addr = alloca i32
+    %x_addr = alloca i32
+    store i32 %x_para, i32* %x_addr
+    store i32 %y_para, i32* %y_addr
+    store i32 %z_para, i32* %z_addr
+    %y = load i32, i32* %y_addr
+    %sgt = icmp sgt i32 %y, 0
+    store i1 %sgt, i1* %OR_addr
+    br i1 %sgt, label %short_circuit_OR_end_OR, label %short_circuit_OR_branch_OR
+
+short_circuit_OR_end_OR:                                     ; preds = entrance_block0 short_circuit_OR_branch_OR 
+    %OR_short_circuit = load i1, i1* %OR_addr
+    store i1 %OR_short_circuit, i1* %OR_addr_0
+    br i1 %OR_short_circuit, label %short_circuit_OR_end_OR0, label %short_circuit_OR_branch_OR0
+
+short_circuit_OR_branch_OR:                                  ; preds = entrance_block0 
+    %y_0 = load i32, i32* %y_addr
+    %slt = icmp slt i32 %y_0, 0
+    store i1 %slt, i1* %OR_addr
+    br label %short_circuit_OR_end_OR
+
+short_circuit_OR_end_OR0:                                    ; preds = short_circuit_OR_end_OR short_circuit_OR_branch_OR0 
+    %OR_short_circuit_0 = load i1, i1* %OR_addr_0
+    store i1 %OR_short_circuit_0, i1* %OR_addr_1
+    br i1 %OR_short_circuit_0, label %short_circuit_OR_end_OR1, label %short_circuit_OR_branch_OR1
+
+short_circuit_OR_branch_OR0:                                 ; preds = short_circuit_OR_end_OR 
+    %x = load i32, i32* %x_addr
+    %eq = icmp eq i32 %x, 0
+    store i1 %eq, i1* %OR_addr_0
+    br label %short_circuit_OR_end_OR0
+
+short_circuit_OR_end_OR1:                                    ; preds = short_circuit_OR_end_OR0 short_circuit_OR_branch_OR1 
+    %OR_short_circuit_1 = load i1, i1* %OR_addr_1
+    br i1 %OR_short_circuit_1, label %single_then_basicblock, label %if_withoutelse_end_basicblock
+
+short_circuit_OR_branch_OR1:                                 ; preds = short_circuit_OR_end_OR0 
+    %make = load i32**, i32*** @make
+    %x_0 = load i32, i32* %x_addr
+    %sub = sub i32 %x_0, 1
+    %getelementptr_reg = getelementptr inbounds i32*, i32** %make, i32 %sub
+    %load_result = load i32*, i32** %getelementptr_reg
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %load_result, i32 0
+    %load_result_0 = load i32, i32* %getelementptr_reg_0
+    %make_0 = load i32**, i32*** @make
+    %x_1 = load i32, i32* %x_addr
+    %sub_0 = sub i32 %x_1, 1
+    %getelementptr_reg_1 = getelementptr inbounds i32*, i32** %make_0, i32 %sub_0
+    %load_result_1 = load i32*, i32** %getelementptr_reg_1
+    %getelementptr_reg_2 = getelementptr inbounds i32, i32* %load_result_1, i32 1
+    %load_result_2 = load i32, i32* %getelementptr_reg_2
+    %add = add i32 %load_result_0, %load_result_2
+    %make_1 = load i32**, i32*** @make
+    %x_2 = load i32, i32* %x_addr
+    %sub_1 = sub i32 %x_2, 1
+    %getelementptr_reg_3 = getelementptr inbounds i32*, i32** %make_1, i32 %sub_1
+    %load_result_3 = load i32*, i32** %getelementptr_reg_3
+    %getelementptr_reg_4 = getelementptr inbounds i32, i32* %load_result_3, i32 2
+    %load_result_4 = load i32, i32* %getelementptr_reg_4
+    %add_0 = add i32 %add, %load_result_4
+    %eq_0 = icmp eq i32 %add_0, 15
+    store i1 %eq_0, i1* %OR_addr_1
+    br label %short_circuit_OR_end_OR1
+
+single_then_basicblock:                                      ; preds = short_circuit_OR_end_OR1 
+    %x_3 = load i32, i32* %x_addr
+    %eq_1 = icmp eq i32 %x_3, 2
+    store i1 %eq_1, i1* %AND_addr
+    br i1 %eq_1, label %short_circuit_AND_branch_AND, label %short_circuit_AND_end_AND
+
+if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock short_circuit_OR_end_OR1 if_end_basicblock 
+    br label %return_block0
+
+short_circuit_AND_end_AND:                                   ; preds = single_then_basicblock short_circuit_AND_branch_AND 
+    %AND_short_circuit = load i1, i1* %AND_addr
+    br i1 %AND_short_circuit, label %then_basicblock, label %else_basicblock
+
+short_circuit_AND_branch_AND:                                ; preds = single_then_basicblock 
+    %y_1 = load i32, i32* %y_addr
+    %eq_2 = icmp eq i32 %y_1, 2
+    store i1 %eq_2, i1* %AND_addr
+    br label %short_circuit_AND_end_AND
+
+then_basicblock:                                             ; preds = short_circuit_AND_end_AND 
+    %make_2 = load i32**, i32*** @make
+    %getelementptr_reg_5 = getelementptr inbounds i32*, i32** %make_2, i32 2
+    %load_result_5 = load i32*, i32** %getelementptr_reg_5
+    %getelementptr_reg_6 = getelementptr inbounds i32, i32* %load_result_5, i32 2
+    %load_result_6 = load i32, i32* %getelementptr_reg_6
+    %z = load i32, i32* %z_addr
+    %sub_2 = sub i32 45, %z
+    store i32 %sub_2, i32* %getelementptr_reg_6
+    %s = load i32, i32* %s_addr
+    %make_3 = load i32**, i32*** @make
+    %getelementptr_reg_7 = getelementptr inbounds i32*, i32** %make_3, i32 0
+    %load_result_7 = load i32*, i32** %getelementptr_reg_7
+    %getelementptr_reg_8 = getelementptr inbounds i32, i32* %load_result_7, i32 0
+    %load_result_8 = load i32, i32* %getelementptr_reg_8
+    %make_4 = load i32**, i32*** @make
+    %getelementptr_reg_9 = getelementptr inbounds i32*, i32** %make_4, i32 0
+    %load_result_9 = load i32*, i32** %getelementptr_reg_9
+    %getelementptr_reg_10 = getelementptr inbounds i32, i32* %load_result_9, i32 1
+    %load_result_10 = load i32, i32* %getelementptr_reg_10
+    %add_1 = add i32 %load_result_8, %load_result_10
+    %make_5 = load i32**, i32*** @make
+    %getelementptr_reg_11 = getelementptr inbounds i32*, i32** %make_5, i32 0
+    %load_result_11 = load i32*, i32** %getelementptr_reg_11
+    %getelementptr_reg_12 = getelementptr inbounds i32, i32* %load_result_11, i32 2
+    %load_result_12 = load i32, i32* %getelementptr_reg_12
+    %add_2 = add i32 %add_1, %load_result_12
+    store i32 %add_2, i32* %s_addr
+    %make_6 = load i32**, i32*** @make
+    %getelementptr_reg_13 = getelementptr inbounds i32*, i32** %make_6, i32 1
+    %load_result_13 = load i32*, i32** %getelementptr_reg_13
+    %getelementptr_reg_14 = getelementptr inbounds i32, i32* %load_result_13, i32 0
+    %load_result_14 = load i32, i32* %getelementptr_reg_14
+    %make_7 = load i32**, i32*** @make
+    %getelementptr_reg_15 = getelementptr inbounds i32*, i32** %make_7, i32 1
+    %load_result_15 = load i32*, i32** %getelementptr_reg_15
+    %getelementptr_reg_16 = getelementptr inbounds i32, i32* %load_result_15, i32 1
+    %load_result_16 = load i32, i32* %getelementptr_reg_16
+    %add_3 = add i32 %load_result_14, %load_result_16
+    %make_8 = load i32**, i32*** @make
+    %getelementptr_reg_17 = getelementptr inbounds i32*, i32** %make_8, i32 1
+    %load_result_17 = load i32*, i32** %getelementptr_reg_17
+    %getelementptr_reg_18 = getelementptr inbounds i32, i32* %load_result_17, i32 2
+    %load_result_18 = load i32, i32* %getelementptr_reg_18
+    %add_4 = add i32 %add_3, %load_result_18
+    %s_0 = load i32, i32* %s_addr
+    %eq_3 = icmp eq i32 %add_4, %s_0
+    store i1 %eq_3, i1* %AND_addr_0
+    br i1 %eq_3, label %short_circuit_AND_branch_AND0, label %short_circuit_AND_end_AND0
+
+else_basicblock:                                             ; preds = short_circuit_AND_end_AND 
+    %y_2 = load i32, i32* %y_addr
+    %eq_10 = icmp eq i32 %y_2, 2
+    br i1 %eq_10, label %then_basicblock0, label %else_basicblock0
+
+if_end_basicblock:                                           ; preds = then_basicblock else_basicblock if_withoutelse_end_basicblock0 if_end_basicblock0 
+    br label %if_withoutelse_end_basicblock
+
+short_circuit_AND_end_AND0:                                  ; preds = then_basicblock short_circuit_AND_branch_AND0 
+    %AND_short_circuit_0 = load i1, i1* %AND_addr_0
+    store i1 %AND_short_circuit_0, i1* %AND_addr_1
+    br i1 %AND_short_circuit_0, label %short_circuit_AND_branch_AND1, label %short_circuit_AND_end_AND1
+
+short_circuit_AND_branch_AND0:                               ; preds = then_basicblock 
+    %make_9 = load i32**, i32*** @make
+    %getelementptr_reg_19 = getelementptr inbounds i32*, i32** %make_9, i32 2
+    %load_result_19 = load i32*, i32** %getelementptr_reg_19
+    %getelementptr_reg_20 = getelementptr inbounds i32, i32* %load_result_19, i32 0
+    %load_result_20 = load i32, i32* %getelementptr_reg_20
+    %make_10 = load i32**, i32*** @make
+    %getelementptr_reg_21 = getelementptr inbounds i32*, i32** %make_10, i32 2
+    %load_result_21 = load i32*, i32** %getelementptr_reg_21
+    %getelementptr_reg_22 = getelementptr inbounds i32, i32* %load_result_21, i32 1
+    %load_result_22 = load i32, i32* %getelementptr_reg_22
+    %add_5 = add i32 %load_result_20, %load_result_22
+    %make_11 = load i32**, i32*** @make
+    %getelementptr_reg_23 = getelementptr inbounds i32*, i32** %make_11, i32 2
+    %load_result_23 = load i32*, i32** %getelementptr_reg_23
+    %getelementptr_reg_24 = getelementptr inbounds i32, i32* %load_result_23, i32 2
+    %load_result_24 = load i32, i32* %getelementptr_reg_24
+    %add_6 = add i32 %add_5, %load_result_24
+    %s_1 = load i32, i32* %s_addr
+    %eq_4 = icmp eq i32 %add_6, %s_1
+    store i1 %eq_4, i1* %AND_addr_0
+    br label %short_circuit_AND_end_AND0
+
+short_circuit_AND_end_AND1:                                  ; preds = short_circuit_AND_end_AND0 short_circuit_AND_branch_AND1 
+    %AND_short_circuit_1 = load i1, i1* %AND_addr_1
+    store i1 %AND_short_circuit_1, i1* %AND_addr_2
+    br i1 %AND_short_circuit_1, label %short_circuit_AND_branch_AND2, label %short_circuit_AND_end_AND2
+
+short_circuit_AND_branch_AND1:                               ; preds = short_circuit_AND_end_AND0 
+    %make_12 = load i32**, i32*** @make
+    %getelementptr_reg_25 = getelementptr inbounds i32*, i32** %make_12, i32 0
+    %load_result_25 = load i32*, i32** %getelementptr_reg_25
+    %getelementptr_reg_26 = getelementptr inbounds i32, i32* %load_result_25, i32 0
+    %load_result_26 = load i32, i32* %getelementptr_reg_26
+    %make_13 = load i32**, i32*** @make
+    %getelementptr_reg_27 = getelementptr inbounds i32*, i32** %make_13, i32 1
+    %load_result_27 = load i32*, i32** %getelementptr_reg_27
+    %getelementptr_reg_28 = getelementptr inbounds i32, i32* %load_result_27, i32 0
+    %load_result_28 = load i32, i32* %getelementptr_reg_28
+    %add_7 = add i32 %load_result_26, %load_result_28
+    %make_14 = load i32**, i32*** @make
+    %getelementptr_reg_29 = getelementptr inbounds i32*, i32** %make_14, i32 2
+    %load_result_29 = load i32*, i32** %getelementptr_reg_29
+    %getelementptr_reg_30 = getelementptr inbounds i32, i32* %load_result_29, i32 0
+    %load_result_30 = load i32, i32* %getelementptr_reg_30
+    %add_8 = add i32 %add_7, %load_result_30
+    %s_2 = load i32, i32* %s_addr
+    %eq_5 = icmp eq i32 %add_8, %s_2
+    store i1 %eq_5, i1* %AND_addr_1
+    br label %short_circuit_AND_end_AND1
+
+short_circuit_AND_end_AND2:                                  ; preds = short_circuit_AND_end_AND1 short_circuit_AND_branch_AND2 
+    %AND_short_circuit_2 = load i1, i1* %AND_addr_2
+    store i1 %AND_short_circuit_2, i1* %AND_addr_3
+    br i1 %AND_short_circuit_2, label %short_circuit_AND_branch_AND3, label %short_circuit_AND_end_AND3
+
+short_circuit_AND_branch_AND2:                               ; preds = short_circuit_AND_end_AND1 
+    %make_15 = load i32**, i32*** @make
+    %getelementptr_reg_31 = getelementptr inbounds i32*, i32** %make_15, i32 0
+    %load_result_31 = load i32*, i32** %getelementptr_reg_31
+    %getelementptr_reg_32 = getelementptr inbounds i32, i32* %load_result_31, i32 1
+    %load_result_32 = load i32, i32* %getelementptr_reg_32
+    %make_16 = load i32**, i32*** @make
+    %getelementptr_reg_33 = getelementptr inbounds i32*, i32** %make_16, i32 1
+    %load_result_33 = load i32*, i32** %getelementptr_reg_33
+    %getelementptr_reg_34 = getelementptr inbounds i32, i32* %load_result_33, i32 1
+    %load_result_34 = load i32, i32* %getelementptr_reg_34
+    %add_9 = add i32 %load_result_32, %load_result_34
+    %make_17 = load i32**, i32*** @make
+    %getelementptr_reg_35 = getelementptr inbounds i32*, i32** %make_17, i32 2
+    %load_result_35 = load i32*, i32** %getelementptr_reg_35
+    %getelementptr_reg_36 = getelementptr inbounds i32, i32* %load_result_35, i32 1
+    %load_result_36 = load i32, i32* %getelementptr_reg_36
+    %add_10 = add i32 %add_9, %load_result_36
+    %s_3 = load i32, i32* %s_addr
+    %eq_6 = icmp eq i32 %add_10, %s_3
+    store i1 %eq_6, i1* %AND_addr_2
+    br label %short_circuit_AND_end_AND2
+
+short_circuit_AND_end_AND3:                                  ; preds = short_circuit_AND_end_AND2 short_circuit_AND_branch_AND3 
+    %AND_short_circuit_3 = load i1, i1* %AND_addr_3
+    store i1 %AND_short_circuit_3, i1* %AND_addr_4
+    br i1 %AND_short_circuit_3, label %short_circuit_AND_branch_AND4, label %short_circuit_AND_end_AND4
+
+short_circuit_AND_branch_AND3:                               ; preds = short_circuit_AND_end_AND2 
+    %make_18 = load i32**, i32*** @make
+    %getelementptr_reg_37 = getelementptr inbounds i32*, i32** %make_18, i32 0
+    %load_result_37 = load i32*, i32** %getelementptr_reg_37
+    %getelementptr_reg_38 = getelementptr inbounds i32, i32* %load_result_37, i32 2
+    %load_result_38 = load i32, i32* %getelementptr_reg_38
+    %make_19 = load i32**, i32*** @make
+    %getelementptr_reg_39 = getelementptr inbounds i32*, i32** %make_19, i32 1
+    %load_result_39 = load i32*, i32** %getelementptr_reg_39
+    %getelementptr_reg_40 = getelementptr inbounds i32, i32* %load_result_39, i32 2
+    %load_result_40 = load i32, i32* %getelementptr_reg_40
+    %add_11 = add i32 %load_result_38, %load_result_40
+    %make_20 = load i32**, i32*** @make
+    %getelementptr_reg_41 = getelementptr inbounds i32*, i32** %make_20, i32 2
+    %load_result_41 = load i32*, i32** %getelementptr_reg_41
+    %getelementptr_reg_42 = getelementptr inbounds i32, i32* %load_result_41, i32 2
+    %load_result_42 = load i32, i32* %getelementptr_reg_42
+    %add_12 = add i32 %add_11, %load_result_42
+    %s_4 = load i32, i32* %s_addr
+    %eq_7 = icmp eq i32 %add_12, %s_4
+    store i1 %eq_7, i1* %AND_addr_3
+    br label %short_circuit_AND_end_AND3
+
+short_circuit_AND_end_AND4:                                  ; preds = short_circuit_AND_end_AND3 short_circuit_AND_branch_AND4 
+    %AND_short_circuit_4 = load i1, i1* %AND_addr_4
+    store i1 %AND_short_circuit_4, i1* %AND_addr_5
+    br i1 %AND_short_circuit_4, label %short_circuit_AND_branch_AND5, label %short_circuit_AND_end_AND5
+
+short_circuit_AND_branch_AND4:                               ; preds = short_circuit_AND_end_AND3 
+    %make_21 = load i32**, i32*** @make
+    %getelementptr_reg_43 = getelementptr inbounds i32*, i32** %make_21, i32 0
+    %load_result_43 = load i32*, i32** %getelementptr_reg_43
+    %getelementptr_reg_44 = getelementptr inbounds i32, i32* %load_result_43, i32 0
+    %load_result_44 = load i32, i32* %getelementptr_reg_44
+    %make_22 = load i32**, i32*** @make
+    %getelementptr_reg_45 = getelementptr inbounds i32*, i32** %make_22, i32 1
+    %load_result_45 = load i32*, i32** %getelementptr_reg_45
+    %getelementptr_reg_46 = getelementptr inbounds i32, i32* %load_result_45, i32 1
+    %load_result_46 = load i32, i32* %getelementptr_reg_46
+    %add_13 = add i32 %load_result_44, %load_result_46
+    %make_23 = load i32**, i32*** @make
+    %getelementptr_reg_47 = getelementptr inbounds i32*, i32** %make_23, i32 2
+    %load_result_47 = load i32*, i32** %getelementptr_reg_47
+    %getelementptr_reg_48 = getelementptr inbounds i32, i32* %load_result_47, i32 2
+    %load_result_48 = load i32, i32* %getelementptr_reg_48
+    %add_14 = add i32 %add_13, %load_result_48
+    %s_5 = load i32, i32* %s_addr
+    %eq_8 = icmp eq i32 %add_14, %s_5
+    store i1 %eq_8, i1* %AND_addr_4
+    br label %short_circuit_AND_end_AND4
+
+short_circuit_AND_end_AND5:                                  ; preds = short_circuit_AND_end_AND4 short_circuit_AND_branch_AND5 
+    %AND_short_circuit_5 = load i1, i1* %AND_addr_5
+    br i1 %AND_short_circuit_5, label %single_then_basicblock0, label %if_withoutelse_end_basicblock0
+
+short_circuit_AND_branch_AND5:                               ; preds = short_circuit_AND_end_AND4 
+    %make_24 = load i32**, i32*** @make
+    %getelementptr_reg_49 = getelementptr inbounds i32*, i32** %make_24, i32 2
+    %load_result_49 = load i32*, i32** %getelementptr_reg_49
+    %getelementptr_reg_50 = getelementptr inbounds i32, i32* %load_result_49, i32 0
+    %load_result_50 = load i32, i32* %getelementptr_reg_50
+    %make_25 = load i32**, i32*** @make
+    %getelementptr_reg_51 = getelementptr inbounds i32*, i32** %make_25, i32 1
+    %load_result_51 = load i32*, i32** %getelementptr_reg_51
+    %getelementptr_reg_52 = getelementptr inbounds i32, i32* %load_result_51, i32 1
+    %load_result_52 = load i32, i32* %getelementptr_reg_52
+    %add_15 = add i32 %load_result_50, %load_result_52
+    %make_26 = load i32**, i32*** @make
+    %getelementptr_reg_53 = getelementptr inbounds i32*, i32** %make_26, i32 0
+    %load_result_53 = load i32*, i32** %getelementptr_reg_53
+    %getelementptr_reg_54 = getelementptr inbounds i32, i32* %load_result_53, i32 2
+    %load_result_54 = load i32, i32* %getelementptr_reg_54
+    %add_16 = add i32 %add_15, %load_result_54
+    %s_6 = load i32, i32* %s_addr
+    %eq_9 = icmp eq i32 %add_16, %s_6
+    store i1 %eq_9, i1* %AND_addr_5
+    br label %short_circuit_AND_end_AND5
+
+single_then_basicblock0:                                     ; preds = short_circuit_AND_end_AND5 
+    %count = load i32*, i32** @count
+    %getelementptr_reg_55 = getelementptr inbounds i32, i32* %count, i32 0
+    %load_result_55 = load i32, i32* %getelementptr_reg_55
+    %count_0 = load i32*, i32** @count
+    %getelementptr_reg_56 = getelementptr inbounds i32, i32* %count_0, i32 0
+    %load_result_56 = load i32, i32* %getelementptr_reg_56
+    %add_17 = add i32 %load_result_56, 1
+    store i32 %add_17, i32* %getelementptr_reg_55
+    %i = load i32, i32* %i_addr
+    store i32 0, i32* %i_addr
+    br label %for_condition
+
+if_withoutelse_end_basicblock0:                              ; preds = single_then_basicblock0 short_circuit_AND_end_AND5 for_end_merge 
+    br label %if_end_basicblock
+
+for_condition:                                               ; preds = single_then_basicblock0 for_step 
+    %i_0 = load i32, i32* %i_addr
+    %sle = icmp sle i32 %i_0, 2
+    br i1 %sle, label %for_body, label %for_end_merge
+
+for_step:                                                    ; preds = for_body for_end_merge0 
+    %i_2 = load i32, i32* %i_addr
+    %add_19 = add i32 %i_2, 1
+    store i32 %add_19, i32* %i_addr
+    br label %for_condition
+
+for_body:                                                    ; preds = for_condition 
+    %j = load i32, i32* %j_addr
+    store i32 0, i32* %j_addr
+    br label %for_condition0
+
+for_end_merge:                                               ; preds = for_condition 
+    %const_string_pointer_1 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string1, i32 0, i32 0
+    call void @print(i8* %const_string_pointer_1)
+    br label %if_withoutelse_end_basicblock0
+
+for_condition0:                                              ; preds = for_body for_step0 
+    %j_0 = load i32, i32* %j_addr
+    %sle_0 = icmp sle i32 %j_0, 2
+    br i1 %sle_0, label %for_body0, label %for_end_merge0
+
+for_step0:                                                   ; preds = for_body0 
+    %j_2 = load i32, i32* %j_addr
+    %add_18 = add i32 %j_2, 1
+    store i32 %add_18, i32* %j_addr
+    br label %for_condition0
+
+for_body0:                                                   ; preds = for_condition0 
+    %make_27 = load i32**, i32*** @make
+    %i_1 = load i32, i32* %i_addr
+    %getelementptr_reg_57 = getelementptr inbounds i32*, i32** %make_27, i32 %i_1
+    %load_result_57 = load i32*, i32** %getelementptr_reg_57
+    %j_1 = load i32, i32* %j_addr
+    %getelementptr_reg_58 = getelementptr inbounds i32, i32* %load_result_57, i32 %j_1
+    %load_result_58 = load i32, i32* %getelementptr_reg_58
+    %call_toString = call i8* @toString(i32 %load_result_58)
+    call void @print(i8* %call_toString)
+    %const_string_pointer = getelementptr inbounds [2 x i8], [2 x i8]* @const_string0, i32 0, i32 0
+    call void @print(i8* %const_string_pointer)
+    br label %for_step0
+
+for_end_merge0:                                              ; preds = for_condition0 
+    %const_string_pointer_0 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string1, i32 0, i32 0
+    call void @print(i8* %const_string_pointer_0)
+    br label %for_step
+
+then_basicblock0:                                            ; preds = else_basicblock 
+    %make_28 = load i32**, i32*** @make
+    %x_4 = load i32, i32* %x_addr
+    %getelementptr_reg_59 = getelementptr inbounds i32*, i32** %make_28, i32 %x_4
+    %load_result_59 = load i32*, i32** %getelementptr_reg_59
+    %y_3 = load i32, i32* %y_addr
+    %getelementptr_reg_60 = getelementptr inbounds i32, i32* %load_result_59, i32 %y_3
+    %load_result_60 = load i32, i32* %getelementptr_reg_60
+    %make_29 = load i32**, i32*** @make
+    %x_5 = load i32, i32* %x_addr
+    %getelementptr_reg_61 = getelementptr inbounds i32*, i32** %make_29, i32 %x_5
+    %load_result_61 = load i32*, i32** %getelementptr_reg_61
+    %getelementptr_reg_62 = getelementptr inbounds i32, i32* %load_result_61, i32 0
+    %load_result_62 = load i32, i32* %getelementptr_reg_62
+    %sub_3 = sub i32 15, %load_result_62
+    %make_30 = load i32**, i32*** @make
+    %x_6 = load i32, i32* %x_addr
+    %getelementptr_reg_63 = getelementptr inbounds i32*, i32** %make_30, i32 %x_6
+    %load_result_63 = load i32*, i32** %getelementptr_reg_63
+    %getelementptr_reg_64 = getelementptr inbounds i32, i32* %load_result_63, i32 1
+    %load_result_64 = load i32, i32* %getelementptr_reg_64
+    %sub_4 = sub i32 %sub_3, %load_result_64
+    store i32 %sub_4, i32* %getelementptr_reg_60
+    %make_31 = load i32**, i32*** @make
+    %x_7 = load i32, i32* %x_addr
+    %getelementptr_reg_65 = getelementptr inbounds i32*, i32** %make_31, i32 %x_7
+    %load_result_65 = load i32*, i32** %getelementptr_reg_65
+    %y_4 = load i32, i32* %y_addr
+    %getelementptr_reg_66 = getelementptr inbounds i32, i32* %load_result_65, i32 %y_4
+    %load_result_66 = load i32, i32* %getelementptr_reg_66
+    %sgt_0 = icmp sgt i32 %load_result_66, 0
+    store i1 %sgt_0, i1* %AND_addr_6
+    br i1 %sgt_0, label %short_circuit_AND_branch_AND6, label %short_circuit_AND_end_AND6
+
+else_basicblock0:                                            ; preds = else_basicblock 
+    %i_3 = load i32, i32* %i_addr
+    store i32 1, i32* %i_addr
+    br label %for_condition1
+
+if_end_basicblock0:                                          ; preds = then_basicblock0 else_basicblock0 if_withoutelse_end_basicblock1 for_end_merge1 
+    br label %if_end_basicblock
+
+short_circuit_AND_end_AND6:                                  ; preds = then_basicblock0 short_circuit_AND_branch_AND6 
+    %AND_short_circuit_6 = load i1, i1* %AND_addr_6
+    store i1 %AND_short_circuit_6, i1* %AND_addr_7
+    br i1 %AND_short_circuit_6, label %short_circuit_AND_branch_AND7, label %short_circuit_AND_end_AND7
+
+short_circuit_AND_branch_AND6:                               ; preds = then_basicblock0 
+    %make_32 = load i32**, i32*** @make
+    %x_8 = load i32, i32* %x_addr
+    %getelementptr_reg_67 = getelementptr inbounds i32*, i32** %make_32, i32 %x_8
+    %load_result_67 = load i32*, i32** %getelementptr_reg_67
+    %y_5 = load i32, i32* %y_addr
+    %getelementptr_reg_68 = getelementptr inbounds i32, i32* %load_result_67, i32 %y_5
+    %load_result_68 = load i32, i32* %getelementptr_reg_68
+    %slt_0 = icmp slt i32 %load_result_68, 10
+    store i1 %slt_0, i1* %AND_addr_6
+    br label %short_circuit_AND_end_AND6
+
+short_circuit_AND_end_AND7:                                  ; preds = short_circuit_AND_end_AND6 short_circuit_AND_branch_AND7 
+    %AND_short_circuit_7 = load i1, i1* %AND_addr_7
+    br i1 %AND_short_circuit_7, label %single_then_basicblock1, label %if_withoutelse_end_basicblock1
+
+short_circuit_AND_branch_AND7:                               ; preds = short_circuit_AND_end_AND6 
+    %color = load i32*, i32** @color
+    %make_33 = load i32**, i32*** @make
+    %x_9 = load i32, i32* %x_addr
+    %getelementptr_reg_69 = getelementptr inbounds i32*, i32** %make_33, i32 %x_9
+    %load_result_69 = load i32*, i32** %getelementptr_reg_69
+    %y_6 = load i32, i32* %y_addr
+    %getelementptr_reg_70 = getelementptr inbounds i32, i32* %load_result_69, i32 %y_6
+    %load_result_70 = load i32, i32* %getelementptr_reg_70
+    %getelementptr_reg_71 = getelementptr inbounds i32, i32* %color, i32 %load_result_70
+    %load_result_71 = load i32, i32* %getelementptr_reg_71
+    %eq_11 = icmp eq i32 %load_result_71, 0
+    store i1 %eq_11, i1* %AND_addr_7
+    br label %short_circuit_AND_end_AND7
+
+single_then_basicblock1:                                     ; preds = short_circuit_AND_end_AND7 
+    %color_0 = load i32*, i32** @color
+    %make_34 = load i32**, i32*** @make
+    %x_10 = load i32, i32* %x_addr
+    %getelementptr_reg_72 = getelementptr inbounds i32*, i32** %make_34, i32 %x_10
+    %load_result_72 = load i32*, i32** %getelementptr_reg_72
+    %y_7 = load i32, i32* %y_addr
+    %getelementptr_reg_73 = getelementptr inbounds i32, i32* %load_result_72, i32 %y_7
+    %load_result_73 = load i32, i32* %getelementptr_reg_73
+    %getelementptr_reg_74 = getelementptr inbounds i32, i32* %color_0, i32 %load_result_73
+    %load_result_74 = load i32, i32* %getelementptr_reg_74
+    store i32 1, i32* %getelementptr_reg_74
+    %y_8 = load i32, i32* %y_addr
+    %eq_12 = icmp eq i32 %y_8, 2
+    br i1 %eq_12, label %then_basicblock1, label %else_basicblock1
+
+if_withoutelse_end_basicblock1:                              ; preds = single_then_basicblock1 short_circuit_AND_end_AND7 if_end_basicblock1 
+    br label %if_end_basicblock0
+
+then_basicblock1:                                            ; preds = single_then_basicblock1 
+    %x_11 = load i32, i32* %x_addr
+    %add_20 = add i32 %x_11, 1
+    %z_0 = load i32, i32* %z_addr
+    %make_35 = load i32**, i32*** @make
+    %x_12 = load i32, i32* %x_addr
+    %getelementptr_reg_75 = getelementptr inbounds i32*, i32** %make_35, i32 %x_12
+    %load_result_75 = load i32*, i32** %getelementptr_reg_75
+    %y_9 = load i32, i32* %y_addr
+    %getelementptr_reg_76 = getelementptr inbounds i32, i32* %load_result_75, i32 %y_9
+    %load_result_76 = load i32, i32* %getelementptr_reg_76
+    %add_21 = add i32 %z_0, %load_result_76
+    call void @search(i32 %add_20, i32 0, i32 %add_21)
+    br label %if_end_basicblock1
+
+else_basicblock1:                                            ; preds = single_then_basicblock1 
+    %x_13 = load i32, i32* %x_addr
+    %y_10 = load i32, i32* %y_addr
+    %add_22 = add i32 %y_10, 1
+    %z_1 = load i32, i32* %z_addr
+    %make_36 = load i32**, i32*** @make
+    %x_14 = load i32, i32* %x_addr
+    %getelementptr_reg_77 = getelementptr inbounds i32*, i32** %make_36, i32 %x_14
+    %load_result_77 = load i32*, i32** %getelementptr_reg_77
+    %y_11 = load i32, i32* %y_addr
+    %getelementptr_reg_78 = getelementptr inbounds i32, i32* %load_result_77, i32 %y_11
+    %load_result_78 = load i32, i32* %getelementptr_reg_78
+    %add_23 = add i32 %z_1, %load_result_78
+    call void @search(i32 %x_13, i32 %add_22, i32 %add_23)
+    br label %if_end_basicblock1
+
+if_end_basicblock1:                                          ; preds = then_basicblock1 else_basicblock1 
+    %color_1 = load i32*, i32** @color
+    %make_37 = load i32**, i32*** @make
+    %x_15 = load i32, i32* %x_addr
+    %getelementptr_reg_79 = getelementptr inbounds i32*, i32** %make_37, i32 %x_15
+    %load_result_79 = load i32*, i32** %getelementptr_reg_79
+    %y_12 = load i32, i32* %y_addr
+    %getelementptr_reg_80 = getelementptr inbounds i32, i32* %load_result_79, i32 %y_12
+    %load_result_80 = load i32, i32* %getelementptr_reg_80
+    %getelementptr_reg_81 = getelementptr inbounds i32, i32* %color_1, i32 %load_result_80
+    %load_result_81 = load i32, i32* %getelementptr_reg_81
+    store i32 0, i32* %getelementptr_reg_81
+    br label %if_withoutelse_end_basicblock1
+
+for_condition1:                                              ; preds = else_basicblock0 for_step1 
+    %i_4 = load i32, i32* %i_addr
+    %sle_1 = icmp sle i32 %i_4, 9
+    br i1 %sle_1, label %for_body1, label %for_end_merge1
+
+for_step1:                                                   ; preds = for_body1 if_withoutelse_end_basicblock2 
+    %i_11 = load i32, i32* %i_addr
+    %add_28 = add i32 %i_11, 1
+    store i32 %add_28, i32* %i_addr
+    br label %for_condition1
+
+for_body1:                                                   ; preds = for_condition1 
+    %color_2 = load i32*, i32** @color
+    %i_5 = load i32, i32* %i_addr
+    %getelementptr_reg_82 = getelementptr inbounds i32, i32* %color_2, i32 %i_5
+    %load_result_82 = load i32, i32* %getelementptr_reg_82
+    %eq_13 = icmp eq i32 %load_result_82, 0
+    br i1 %eq_13, label %single_then_basicblock2, label %if_withoutelse_end_basicblock2
+
+for_end_merge1:                                              ; preds = for_condition1 
+    br label %if_end_basicblock0
+
+single_then_basicblock2:                                     ; preds = for_body1 
+    %color_3 = load i32*, i32** @color
+    %i_6 = load i32, i32* %i_addr
+    %getelementptr_reg_83 = getelementptr inbounds i32, i32* %color_3, i32 %i_6
+    %load_result_83 = load i32, i32* %getelementptr_reg_83
+    store i32 1, i32* %getelementptr_reg_83
+    %make_38 = load i32**, i32*** @make
+    %x_16 = load i32, i32* %x_addr
+    %getelementptr_reg_84 = getelementptr inbounds i32*, i32** %make_38, i32 %x_16
+    %load_result_84 = load i32*, i32** %getelementptr_reg_84
+    %y_13 = load i32, i32* %y_addr
+    %getelementptr_reg_85 = getelementptr inbounds i32, i32* %load_result_84, i32 %y_13
+    %load_result_85 = load i32, i32* %getelementptr_reg_85
+    %i_7 = load i32, i32* %i_addr
+    store i32 %i_7, i32* %getelementptr_reg_85
+    %y_14 = load i32, i32* %y_addr
+    %eq_14 = icmp eq i32 %y_14, 2
+    br i1 %eq_14, label %then_basicblock2, label %else_basicblock2
+
+if_withoutelse_end_basicblock2:                              ; preds = single_then_basicblock2 for_body1 if_end_basicblock2 
+    br label %for_step1
+
+then_basicblock2:                                            ; preds = single_then_basicblock2 
+    %x_17 = load i32, i32* %x_addr
+    %add_24 = add i32 %x_17, 1
+    %z_2 = load i32, i32* %z_addr
+    %i_8 = load i32, i32* %i_addr
+    %add_25 = add i32 %z_2, %i_8
+    call void @search(i32 %add_24, i32 0, i32 %add_25)
+    br label %if_end_basicblock2
+
+else_basicblock2:                                            ; preds = single_then_basicblock2 
+    %x_18 = load i32, i32* %x_addr
+    %y_15 = load i32, i32* %y_addr
+    %add_26 = add i32 %y_15, 1
+    %z_3 = load i32, i32* %z_addr
+    %i_9 = load i32, i32* %i_addr
+    %add_27 = add i32 %z_3, %i_9
+    call void @search(i32 %x_18, i32 %add_26, i32 %add_27)
+    br label %if_end_basicblock2
+
+if_end_basicblock2:                                          ; preds = then_basicblock2 else_basicblock2 
+    %make_39 = load i32**, i32*** @make
+    %x_19 = load i32, i32* %x_addr
+    %getelementptr_reg_86 = getelementptr inbounds i32*, i32** %make_39, i32 %x_19
+    %load_result_86 = load i32*, i32** %getelementptr_reg_86
+    %y_16 = load i32, i32* %y_addr
+    %getelementptr_reg_87 = getelementptr inbounds i32, i32* %load_result_86, i32 %y_16
+    %load_result_87 = load i32, i32* %getelementptr_reg_87
+    store i32 0, i32* %getelementptr_reg_87
+    %color_4 = load i32*, i32** @color
+    %i_10 = load i32, i32* %i_addr
+    %getelementptr_reg_88 = getelementptr inbounds i32, i32* %color_4, i32 %i_10
+    %load_result_88 = load i32, i32* %getelementptr_reg_88
+    store i32 0, i32* %getelementptr_reg_88
+    br label %if_withoutelse_end_basicblock2
+
+return_block0:                                               ; preds = if_withoutelse_end_basicblock 
+    ret void
+}
+define dso_local void @origin(i32 %N_para) {
+entrance_block0:                                             
+    %N_addr = alloca i32
+    store i32 %N_para, i32* %N_addr
+    %make = load i32**, i32*** @make
+    %N = load i32, i32* %N_addr
+    %mul_bytes = mul i32 %N, 8
     %sum_bytes = add i32 %mul_bytes, 4
     %malloca = call i8* @_f_malloc(i32 %sum_bytes)
     %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
-    store i32 %add, i32* %array_cast_i8_to_i32
+    store i32 %N, i32* %array_cast_i8_to_i32
     %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
-    %array_addr = bitcast i32* %array_tmp_begin_i32 to i1*
-    store i1* %array_addr, i1** @check
-    store i32 0, i32* %i_addr
-    br label %while_condition
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32**
+    store i32** %array_addr, i32*** @make
+    %i = load i32, i32* @i
+    store i32 0, i32* @i
+    br label %for_condition
 
-while_condition:                                             ; preds = entrance_block0 while_body 
-    %i = load i32, i32* %i_addr
-    %N_1 = load i32, i32* @N
-    %sle = icmp sle i32 %i, %N_1
-    br i1 %sle, label %while_body, label %while_end_merge
+for_condition:                                               ; preds = entrance_block0 for_step 
+    %i_0 = load i32, i32* @i
+    %N_0 = load i32, i32* %N_addr
+    %slt = icmp slt i32 %i_0, %N_0
+    br i1 %slt, label %for_body, label %for_end_merge
 
-while_body:                                                  ; preds = while_condition 
-    %check_0 = load i1*, i1** @check
-    %i_0 = load i32, i32* %i_addr
-    %add_0 = add i32 %i_0, 1
-    store i32 %add_0, i32* %i_addr
-    %getelementptr_reg = getelementptr inbounds i1, i1* %check_0, i32 %i_0
-    %load_result = load i1, i1* %getelementptr_reg
-    store i1 true, i1* %getelementptr_reg
-    br label %while_condition
+for_step:                                                    ; preds = for_body for_end_merge0 
+    %i_3 = load i32, i32* @i
+    %add_0 = add i32 %i_3, 1
+    store i32 %add_0, i32* @i
+    br label %for_condition
 
-while_end_merge:                                             ; preds = entrance_block0 while_condition 
-    %N_2 = load i32, i32* @N
-    %add_1 = add i32 %N_2, 5
-    %mul_bytes_0 = mul i32 %add_1, 4
+for_body:                                                    ; preds = for_condition 
+    %make_0 = load i32**, i32*** @make
+    %i_1 = load i32, i32* @i
+    %getelementptr_reg = getelementptr inbounds i32*, i32** %make_0, i32 %i_1
+    %load_result = load i32*, i32** %getelementptr_reg
+    %N_1 = load i32, i32* %N_addr
+    %mul_bytes_0 = mul i32 %N_1, 4
     %sum_bytes_0 = add i32 %mul_bytes_0, 4
     %malloca_0 = call i8* @_f_malloc(i32 %sum_bytes_0)
     %array_cast_i8_to_i32_0 = bitcast i8* %malloca_0 to i32*
-    store i32 %add_1, i32* %array_cast_i8_to_i32_0
+    store i32 %N_1, i32* %array_cast_i8_to_i32_0
     %array_tmp_begin_i32_0 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32_0, i32 1
     %array_addr_0 = bitcast i32* %array_tmp_begin_i32_0 to i32*
-    store i32* %array_addr_0, i32** %phi_addr
-    %N_3 = load i32, i32* @N
-    %add_2 = add i32 %N_3, 5
-    %mul_bytes_1 = mul i32 %add_2, 4
-    %sum_bytes_1 = add i32 %mul_bytes_1, 4
-    %malloca_1 = call i8* @_f_malloc(i32 %sum_bytes_1)
-    %array_cast_i8_to_i32_1 = bitcast i8* %malloca_1 to i32*
-    store i32 %add_2, i32* %array_cast_i8_to_i32_1
-    %array_tmp_begin_i32_1 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32_1, i32 1
-    %array_addr_1 = bitcast i32* %array_tmp_begin_i32_1 to i32*
-    store i32* %array_addr_1, i32** %P_addr
-    %phi = load i32*, i32** %phi_addr
-    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %phi, i32 1
+    store i32* %array_addr_0, i32** %getelementptr_reg
+    %j = load i32, i32* @j
+    store i32 0, i32* @j
+    br label %for_condition0
+
+for_end_merge:                                               ; preds = for_condition 
+    br label %return_block0
+
+for_condition0:                                              ; preds = for_body for_step0 
+    %j_0 = load i32, i32* @j
+    %N_2 = load i32, i32* %N_addr
+    %slt_0 = icmp slt i32 %j_0, %N_2
+    br i1 %slt_0, label %for_body0, label %for_end_merge0
+
+for_step0:                                                   ; preds = for_body0 
+    %j_2 = load i32, i32* @j
+    %add = add i32 %j_2, 1
+    store i32 %add, i32* @j
+    br label %for_condition0
+
+for_body0:                                                   ; preds = for_condition0 
+    %make_1 = load i32**, i32*** @make
+    %i_2 = load i32, i32* @i
+    %getelementptr_reg_0 = getelementptr inbounds i32*, i32** %make_1, i32 %i_2
+    %load_result_0 = load i32*, i32** %getelementptr_reg_0
+    %j_1 = load i32, i32* @j
+    %getelementptr_reg_1 = getelementptr inbounds i32, i32* %load_result_0, i32 %j_1
+    %load_result_1 = load i32, i32* %getelementptr_reg_1
+    store i32 0, i32* %getelementptr_reg_1
+    br label %for_step0
+
+for_end_merge0:                                              ; preds = for_condition0 
+    br label %for_step
+
+return_block0:                                               ; preds = for_end_merge 
+    ret void
+}
+define dso_local i32 @main() {
+entrance_block0:                                             
+    call void @GLOBAL__sub_I_main_mx()
+    %return_register_infunction_addr = alloca i32
+    %count = load i32*, i32** @count
+    %getelementptr_reg = getelementptr inbounds i32, i32* %count, i32 0
+    %load_result = load i32, i32* %getelementptr_reg
+    store i32 0, i32* %getelementptr_reg
+    call void @origin(i32 3)
+    call void @search(i32 0, i32 0, i32 0)
+    %count_0 = load i32*, i32** @count
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %count_0, i32 0
     %load_result_0 = load i32, i32* %getelementptr_reg_0
-    store i32 1, i32* %getelementptr_reg_0
-    %i_1 = load i32, i32* %i_addr
-    store i32 2, i32* %i_addr
-    br label %for_body
-
-for_step:                                                    ; preds = for_body for_end_merge0 
-    %i_19 = load i32, i32* %i_addr
-    %add_6 = add i32 %i_19, 1
-    store i32 %add_6, i32* %i_addr
-    br label %for_body
-
-for_body:                                                    ; preds = for_step while_end_merge 
-    %i_2 = load i32, i32* %i_addr
-    %N_4 = load i32, i32* @N
-    %sgt = icmp sgt i32 %i_2, %N_4
-    br i1 %sgt, label %single_then_basicblock, label %if_withoutelse_end_basicblock
-
-for_end_merge:                                               ; preds = single_then_basicblock 
+    %call_toString = call i8* @toString(i32 %load_result_0)
+    call void @println(i8* %call_toString)
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
-single_then_basicblock:                                      ; preds = for_body 
-    br label %for_end_merge
-
-if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock for_body 
-    %check_1 = load i1*, i1** @check
-    %i_3 = load i32, i32* %i_addr
-    %getelementptr_reg_1 = getelementptr inbounds i1, i1* %check_1, i32 %i_3
-    %load_result_1 = load i1, i1* %getelementptr_reg_1
-    br i1 %load_result_1, label %single_then_basicblock0, label %if_withoutelse_end_basicblock0
-
-single_then_basicblock0:                                     ; preds = if_withoutelse_end_basicblock 
-    %P = load i32*, i32** %P_addr
-    %M = load i32, i32* @M
-    %add_3 = add i32 %M, 1
-    store i32 %add_3, i32* @M
-    %getelementptr_reg_2 = getelementptr inbounds i32, i32* %P, i32 %add_3
-    %load_result_2 = load i32, i32* %getelementptr_reg_2
-    %i_4 = load i32, i32* %i_addr
-    store i32 %i_4, i32* %getelementptr_reg_2
-    %phi_0 = load i32*, i32** %phi_addr
-    %i_5 = load i32, i32* %i_addr
-    %getelementptr_reg_3 = getelementptr inbounds i32, i32* %phi_0, i32 %i_5
-    %load_result_3 = load i32, i32* %getelementptr_reg_3
-    %i_6 = load i32, i32* %i_addr
-    %sub = sub i32 %i_6, 1
-    store i32 %sub, i32* %getelementptr_reg_3
-    br label %if_withoutelse_end_basicblock0
-
-if_withoutelse_end_basicblock0:                              ; preds = single_then_basicblock0 if_withoutelse_end_basicblock 
-    %i_7 = load i32, i32* %i_addr
-    store i32 %i_7, i32* %k_addr
-    %i_8 = load i32, i32* %i_addr_0
-    store i32 1, i32* %i_addr_0
-    br label %for_condition
-
-for_condition:                                               ; preds = if_withoutelse_end_basicblock0 for_step0 
-    %i_9 = load i32, i32* %i_addr_0
-    %M_0 = load i32, i32* @M
-    %sle_0 = icmp sle i32 %i_9, %M_0
-    store i1 %sle_0, i1* %AND_addr
-    br i1 %sle_0, label %short_circuit_AND_branch_AND, label %short_circuit_AND_end_AND
-
-for_step0:                                                   ; preds = for_body0 single_then_basicblock1 if_end_basicblock 
-    %i_18 = load i32, i32* %i_addr_0
-    %add_5 = add i32 %i_18, 1
-    store i32 %add_5, i32* %i_addr_0
-    br label %for_condition
-
-for_body0:                                                   ; preds = for_condition short_circuit_AND_end_AND 
-    %k_0 = load i32, i32* %k_addr
-    %P_1 = load i32*, i32** %P_addr
-    %i_11 = load i32, i32* %i_addr_0
-    %getelementptr_reg_5 = getelementptr inbounds i32, i32* %P_1, i32 %i_11
-    %load_result_5 = load i32, i32* %getelementptr_reg_5
-    %mul_0 = mul i32 %k_0, %load_result_5
-    store i32 %mul_0, i32* %tmp_addr
-    %tmp = load i32, i32* %tmp_addr
-    %N_6 = load i32, i32* @N
-    %sgt_0 = icmp sgt i32 %tmp, %N_6
-    br i1 %sgt_0, label %single_then_basicblock1, label %if_withoutelse_end_basicblock1
-
-for_end_merge0:                                              ; preds = for_condition short_circuit_AND_end_AND then_basicblock 
-    %phi_5 = load i32*, i32** %phi_addr
-    %k_6 = load i32, i32* %k_addr
-    %getelementptr_reg_16 = getelementptr inbounds i32, i32* %phi_5, i32 %k_6
-    %load_result_16 = load i32, i32* %getelementptr_reg_16
-    %call_toString = call i8* @toString(i32 %load_result_16)
-    call void @println(i8* %call_toString)
-    br label %for_step
-
-short_circuit_AND_end_AND:                                   ; preds = for_condition short_circuit_AND_branch_AND 
-    %AND_short_circuit = load i1, i1* %AND_addr
-    br i1 %AND_short_circuit, label %for_body0, label %for_end_merge0
-
-short_circuit_AND_branch_AND:                                ; preds = for_condition 
-    %k = load i32, i32* %k_addr
-    %P_0 = load i32*, i32** %P_addr
-    %i_10 = load i32, i32* %i_addr_0
-    %getelementptr_reg_4 = getelementptr inbounds i32, i32* %P_0, i32 %i_10
-    %load_result_4 = load i32, i32* %getelementptr_reg_4
-    %mul = mul i32 %k, %load_result_4
-    %N_5 = load i32, i32* @N
-    %sle_1 = icmp sle i32 %mul, %N_5
-    store i1 %sle_1, i1* %AND_addr
-    br label %short_circuit_AND_end_AND
-
-single_then_basicblock1:                                     ; preds = for_body0 
-    br label %for_step0
-
-if_withoutelse_end_basicblock1:                              ; preds = single_then_basicblock1 for_body0 
-    %check_2 = load i1*, i1** @check
-    %tmp_0 = load i32, i32* %tmp_addr
-    %getelementptr_reg_6 = getelementptr inbounds i1, i1* %check_2, i32 %tmp_0
-    %load_result_6 = load i1, i1* %getelementptr_reg_6
-    store i1 false, i1* %getelementptr_reg_6
-    %k_1 = load i32, i32* %k_addr
-    call void @printlnInt(i32 %k_1)
-    %i_12 = load i32, i32* %i_addr_0
-    call void @printlnInt(i32 %i_12)
-    %cnt = load i32, i32* %cnt_addr
-    store i32 0, i32* %cnt_addr
-    br label %for_condition0
-
-for_condition0:                                              ; preds = if_withoutelse_end_basicblock1 for_step1 
-    %cnt_0 = load i32, i32* %cnt_addr
-    %N_7 = load i32, i32* @N
-    %sle_2 = icmp sle i32 %cnt_0, %N_7
-    br i1 %sle_2, label %for_body1, label %for_end_merge1
-
-for_step1:                                                   ; preds = for_body1 if_withoutelse_end_basicblock2 
-    %cnt_2 = load i32, i32* %cnt_addr
-    %add_4 = add i32 %cnt_2, 1
-    store i32 %add_4, i32* %cnt_addr
-    br label %for_condition0
-
-for_body1:                                                   ; preds = for_condition0 
-    %check_3 = load i1*, i1** @check
-    %i_13 = load i32, i32* %i_addr_0
-    %getelementptr_reg_7 = getelementptr inbounds i1, i1* %check_3, i32 %i_13
-    %load_result_7 = load i1, i1* %getelementptr_reg_7
-    br i1 %load_result_7, label %single_then_basicblock2, label %if_withoutelse_end_basicblock2
-
-for_end_merge1:                                              ; preds = for_condition0 
-    %k_2 = load i32, i32* %k_addr
-    %P_2 = load i32*, i32** %P_addr
-    %i_14 = load i32, i32* %i_addr_0
-    %getelementptr_reg_8 = getelementptr inbounds i32, i32* %P_2, i32 %i_14
-    %load_result_8 = load i32, i32* %getelementptr_reg_8
-    %srem = srem i32 %k_2, %load_result_8
-    %eq = icmp eq i32 %srem, 0
-    br i1 %eq, label %then_basicblock, label %else_basicblock
-
-single_then_basicblock2:                                     ; preds = for_body1 
-    %cnt_1 = load i32, i32* %cnt_addr
-    call void @printlnInt(i32 %cnt_1)
-    %const_string_pointer = getelementptr inbounds [4 x i8], [4 x i8]* @const_string0, i32 0, i32 0
-    call void @println(i8* %const_string_pointer)
-    br label %if_withoutelse_end_basicblock2
-
-if_withoutelse_end_basicblock2:                              ; preds = single_then_basicblock2 for_body1 
-    br label %for_step1
-
-then_basicblock:                                             ; preds = for_end_merge1 
-    %phi_1 = load i32*, i32** %phi_addr
-    %tmp_1 = load i32, i32* %tmp_addr
-    %getelementptr_reg_9 = getelementptr inbounds i32, i32* %phi_1, i32 %tmp_1
-    %load_result_9 = load i32, i32* %getelementptr_reg_9
-    %phi_2 = load i32*, i32** %phi_addr
-    %k_3 = load i32, i32* %k_addr
-    %getelementptr_reg_10 = getelementptr inbounds i32, i32* %phi_2, i32 %k_3
-    %load_result_10 = load i32, i32* %getelementptr_reg_10
-    %P_3 = load i32*, i32** %P_addr
-    %i_15 = load i32, i32* %i_addr_0
-    %getelementptr_reg_11 = getelementptr inbounds i32, i32* %P_3, i32 %i_15
-    %load_result_11 = load i32, i32* %getelementptr_reg_11
-    %mul_1 = mul i32 %load_result_10, %load_result_11
-    store i32 %mul_1, i32* %getelementptr_reg_9
-    br label %for_end_merge0
-
-else_basicblock:                                             ; preds = for_end_merge1 
-    %phi_3 = load i32*, i32** %phi_addr
-    %k_4 = load i32, i32* %k_addr
-    %P_4 = load i32*, i32** %P_addr
-    %i_16 = load i32, i32* %i_addr_0
-    %getelementptr_reg_12 = getelementptr inbounds i32, i32* %P_4, i32 %i_16
-    %load_result_12 = load i32, i32* %getelementptr_reg_12
-    %mul_2 = mul i32 %k_4, %load_result_12
-    %getelementptr_reg_13 = getelementptr inbounds i32, i32* %phi_3, i32 %mul_2
-    %load_result_13 = load i32, i32* %getelementptr_reg_13
-    %phi_4 = load i32*, i32** %phi_addr
-    %k_5 = load i32, i32* %k_addr
-    %getelementptr_reg_14 = getelementptr inbounds i32, i32* %phi_4, i32 %k_5
-    %load_result_14 = load i32, i32* %getelementptr_reg_14
-    %P_5 = load i32*, i32** %P_addr
-    %i_17 = load i32, i32* %i_addr_0
-    %getelementptr_reg_15 = getelementptr inbounds i32, i32* %P_5, i32 %i_17
-    %load_result_15 = load i32, i32* %getelementptr_reg_15
-    %sub_0 = sub i32 %load_result_15, 1
-    %mul_3 = mul i32 %load_result_14, %sub_0
-    store i32 %mul_3, i32* %getelementptr_reg_13
-    br label %if_end_basicblock
-
-if_end_basicblock:                                           ; preds = then_basicblock else_basicblock 
-    br label %for_step0
-
-return_block0:                                               ; preds = for_end_merge 
+return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }
 define dso_local void @GLOBAL__sub_I_main_mx() {
 entrance_block0:                                             
-    store i32 0, i32* @M
+    %mul_bytes = mul i32 10, 4
+    %sum_bytes = add i32 %mul_bytes, 4
+    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
+    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
+    store i32 10, i32* %array_cast_i8_to_i32
+    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32*
+    store i32* %array_addr, i32** @color
+    %mul_bytes_0 = mul i32 1, 4
+    %sum_bytes_0 = add i32 %mul_bytes_0, 4
+    %malloca_0 = call i8* @_f_malloc(i32 %sum_bytes_0)
+    %array_cast_i8_to_i32_0 = bitcast i8* %malloca_0 to i32*
+    store i32 1, i32* %array_cast_i8_to_i32_0
+    %array_tmp_begin_i32_0 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32_0, i32 1
+    %array_addr_0 = bitcast i32* %array_tmp_begin_i32_0 to i32*
+    store i32* %array_addr_0, i32** @count
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
