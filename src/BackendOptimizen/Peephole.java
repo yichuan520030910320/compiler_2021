@@ -28,6 +28,7 @@ public class Peephole extends ASM_Pass {
     public void run_on_function(ASM_Function asm_function_) {
         for (int i = 0; i < asm_function_.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = asm_function_.asm_basicblock_in_function.get(i);
+            load_store_peephole(asm_basicblock);
 
 
         }
