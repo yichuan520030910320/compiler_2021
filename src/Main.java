@@ -1,6 +1,7 @@
 import Backend.ASMprinter;
 import Backend.HorribleStackAlllocate;
 import Backend.Instructin_select;
+import BackendOptimizen.Peephole;
 import IR.IRbuilder;
 import IR.IRprinter;
 import Optimize.Graph_Coloring;
@@ -70,7 +71,6 @@ public class Main {
 
             if (localjudge){//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
-
                 if (local_test_ir==true)llvm_naive.stdout=true;
                 llvm_naive.visit(irbuilder.module_in_irbuilder);
             }
@@ -81,6 +81,9 @@ public class Main {
             //reg allocate
             //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
             Graph_Coloring graph_coloring=new Graph_Coloring(instructin_select.cur_module);
+
+            //backend optimizen
+            Peephole peephole_=new Peephole(instructin_select.cur_module);
 
             //asm printer
             //ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
