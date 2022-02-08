@@ -72,9 +72,9 @@ public class Peephole extends ASM_Pass {
                                 base_riscv_instruction1.immediate.imm_val == base_riscv_instruction.immediate.imm_val &&
                                 base_riscv_instruction.rs1 == base_riscv_instruction1.rs1
                         ) {
-                            System.out.println("peephole l/s");
+                            //System.out.println("peephole l/s");
                             it.remove();
-                            it.add(new RISCV_Instruction_Move(base_riscv_instruction1.rd, base_riscv_instruction.rs2));
+                            it.add(new RISCV_Instruction_Move( base_riscv_instruction.rs2, base_riscv_instruction1.rd));
                         }
                         //todo la t0 k
                         //sw t0 t1
@@ -103,13 +103,13 @@ public class Peephole extends ASM_Pass {
                     Base_RISCV_Instruction base_riscv_instruction1 = it.next();
                     if (base_riscv_instruction1 instanceof RISCV_Instruction_Binary && base_riscv_instruction1.immediate == null) {
                         if (base_riscv_instruction.rd == base_riscv_instruction1.rs1) {
-                            System.out.println("peephole l/s 1");
+                            //System.out.println("peephole l/s 1");
                             it.remove();
                             it.previous();
                             it.remove();
                             it.add(new RISCV_Instruction_Binary(((RISCV_Instruction_Binary) base_riscv_instruction1).riscvBinarytype, base_riscv_instruction.rs1, base_riscv_instruction1.rs2, base_riscv_instruction1.rd, null));
                         } else if (base_riscv_instruction.rd == base_riscv_instruction1.rs2) {
-                            System.out.println("peephole l/s 2");
+                            //System.out.println("peephole l/s 2");
                             it.remove();
                             it.previous();
                             it.remove();
