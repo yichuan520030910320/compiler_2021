@@ -46,7 +46,7 @@ public class IRfunction extends BaseUser {
         } else {
             return_reg = new Register(new PointerType(function_type.returntype), "return_register_infunction_addr");
             entry_block.link_in_basicblock.add(new AllocateInstruction(entry_block, function_type.returntype, return_reg));
-            entry_block.link_in_basicblock.add(new StoreInstruction(entry_block, return_reg.type.defaulttype(), return_reg));
+            entry_block.link_in_basicblock.add(new StoreInstruction(entry_block, function_type.returntype.defaulttype(), return_reg));
             Register eventual_returnval = new Register(function_type.returntype, "returnval");
             return_block.link_in_basicblock.add(new LoadInstruction(return_block, eventual_returnval, return_reg));
             return_block.link_in_basicblock.add(new RetInstruction(return_block, eventual_returnval, function_type.returntype));
