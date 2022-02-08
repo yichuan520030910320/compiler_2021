@@ -122,6 +122,9 @@ public class Mem2Reg implements IRvisitor {
     @Override
     public void visit(GetElementPtrInstruction it) {
         it.source_ptr = chang_operand(it.source_ptr);
+        for (int i = 0; i <it.index_offset.size() ; i++) {
+            it.index_offset.set(i,chang_operand(it.index_offset.get(i)));
+        }
     }
 
     @Override
