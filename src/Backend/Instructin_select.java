@@ -398,6 +398,7 @@ public class Instructin_select implements IRvisitor {
 
     private Base_RISCV_Register transreg(BaseOperand iropreand) {
         //todo it is naive
+
         if (iropreand instanceof Parament) {
             if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
             Virtual_Register new_virtual_reg = new Virtual_Register(iropreand.toString(), iropreand.type.byte_num());
@@ -431,6 +432,9 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_La(iRmodule.string_map.get(((ConstOperand_String) ((Global_variable) iropreand).initoperand).conststring).GlobalVariableName, tmp_str_addrreg));
             return tmp_str_addrreg;
 
+        }else if (iropreand instanceof Mem2Reg_Register){
+            if (!IRreg_to_ASMreg.containsKey(iropreand))throw new RuntimeException("no mem2reg");
+            return IRreg_to_ASMreg.get(iropreand);
         }
         throw new IRbuilderError(" actual error in inst select", null);
 

@@ -1,18 +1,23 @@
 /*
 Test Package: Codegen
 Author: Admin
-Time: 2020-02-02
+Time: 2020-01-25
 Input:
 === input ===
 === end ===
 Output:
 === output ===
 === end ===
-ExitCode: 2
+ExitCode: 16
 InstLimit: -1
-Origin Package: Codegen Pretest-587-Modifiy
+Origin Package: Codegen Pretest-528
 */
+
 int main() {
-    string s = "hahaha";
-    printlnInt (s.substring(2, 4).length());
+    int a = 5;
+    int b;
+    int c;
+    c = a++;
+    b = c;
+   printlnInt(b+c+a);
 }

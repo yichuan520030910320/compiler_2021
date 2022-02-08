@@ -78,7 +78,7 @@ public class Graph_Coloring {
             SetInitialed();
             Compute_SpillCost();
             Physical_Register ra = asm_module.physical_registers.get(1);
-            Physical_Register s0 = asm_module.physical_registers.get(9);
+            Physical_Register s0 = asm_module.physical_registers.get(8);
             livenessAnalysis = new LivenessAnalysis(asm_function, ra, s0);
             Build();
             MakeWorklist();

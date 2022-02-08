@@ -4,7 +4,6 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 
-@const_string0 = private unnamed_addr constant [7 x i8] c"hahaha\00", align 1
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
 declare i1 @_str_le(i8* %lhs,i8* %rhs)
@@ -29,16 +28,29 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %s_addr = alloca i8*
-    store i8* null, i8** %s_addr
+    %c_addr = alloca i32
+    store i32 0, i32* %c_addr
+    %b_addr = alloca i32
+    store i32 0, i32* %b_addr
+    %a_addr = alloca i32
+    store i32 0, i32* %a_addr
     %return_register_infunction_addr = alloca i32
     store i32 0, i32* %return_register_infunction_addr
-    %const_string_pointer = getelementptr inbounds [7 x i8], [7 x i8]* @const_string0, i32 0, i32 0
-    store i8* %const_string_pointer, i8** %s_addr
-    %s = load i8*, i8** %s_addr
-    %call_string_substring = call i8* @_str_substring(i8* %s, i32 2, i32 4)
-    %call_string_length = call i32 @_str_length(i8* %call_string_substring)
-    call void @printlnInt(i32 %call_string_length)
+    store i32 5, i32* %a_addr
+    %c = load i32, i32* %c_addr
+    %a = load i32, i32* %a_addr
+    %add = add i32 %a, 1
+    store i32 %add, i32* %a_addr
+    store i32 %a, i32* %c_addr
+    %b = load i32, i32* %b_addr
+    %c_0 = load i32, i32* %c_addr
+    store i32 %c_0, i32* %b_addr
+    %b_0 = load i32, i32* %b_addr
+    %c_1 = load i32, i32* %c_addr
+    %add_0 = add i32 %b_0, %c_1
+    %a_0 = load i32, i32* %a_addr
+    %add_1 = add i32 %add_0, %a_0
+    call void @printlnInt(i32 %add_1)
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
