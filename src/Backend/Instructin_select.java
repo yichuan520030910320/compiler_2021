@@ -263,10 +263,9 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_La(((Global_variable) it.dest_operand).GlobalVariableName, la));
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, la, transreg(it.source_operand), new Immediate(0)));
         } else {
-
+            //mem2reg
             if (it.dest_operand instanceof Mem2Reg_Register) {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(transreg(it.source_operand), transreg(it.dest_operand)));
-
                 return;
             }
 

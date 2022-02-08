@@ -1318,7 +1318,7 @@ public class IRbuilder implements ASTvisitor {
     private void array_size(FunctioncallExp_ASTnode it) {
         Register bitcast_i32 = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "bitcast_i32");
         current_function.renaming_add(bitcast_i32);
-        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, bitcast_i32, (Register) ((MemberExp_ASTnode) (it.funcname)).classcall.ir_operand, new PointerType(new IntegerType(IntegerSubType.i32))));
+        current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, bitcast_i32, ((MemberExp_ASTnode) (it.funcname)).classcall.ir_operand, new PointerType(new IntegerType(IntegerSubType.i32))));
 
         Register gep_size = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "gep_size");
         current_function.renaming_add(gep_size);

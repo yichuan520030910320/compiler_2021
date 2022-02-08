@@ -129,6 +129,7 @@ public class Mem2Reg implements IRvisitor {
 
     @Override
     public void visit(BitCastInstruction it) {
+        it.source_reg=  chang_operand(it.source_reg);
 //nothing to do
     }
 

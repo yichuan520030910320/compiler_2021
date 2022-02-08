@@ -23,10 +23,36 @@ public class Peephole extends ASM_Pass {
             ASM_Basicblock asm_basicblock = asm_function_.asm_basicblock_in_function.get(i);
             load_store_peephole(asm_basicblock);
             load_redundancy_peephole(asm_basicblock);
+            mv_redundancy_peephole(asm_basicblock);
             calculate_merge_peephole(asm_basicblock);
             calculate_simplify_peephole(asm_basicblock);
         }
 
+    }
+
+    void mv_redundancy_peephole(ASM_Basicblock asm_basicblock) {
+        //mv	t1,zero
+        //    mv	t1,zero
+        //    mv	t1,zero
+        //    mv	t1,zero
+        ListIterator<Base_RISCV_Instruction> it;
+        it = asm_basicblock.Riscv_instruction_in_block.listIterator(0);
+        while (it.hasNext()) {
+            Base_RISCV_Instruction base_riscv_instruction = it.next();
+            if (base_riscv_instruction instanceof RISCV_Instruction_Move) {
+                if (it.hasNext()) {
+                    Base_RISCV_Instruction base_riscv_instruction1 = it.next();
+                    if (base_riscv_instruction1 instanceof RISCV_Instruction_Move) {
+                        if (base_riscv_instruction.rd == base_riscv_instruction1.rd) {
+                            //System.out.println("redundancy load");
+                            it.previous();
+                            it.previous();
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void load_redundancy_peephole(ASM_Basicblock asm_basicblock) {
