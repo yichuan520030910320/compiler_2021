@@ -265,9 +265,8 @@ public class Instructin_select implements IRvisitor {
         } else {
 
             if (it.dest_operand instanceof Mem2Reg_Register) {
-                Virtual_Register mem2reg = new Virtual_Register("mem2reg", it.dest_operand.type.byte_num());
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(transreg(it.source_operand), mem2reg));
-                IRreg_to_ASMreg.put(it.dest_operand, mem2reg);
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(transreg(it.source_operand), transreg(it.dest_operand)));
+
                 return;
             }
 
@@ -433,8 +432,10 @@ public class Instructin_select implements IRvisitor {
             return tmp_str_addrreg;
 
         }else if (iropreand instanceof Mem2Reg_Register){
-            if (!IRreg_to_ASMreg.containsKey(iropreand))throw new RuntimeException("no mem2reg");
-            return IRreg_to_ASMreg.get(iropreand);
+            if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
+            Virtual_Register new_virtual_reg = new Virtual_Register("mem2reg", iropreand.type.byte_num());
+            IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
+            return new_virtual_reg;
         }
         throw new IRbuilderError(" actual error in inst select", null);
 

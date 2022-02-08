@@ -65,7 +65,11 @@ public class Mem2Reg implements IRvisitor {
 
     @Override
     public void visit(CallInstruction it) {
-        //nothing to do
+        if (it.paralist!=null) {
+            for (int i = 0; i < it.paralist.size(); i++) {
+                it.paralist.set(i, chang_operand(it.paralist.get(i)));
+            }
+        }
     }
 
     @Override
