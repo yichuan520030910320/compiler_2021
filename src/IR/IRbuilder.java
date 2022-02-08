@@ -723,8 +723,10 @@ public class IRbuilder implements ASTvisitor {
             //add scope map : string---->addr reg
             current_ir_scope.id_map.put(it.name, single_allocate);
             //add two instructions
-            if (!current_basicblock.check_taiL_br())
+            if (!current_basicblock.check_taiL_br()) {
+                current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block, type_trans.asttype_to_irtype(it.type).defaulttype(), single_allocate));
                 current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, type_trans.asttype_to_irtype(it.type), single_allocate));
+            }
             if (it.expression != null) {
                 if (it.expression instanceof LambdaExp_ASTnode) return;//special judge for lambda not put in ir
                 current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.expression.ir_operand, single_allocate));
@@ -1209,9 +1211,9 @@ public class IRbuilder implements ASTvisitor {
             //alloca a space to record the currnt array pointer (in the first level)
             Register current_array_ptr_addr = new Register(new PointerType(return_type), "current_array_ptr_addr");
             current_function.renaming_add(current_array_ptr_addr);
-            if (!current_basicblock.check_taiL_br())
-                current_basicblock.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, return_type, current_array_ptr_addr));
-
+            if (!current_basicblock.check_taiL_br()) {
+                current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, return_type, current_array_ptr_addr));
+            }
             current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr, current_array_ptr_addr));
 
             //basicblock declare

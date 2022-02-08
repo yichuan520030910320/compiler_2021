@@ -1,5 +1,8 @@
 package IR.TypeSystem;
 
+import IR.Operand.BaseOperand;
+import IR.Operand.ConstOperand_Bool;
+import IR.Operand.ConstOperand_Integer;
 import Utils.error.IRbuilderError;
 import Utils.position;
 
@@ -23,5 +26,11 @@ public class IntegerType extends Typesystem {
     public int byte_num() {
         if (Inttype==IntegerSubType.i1||Inttype==IntegerSubType.i8)return 1;
         else return 4;
+    }
+
+    @Override
+    public BaseOperand defaulttype() {
+        if (Inttype==IntegerSubType.i1)return new ConstOperand_Bool(this,false);
+        else return new ConstOperand_Integer(this,0);
     }
 }

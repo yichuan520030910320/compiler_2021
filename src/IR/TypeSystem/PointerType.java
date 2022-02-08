@@ -1,5 +1,8 @@
 package IR.TypeSystem;
 
+import IR.Operand.BaseOperand;
+import IR.Operand.ConstOperand_Null;
+
 public class PointerType extends Typesystem {
     public Typesystem Base_Pointer_Type;
     public int dim;
@@ -29,5 +32,10 @@ public class PointerType extends Typesystem {
     @Override
     public int byte_num() {
         return 8;
+    }
+
+    @Override
+    public BaseOperand defaulttype() {
+        return new ConstOperand_Null(new VoidType());
     }
 }

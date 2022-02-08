@@ -1,5 +1,7 @@
 package IR.TypeSystem;
 
+import IR.Operand.BaseOperand;
+
 import java.util.ArrayList;
 
 public class StructType extends Typesystem {
@@ -45,5 +47,10 @@ public class StructType extends Typesystem {
         return size;
 
 
+    }
+
+    @Override
+    public BaseOperand defaulttype() {
+        throw new RuntimeException("default in struct type");
     }
 }

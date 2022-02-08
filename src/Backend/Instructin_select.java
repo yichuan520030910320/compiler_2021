@@ -263,6 +263,14 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_La(((Global_variable) it.dest_operand).GlobalVariableName, la));
             cur_basicblock.add_tail_instru(new RISCV_Instruction_Store(4, la, transreg(it.source_operand), new Immediate(0)));
         } else {
+
+            if (it.dest_operand instanceof Mem2Reg_Register) {
+                Virtual_Register mem2reg = new Virtual_Register("mem2reg", it.dest_operand.type.byte_num());
+                cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(transreg(it.source_operand), mem2reg));
+                IRreg_to_ASMreg.put(it.dest_operand, mem2reg);
+                return;
+            }
+
             Base_RISCV_Register asm_rs1 = transreg(it.dest_operand);
             Base_RISCV_Register asm_rs2 = transreg(it.source_operand);
             if (cur_function.Virtual_to_offset.containsKey(asm_rs1)) {
@@ -354,7 +362,7 @@ public class Instructin_select implements IRvisitor {
                 //is in the array
 
                 BaseOperand offset_in_gep = it.index_offset.get(0);
-                Typesystem reg_type=((PointerType) it.result_register.type).get_low_dim_type();
+                Typesystem reg_type = ((PointerType) it.result_register.type).get_low_dim_type();
                 //change offset=byte_in_gep*offset
                 assert it.result_register.type instanceof PointerType;
                 if (offset_in_gep instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) offset_in_gep).value * reg_type.byte_num())) {

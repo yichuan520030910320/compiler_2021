@@ -1,7 +1,10 @@
 package IR.TypeSystem;
 
-public class VoidType extends Typesystem{
-    public VoidType(){}
+import IR.Operand.BaseOperand;
+
+public class VoidType extends Typesystem {
+    public VoidType() {
+    }
 
     @Override
     public String toString() {
@@ -11,5 +14,10 @@ public class VoidType extends Typesystem{
     @Override
     public int byte_num() {
         return 0;
+    }
+
+    @Override
+    public BaseOperand defaulttype() {
+        throw new RuntimeException("default in void type");
     }
 }

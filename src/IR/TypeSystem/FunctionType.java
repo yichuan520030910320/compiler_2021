@@ -1,5 +1,6 @@
 package IR.TypeSystem;
 
+import IR.Operand.BaseOperand;
 import IR.Operand.Parament;
 
 import java.util.ArrayList;
@@ -20,4 +21,11 @@ public class FunctionType extends Typesystem{
     public int byte_num() {
         return 0;
     }
+
+    @Override
+    public BaseOperand defaulttype() {
+        throw new RuntimeException("defalut in function type");
+    }
+
+
 }

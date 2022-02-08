@@ -1,0 +1,133 @@
+package MidEndOptimizen;
+
+import IR.IRbasicblock.IRbasicblock;
+import IR.IRfunction.IRfunction;
+import IR.IRmodule.IRmodule;
+import IR.IRvisitor;
+import IR.Instru.*;
+import IR.Operand.BaseOperand;
+import IR.Operand.Mem2Reg_Register;
+import IR.Operand.Register;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
+public class Mem2Reg implements IRvisitor {
+    public IRmodule iRmodule;
+
+    public HashMap<BaseOperand, Mem2Reg_Register> allocate_map;
+    public HashMap<BaseOperand, Mem2Reg_Register> load_map;
+
+    public Mem2Reg(IRmodule iRmodule_) {
+        iRmodule = iRmodule_;
+        for (Map.Entry<String, IRfunction> entry : iRmodule.Internal_Function_Map.entrySet()) {
+            IRfunction tmpirrunction = entry.getValue();
+            allocate_map = new HashMap<>();
+            load_map = new HashMap<>();
+            for (int i = 0; i < tmpirrunction.block_list.size(); i++) {
+                run_basicblock(tmpirrunction.block_list.get(i));
+            }
+        }
+    }
+
+    void run_basicblock(IRbasicblock iRbasicblock) {
+        LinkedList<BaseInstru> newinstrulist = new LinkedList<>();
+        for (int i = 0; i < iRbasicblock.link_in_basicblock.size(); i++) {
+            BaseInstru baseInstru = iRbasicblock.link_in_basicblock.get(i);
+            if (baseInstru instanceof AllocateInstruction) {
+                allocate_map.put(((AllocateInstruction) baseInstru).allocate_result, new Mem2Reg_Register(((AllocateInstruction) baseInstru).allocate_type));
+                continue;
+            } else if (baseInstru instanceof LoadInstruction) {
+                if (allocate_map.containsKey(((LoadInstruction) baseInstru).source_pointer)) {
+                    load_map.put(((LoadInstruction) baseInstru).destination_register, new Mem2Reg_Register(((LoadInstruction) baseInstru).destination_register.type));
+                    newinstrulist.add(new StoreInstruction(iRbasicblock, allocate_map.get(((LoadInstruction) baseInstru).source_pointer), load_map.get(((LoadInstruction) baseInstru).destination_register)));
+                    continue;
+                }
+            }
+            baseInstru.accept(this);
+            newinstrulist.add(baseInstru);
+        }
+        iRbasicblock.link_in_basicblock = newinstrulist;
+    }
+
+    @Override
+    public void visit(BinaryInstruction it) {
+        it.operand1 = chang_operand(it.operand1);
+        it.operand2 = chang_operand(it.operand2);
+    }
+
+    @Override
+    public void visit(BrInstruction it) {
+        it.cond = chang_operand(it.cond);
+    }
+
+    @Override
+    public void visit(CallInstruction it) {
+        //nothing to do
+    }
+
+    @Override
+    public void visit(CmpInstruction it) {
+        it.operand1 = chang_operand(it.operand1);
+        it.operand2 = chang_operand(it.operand2);
+    }
+
+    @Override
+    public void visit(LoadInstruction it) {
+
+    }
+
+    @Override
+    public void visit(PhiInstruction it) {
+
+    }
+
+    @Override
+    public void visit(RetInstruction it) {
+        it.Ret_Operand = chang_operand(it.Ret_Operand);
+    }
+
+    @Override
+    public void visit(StoreInstruction it) {
+        it.dest_operand = chang_operand(it.dest_operand);
+        it.source_operand = chang_operand(it.source_operand);
+    }
+
+    @Override
+    public void visit(AllocateInstruction it) {
+
+    }
+
+    @Override
+    public void visit(IRbasicblock it) {
+
+    }
+
+    @Override
+    public void visit(IRfunction it) {
+
+    }
+
+    @Override
+    public void visit(IRmodule it) {
+
+    }
+
+    @Override
+    public void visit(GetElementPtrInstruction it) {
+        it.source_ptr = chang_operand(it.source_ptr);
+    }
+
+    @Override
+    public void visit(BitCastInstruction it) {
+//nothing to do
+    }
+
+    BaseOperand chang_operand(BaseOperand operand) {
+        if (allocate_map.containsKey(operand)) return allocate_map.get(operand);
+        else if (load_map.containsKey(operand)) return load_map.get(operand);
+        return operand;
+    }
+}

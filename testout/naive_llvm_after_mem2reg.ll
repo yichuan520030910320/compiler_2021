@@ -29,77 +29,72 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %j_addr = alloca i32
-    store i32 0, i32* %j_addr
-    %i_addr = alloca i32
-    store i32 0, i32* %i_addr
-    %sum_addr = alloca i32
-    store i32 0, i32* %sum_addr
-    %n_addr = alloca i32
-    store i32 0, i32* %n_addr
-    %return_register_infunction_addr = alloca i32
-    store i32 10, i32* %n_addr
-    store i32 0, i32* %sum_addr
-    %i = load i32, i32* %i_addr
-    store i32 1, i32* %i_addr
+    store i32 0, i32 %mem2reg0
+    store i32 0, i32 %mem2reg1
+    store i32 0, i32 %mem2reg2
+    store i32 0, i32 %mem2reg3
+    store i32 10, i32 %mem2reg3
+    store i32 0, i32 %mem2reg2
+    store i32 %mem2reg1, i32 %mem2reg5
+    store i32 1, i32 %mem2reg1
     br label %for_condition
 
 for_condition:                                               ; preds = entrance_block0 for_step 
-    %i_0 = load i32, i32* %i_addr
-    %n = load i32, i32* %n_addr
-    %sle = icmp sle i32 %i_0, %n
+    store i32 %mem2reg1, i32 %mem2reg6
+    store i32 %mem2reg3, i32 %mem2reg7
+    %sle = icmp sle i32 mem2reg6, mem2reg7
     br i1 %sle, label %for_body, label %for_end_merge
 
 for_step:                                                    ; preds = for_body 
-    %i_2 = load i32, i32* %i_addr
-    %add_0 = add i32 %i_2, 1
-    store i32 %add_0, i32* %i_addr
+    store i32 %mem2reg1, i32 %mem2reg8
+    %add_0 = add i32 mem2reg8, 1
+    store i32 %add_0, i32 %mem2reg1
     br label %for_condition
 
 for_body:                                                    ; preds = for_condition 
-    %sum = load i32, i32* %sum_addr
-    %sum_0 = load i32, i32* %sum_addr
-    %i_1 = load i32, i32* %i_addr
-    %add = add i32 %sum_0, %i_1
-    store i32 %add, i32* %sum_addr
+    store i32 %mem2reg2, i32 %mem2reg9
+    store i32 %mem2reg2, i32 %mem2reg10
+    store i32 %mem2reg1, i32 %mem2reg11
+    %add = add i32 mem2reg10, mem2reg11
+    store i32 %add, i32 %mem2reg2
     br label %for_step
 
 for_end_merge:                                               ; preds = for_condition 
-    %j = load i32, i32* %j_addr
-    store i32 1, i32* %j_addr
+    store i32 %mem2reg0, i32 %mem2reg12
+    store i32 1, i32 %mem2reg0
     br label %for_condition0
 
 for_condition0:                                              ; preds = for_end_merge for_step0 
-    %j_0 = load i32, i32* %j_addr
-    %n_0 = load i32, i32* %n_addr
-    %sle_0 = icmp sle i32 %j_0, %n_0
+    store i32 %mem2reg0, i32 %mem2reg13
+    store i32 %mem2reg3, i32 %mem2reg14
+    %sle_0 = icmp sle i32 mem2reg13, mem2reg14
     br i1 %sle_0, label %for_body0, label %for_end_merge0
 
 for_step0:                                                   ; preds = for_body0 
-    %j_2 = load i32, i32* %j_addr
-    %add_3 = add i32 %j_2, 1
-    store i32 %add_3, i32* %j_addr
+    store i32 %mem2reg0, i32 %mem2reg15
+    %add_3 = add i32 mem2reg15, 1
+    store i32 %add_3, i32 %mem2reg0
     br label %for_condition0
 
 for_body0:                                                   ; preds = for_condition0 
-    %sum_1 = load i32, i32* %sum_addr
-    %sum_2 = load i32, i32* %sum_addr
-    %add_1 = add i32 %sum_2, 10
-    %j_1 = load i32, i32* %j_addr
-    %add_2 = add i32 %add_1, %j_1
-    store i32 %add_2, i32* %sum_addr
+    store i32 %mem2reg2, i32 %mem2reg16
+    store i32 %mem2reg2, i32 %mem2reg17
+    %add_1 = add i32 mem2reg17, 10
+    store i32 %mem2reg0, i32 %mem2reg18
+    %add_2 = add i32 %add_1, mem2reg18
+    store i32 %add_2, i32 %mem2reg2
     br label %for_step0
 
 for_end_merge0:                                              ; preds = for_condition0 
-    %sum_3 = load i32, i32* %sum_addr
+    store i32 %mem2reg2, i32 %mem2reg19
     call void @printlnInt(i32 %sum_3)
-    %sum_4 = load i32, i32* %sum_addr
-    store i32 %sum_4, i32* %return_register_infunction_addr
+    store i32 %mem2reg2, i32 %mem2reg20
+    store i32 %mem2reg20, i32 %mem2reg4
     br label %return_block0
 
 return_block0:                                               ; preds = for_end_merge0 
-    %returnval = load i32, i32* %return_register_infunction_addr
-    ret i32 %returnval
+    store i32 %mem2reg4, i32 %mem2reg21
+    ret i32 %mem2reg21
 }
 define dso_local void @GLOBAL__sub_I_main_mx() {
 entrance_block0:                                             

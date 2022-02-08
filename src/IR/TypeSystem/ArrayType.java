@@ -1,5 +1,7 @@
 package IR.TypeSystem;
 
+import IR.Operand.BaseOperand;
+
 public class ArrayType extends Typesystem{
     public Typesystem basetype;
     public int len;
@@ -16,4 +18,11 @@ public class ArrayType extends Typesystem{
     public int byte_num() {
         return basetype.byte_num()*len;
     }
+
+    @Override
+    public BaseOperand defaulttype() {
+        throw new RuntimeException("default in function type");
+    }
+
+
 }
