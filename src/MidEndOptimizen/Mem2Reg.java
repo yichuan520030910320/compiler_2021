@@ -45,8 +45,8 @@ public class Mem2Reg implements IRvisitor {
                 if (allocate_map.containsKey(((LoadInstruction) baseInstru).source_pointer)) {
                     Typesystem desttype=allocate_map.get(((LoadInstruction) baseInstru).source_pointer).type;
                     Mem2Reg_Register mem2Reg_register=new Mem2Reg_Register( desttype);
-                    load_map.put(((LoadInstruction) baseInstru).destination_register,allocate_map.get(((LoadInstruction) baseInstru).source_pointer));
-                    //newinstrulist.add(new StoreInstruction(iRbasicblock, allocate_map.get(((LoadInstruction) baseInstru).source_pointer),mem2Reg_register));
+                    load_map.put(((LoadInstruction) baseInstru).destination_register,mem2Reg_register);
+                    newinstrulist.add(new StoreInstruction(iRbasicblock, allocate_map.get(((LoadInstruction) baseInstru).source_pointer),mem2Reg_register));
                     continue;
                 }
             }
