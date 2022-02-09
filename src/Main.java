@@ -4,6 +4,7 @@ import Backend.Instructin_select;
 import BackendOptimizen.Peephole;
 import IR.IRbuilder;
 import IR.IRprinter;
+import IR.Instru.AllocateInstruction;
 import MidEndOptimizen.Mem2Reg;
 import Optimize.Graph_Coloring;
 import Parser.MxErrorListener;
@@ -28,10 +29,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =false;
+        boolean localjudge =true;
         boolean local_test_ir=false;
         String name;
-        InputStream input = null;boolean onlysemnatic=false;
+        InputStream input = null;boolean onlysemnatic=false;boolean opt=false;
         if (localjudge&&(!local_test_ir) ) {
             name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
             input = new FileInputStream(name);
@@ -42,6 +43,10 @@ public class Main {
                 if (args[i].charAt(0) == '-'){
                     if (Objects.equals(args[i], "-fsyntax-only"))
                         onlysemnatic = true;
+                }
+                if (args[i].charAt(0) == '-'){
+                    if (Objects.equals(args[i], "-opt"))
+                        opt = true;
                 }
             }
         }
@@ -75,7 +80,9 @@ public class Main {
                 if (local_test_ir==true)llvm_naive.stdout=true;
                 llvm_naive.visit(irbuilder.module_in_irbuilder);
             }
-            Mem2Reg mem2Reg=new Mem2Reg(irbuilder.module_in_irbuilder);
+            if ((!(AllocateInstruction.alloca_cnt>270))||opt) {
+                Mem2Reg mem2Reg = new Mem2Reg(irbuilder.module_in_irbuilder);
+            }
 //            if (localjudge){//print naive llvm
 //                IRprinter llvm_naive = new IRprinter("testout/naive_llvm_after_mem2reg.ll", name);
 //                if (local_test_ir==true)llvm_naive.stdout=true;
