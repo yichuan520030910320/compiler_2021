@@ -1202,20 +1202,13 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new BitCastInstruction(current_basicblock, array_addr, array_tmp_begin_i32, return_type));
 
         if (loop_dim < new_list_.size() - 1) {
-            ArrayList<BaseOperand> get_ele_ptr_tail_offset = new ArrayList<>();
-            get_ele_ptr_tail_offset.add(new_list_.get(loop_dim));
-            Register array_tail_addr = new Register(return_type, "array_tail_addr");
-            current_function.renaming_add(array_tail_addr);
-            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, array_tail_addr, array_addr, get_ele_ptr_tail_offset));
-
-            //alloca a space to record the currnt array pointer (in the first level)
-            Register current_array_ptr_addr = new Register(new PointerType(return_type), "current_array_ptr_addr");
-            current_function.renaming_add(current_array_ptr_addr);
+            Register arrayptrcnt = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "arrayptrcnt");
+            current_function.renaming_add(arrayptrcnt);
             if (!current_basicblock.check_taiL_br()) {
-                current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block,return_type.defaulttype(),current_array_ptr_addr));
-                current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, return_type, current_array_ptr_addr));
+                current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, new IntegerType(IntegerSubType.i32), arrayptrcnt));
             }
-            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr, current_array_ptr_addr));
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0), arrayptrcnt));
+
 
             //basicblock declare
             IRbasicblock new_condition = create_block("new_condition");
@@ -1235,34 +1228,101 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
 
             current_basicblock = new_condition;
-            Register load_tmp_current_pointer = new Register(return_type, "load_tmp_current_pointer");
+            Register load_tmp_current_pointer = new Register(new IntegerType(IntegerSubType.i32), "load_tmp_ptr_cnt");
             current_function.renaming_add(load_tmp_current_pointer);
-            current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_tmp_current_pointer, current_array_ptr_addr));
+            current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_tmp_current_pointer, arrayptrcnt));
 
             Register addr_cmp_result = new Register(new IntegerType(IntegerSubType.i1), "addr_cmp_result");
             current_function.renaming_add(addr_cmp_result);
-            current_basicblock.instruction_add(new CmpInstruction(current_basicblock, addr_cmp_result, Enum_Compare_IRInstruction.slt, load_tmp_current_pointer, array_tail_addr));
+            current_basicblock.instruction_add(new CmpInstruction(current_basicblock, addr_cmp_result, Enum_Compare_IRInstruction.slt, load_tmp_current_pointer, new_list_.get(loop_dim)));
 
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, addr_cmp_result, new_loop_body, new_end));
 
             current_basicblock = new_loop_body;
+            ArrayList<BaseOperand> para_gep = new ArrayList<>();
+            para_gep.add(load_tmp_current_pointer);
+            Register geparrayaddr = new Register(return_type, "geparrayaddr");
+            current_function.renaming_add(geparrayaddr);
+            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, geparrayaddr, array_addr, para_gep));
+
             Register array_addr_head = mollca_array(loop_dim + 1, new_list_, ((PointerType) return_type).get_low_dim_type());
             current_function.renaming_add(array_addr_head);
 
             //store the pointer in the heap for instance a[3][2]  store the second level pointer in the first level heap
-            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr_head, load_tmp_current_pointer));
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr_head, geparrayaddr));
 
-            //set the next array pointer
-            ArrayList<BaseOperand> get_ele_ptr_offset2 = new ArrayList<>();
-            get_ele_ptr_offset2.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
-            Register nxt_pointer = new Register(return_type, "nxt_pointer");
-            current_function.renaming_add(nxt_pointer);
-            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, nxt_pointer, load_tmp_current_pointer, get_ele_ptr_offset2));
+            Register add_one_ptr = new Register(new IntegerType(IntegerSubType.i32), "add_one_ptr");
+            current_function.renaming_add(add_one_ptr);
+            current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, add_one_ptr, load_tmp_current_pointer, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1), Enum_Binary_IRInstruction.add));
 
-            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, nxt_pointer, current_array_ptr_addr));
+            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, add_one_ptr, arrayptrcnt));
+
             //unconditional br to condition
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
             current_basicblock = new_end;
+
+
+//            ArrayList<BaseOperand> get_ele_ptr_tail_offset = new ArrayList<>();
+//            get_ele_ptr_tail_offset.add(new_list_.get(loop_dim));
+//            Register array_tail_addr = new Register(return_type, "array_tail_addr");
+//            current_function.renaming_add(array_tail_addr);
+//            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, array_tail_addr, array_addr, get_ele_ptr_tail_offset));
+//
+//            //alloca a space to record the currnt array pointer (in the first level)
+//            Register current_array_ptr_addr = new Register(new PointerType(return_type), "current_array_ptr_addr");
+//            current_function.renaming_add(current_array_ptr_addr);
+//            if (!current_basicblock.check_taiL_br()) {
+//                current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block,return_type.defaulttype(),current_array_ptr_addr));
+//                current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, return_type, current_array_ptr_addr));
+//            }
+//            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr, current_array_ptr_addr));
+//
+//            //basicblock declare
+//            IRbasicblock new_condition = create_block("new_condition");
+//            IRbasicblock new_loop_body = create_block("new_loop_body");
+//            IRbasicblock new_end = create_block("new_end");
+//
+//            //add relation
+//            current_basicblock.nxt_basic_block.add(new_condition);
+//            new_condition.pre_basicblock.add(new_loop_body);
+//            new_condition.pre_basicblock.add(current_basicblock);
+//            new_condition.nxt_basic_block.add(new_loop_body);
+//            new_condition.nxt_basic_block.add(new_end);
+//            new_end.pre_basicblock.add(new_condition);
+//            new_loop_body.pre_basicblock.add(new_condition);
+//            new_loop_body.nxt_basic_block.add(new_condition);
+//
+//            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
+//
+//            current_basicblock = new_condition;
+//            Register load_tmp_current_pointer = new Register(return_type, "load_tmp_current_pointer");
+//            current_function.renaming_add(load_tmp_current_pointer);
+//            current_basicblock.instruction_add(new LoadInstruction(current_basicblock, load_tmp_current_pointer, current_array_ptr_addr));
+//
+//            Register addr_cmp_result = new Register(new IntegerType(IntegerSubType.i1), "addr_cmp_result");
+//            current_function.renaming_add(addr_cmp_result);
+//            current_basicblock.instruction_add(new CmpInstruction(current_basicblock, addr_cmp_result, Enum_Compare_IRInstruction.slt, load_tmp_current_pointer, array_tail_addr));
+//
+//            current_basicblock.instruction_add(new BrInstruction(current_basicblock, addr_cmp_result, new_loop_body, new_end));
+//
+//            current_basicblock = new_loop_body;
+//            Register array_addr_head = mollca_array(loop_dim + 1, new_list_, ((PointerType) return_type).get_low_dim_type());
+//            current_function.renaming_add(array_addr_head);
+//
+//            //store the pointer in the heap for instance a[3][2]  store the second level pointer in the first level heap
+//            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr_head, load_tmp_current_pointer));
+//
+//            //set the next array pointer
+//            ArrayList<BaseOperand> get_ele_ptr_offset2 = new ArrayList<>();
+//            get_ele_ptr_offset2.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
+//            Register nxt_pointer = new Register(return_type, "nxt_pointer");
+//            current_function.renaming_add(nxt_pointer);
+//            current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, nxt_pointer, load_tmp_current_pointer, get_ele_ptr_offset2));
+//
+//            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, nxt_pointer, current_array_ptr_addr));
+//            //unconditional br to condition
+//            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
+//            current_basicblock = new_end;
 
         }
         return array_addr;
@@ -1294,9 +1354,10 @@ public class IRbuilder implements ASTvisitor {
         current_function.renaming_add(result_reg);
         //alloca and store
         if (!current_basicblock.check_taiL_br()) {
-            current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block,new ConstOperand_Bool(new IntegerType(IntegerSubType.i1),false),result_reg));
+            current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block, new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), false), result_reg));
             current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, new IntegerType(IntegerSubType.i1), result_reg));
-        } current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.lhs.ir_operand, result_reg));
+        }
+        current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.lhs.ir_operand, result_reg));
         switch (op) {
             case AND -> current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_branch, short_circuit_and_end));
             case OR -> current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.lhs.ir_operand, short_circuit_and_end, short_circuit_and_branch));
@@ -1337,9 +1398,10 @@ public class IRbuilder implements ASTvisitor {
         Register this_addr = new Register(new PointerType(new PointerType(module_in_irbuilder.Module_Struct_Map.get(current_class_detail.classname))), "this_addr");
         current_function.renaming_add(this_addr);
         if (!current_basicblock.check_taiL_br()) {
-            current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block,((PointerType) this_addr.type).get_low_dim_type().defaulttype() ,this_addr));
+            current_function.entry_block.link_in_basicblock.addFirst(new StoreInstruction(current_function.entry_block, ((PointerType) this_addr.type).get_low_dim_type().defaulttype(), this_addr));
             current_function.entry_block.link_in_basicblock.addFirst(new AllocateInstruction(current_function.entry_block, ((PointerType) this_addr.type).get_low_dim_type(), this_addr));
-        }  current_ir_scope.id_map.put("this_addr", this_addr);
+        }
+        current_ir_scope.id_map.put("this_addr", this_addr);
         //fix a bug in instruction selector
         Register thispara_reg = new Register(Function.function_type.parament_list.get(0).type, "this");
         current_function.renaming_add(this_addr);

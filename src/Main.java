@@ -84,6 +84,12 @@ public class Main {
             //instrunction select
             Instructin_select instructin_select=new Instructin_select(irbuilder.module_in_irbuilder);
 
+
+            ASMprinter asMprinter_to_ravel1=new ASMprinter(irbuilder.module_in_irbuilder,instructin_select.cur_module);
+//            if (localjudge) {
+//                asMprinter_to_ravel1.file_print = new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\testpre.s"));
+//                asMprinter_to_ravel1.run_print();
+//            }
             //reg allocate
             //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
             Graph_Coloring graph_coloring=new Graph_Coloring(instructin_select.cur_module);
@@ -91,9 +97,9 @@ public class Main {
             //backend optimizen
             Peephole peephole_=new Peephole(instructin_select.cur_module);
 
+
             //asm printer
-            //ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,horribleStackAlllocate.asm_module);
-            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,graph_coloring.asm_module);
+            ASMprinter asMprinter_to_ravel=new ASMprinter(irbuilder.module_in_irbuilder,instructin_select.cur_module);
             if (localjudge)asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
             else asMprinter_to_ravel.file_print= new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();

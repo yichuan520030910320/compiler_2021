@@ -36,6 +36,8 @@ public class Instructin_select implements IRvisitor {
 
     public ArrayList<Virtual_Register> callee_saved_virtual_reg = new ArrayList<>();
 
+    private int memregcnt=0;
+
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
         cur_module = new ASM_Module();
@@ -105,7 +107,6 @@ public class Instructin_select implements IRvisitor {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
                 } else {
                     rs2 = transreg(it.operand2);
-
                 }
             }
             case or -> {
@@ -251,7 +252,7 @@ public class Instructin_select implements IRvisitor {
         if (it.Ret_Type instanceof VoidType) {
             return;
         }
-        cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(IRreg_to_ASMreg.get(it.Ret_Operand), cur_module.physical_registers.get(10)));
+        cur_basicblock.add_tail_instru(new RISCV_Instruction_Move(transreg(it.Ret_Operand), cur_module.physical_registers.get(10)));
         //put the ret in the printer
     }
 
@@ -432,7 +433,8 @@ public class Instructin_select implements IRvisitor {
 
         }else if (iropreand instanceof Mem2Reg_Register){
             if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
-            Virtual_Register new_virtual_reg = new Virtual_Register("mem2reg", iropreand.type.byte_num());
+
+            Virtual_Register new_virtual_reg = new Virtual_Register("mem2reg"+memregcnt++, iropreand.type.byte_num());
             IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
             return new_virtual_reg;
         }

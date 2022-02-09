@@ -8,6 +8,8 @@ import IR.Instru.*;
 import IR.Operand.BaseOperand;
 import IR.Operand.Mem2Reg_Register;
 import IR.Operand.Register;
+import IR.TypeSystem.PointerType;
+import IR.TypeSystem.Typesystem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +43,10 @@ public class Mem2Reg implements IRvisitor {
                 continue;
             } else if (baseInstru instanceof LoadInstruction) {
                 if (allocate_map.containsKey(((LoadInstruction) baseInstru).source_pointer)) {
-                    load_map.put(((LoadInstruction) baseInstru).destination_register, new Mem2Reg_Register(((LoadInstruction) baseInstru).destination_register.type));
-                    newinstrulist.add(new StoreInstruction(iRbasicblock, allocate_map.get(((LoadInstruction) baseInstru).source_pointer), load_map.get(((LoadInstruction) baseInstru).destination_register)));
+                    Typesystem desttype=allocate_map.get(((LoadInstruction) baseInstru).source_pointer).type;
+                    Mem2Reg_Register mem2Reg_register=new Mem2Reg_Register( desttype);
+                    load_map.put(((LoadInstruction) baseInstru).destination_register,allocate_map.get(((LoadInstruction) baseInstru).source_pointer));
+                    //newinstrulist.add(new StoreInstruction(iRbasicblock, allocate_map.get(((LoadInstruction) baseInstru).source_pointer),mem2Reg_register));
                     continue;
                 }
             }
