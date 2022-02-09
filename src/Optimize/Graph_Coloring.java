@@ -1,5 +1,6 @@
 package Optimize;
 
+import IR.Operand.BaseOperand;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
@@ -293,13 +294,21 @@ public class Graph_Coloring {
         //these already spilled register has the lowest priority to be selected
         Base_RISCV_Register m = null;
         double MIN = Double.POSITIVE_INFINITY;
+        Base_RISCV_Register alreadyspillmin=null;
+//        for (Base_RISCV_Register tmp : already_spilled_register_with_shortlive) {
+//            if ((tmp.spill_factor / degree.get(tmp)) < MIN ) {
+//                alreadyspillmin = tmp;
+//                MIN = tmp.spill_factor / degree.get(tmp);
+//            }
+//            if (alreadyspillmin == null) alreadyspillmin = tmp;
+//        }
+//        MIN = Double.POSITIVE_INFINITY;
         for (Base_RISCV_Register tmp : spillWorklist) {
 
             if ((tmp.spill_factor / degree.get(tmp)) < MIN && (!already_spilled_register_with_shortlive.contains(tmp))) {
                 m = tmp;
                 MIN = tmp.spill_factor / degree.get(tmp);
-            }
-            if (m == null) m = tmp;
+            } if (m == null) m = tmp;
         }
 
 

@@ -24,6 +24,7 @@ public class Mem2Reg implements IRvisitor {
 
     public Mem2Reg(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
+        if (AllocateInstruction.alloca_cnt>270)return;
         for (Map.Entry<String, IRfunction> entry : iRmodule.Internal_Function_Map.entrySet()) {
             IRfunction tmpirrunction = entry.getValue();
             allocate_map = new HashMap<>();
