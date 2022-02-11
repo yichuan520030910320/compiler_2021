@@ -13,6 +13,7 @@ public class BitCastInstruction extends BaseInstru{
     public BitCastInstruction(IRbasicblock iRbasicblock,Register result_reg_,BaseOperand source_reg_,Typesystem targettype_) {
         super(iRbasicblock);
 
+
         result_reg=result_reg_;
         source_reg=source_reg_;
         targettype=targettype_;
