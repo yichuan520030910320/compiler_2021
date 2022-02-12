@@ -36,7 +36,7 @@ public class Instructin_select implements IRvisitor {
 
     public ArrayList<Virtual_Register> callee_saved_virtual_reg = new ArrayList<>();
 
-    private int memregcnt=0;
+    private int memregcnt = 0;
 
     public Instructin_select(IRmodule iRmodule_) {
         iRmodule = iRmodule_;
@@ -105,6 +105,8 @@ public class Instructin_select implements IRvisitor {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.and;
                 if (it.operand2 instanceof ConstOperand_Bool) {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.andi, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
                 } else {
                     rs2 = transreg(it.operand2);
                 }
@@ -113,6 +115,8 @@ public class Instructin_select implements IRvisitor {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.or;
                 if (it.operand2 instanceof ConstOperand_Bool) {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.ori, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.ori, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
                 } else {
                     rs2 = transreg(it.operand2);
 
@@ -122,6 +126,8 @@ public class Instructin_select implements IRvisitor {
                 op = RISCV_Instruction_Binary.RISCVBinarytype.xor;
                 if (it.operand2 instanceof ConstOperand_Bool) {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd, new Immediate(((ConstOperand_Bool) it.operand2).bool_value ? 1 : 0)));
+                } else if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
                 } else {
                     rs2 = transreg(it.operand2);
                 }
@@ -173,26 +179,48 @@ public class Instructin_select implements IRvisitor {
     public void visit(CmpInstruction it) {
         Base_RISCV_Register rd = transreg(it.cmp_result);
         Base_RISCV_Register rs1 = transreg(it.operand1);
-        Base_RISCV_Register rs2 = transreg(it.operand2);
+        Base_RISCV_Register rs2 = null;
         RISCV_Instruction_Cmp.RISCVCompareType cmp_type;
         Virtual_Register xor_result = new Virtual_Register("sub_virtual_reg", it.operand1.type.byte_num());
         switch (it.cmp_operation) {
-            case slt, sge -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
-            case sgt, sle -> cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
+            case slt, sge -> {
+                cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.slt;
+                rs2 = transreg(it.operand2);
+            }
+            case sgt, sle -> {
+                cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.sgt;
+                rs2 = transreg(it.operand2);
+            }
             case eq -> {
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.seqz;
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
+                }
             }
             case ne -> {
-                cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
                 cmp_type = RISCV_Instruction_Cmp.RISCVCompareType.snez;
+
+                if ((it.operand2 instanceof ConstOperand_Integer && checkimmrange(((ConstOperand_Integer) it.operand2).value))) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rs1, null, rd, new Immediate(((ConstOperand_Integer) it.operand2).value)));
+                } else {
+                    rs2 = transreg(it.operand2);
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xor, rs1, rs2, xor_result, null));
+                }
             }
             default -> throw new IllegalStateException("Unexpected value: " + it.cmp_operation);
         }
         switch (it.cmp_operation) {
             case slt, sgt -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
-            case eq, ne -> cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
-            case sge, sle -> {
+            case eq, ne -> {
+                if (!(rs2 == null)) {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
+                }else {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type,rd,null,rd));
+                }
+            }case sge, sle -> {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rd, null, rd, new Immediate(1)));
             }
@@ -431,10 +459,10 @@ public class Instructin_select implements IRvisitor {
             cur_basicblock.add_tail_instru(new RISCV_Instruction_La(iRmodule.string_map.get(((ConstOperand_String) ((Global_variable) iropreand).initoperand).conststring).GlobalVariableName, tmp_str_addrreg));
             return tmp_str_addrreg;
 
-        }else if (iropreand instanceof Mem2Reg_Register){
+        } else if (iropreand instanceof Mem2Reg_Register) {
             if (IRreg_to_ASMreg.containsKey(iropreand)) return IRreg_to_ASMreg.get(iropreand);
 
-            Virtual_Register new_virtual_reg = new Virtual_Register("mem2reg"+memregcnt++, iropreand.type.byte_num());
+            Virtual_Register new_virtual_reg = new Virtual_Register("mem2reg" + memregcnt++, iropreand.type.byte_num());
             IRreg_to_ASMreg.put(iropreand, new_virtual_reg);
             return new_virtual_reg;
         }

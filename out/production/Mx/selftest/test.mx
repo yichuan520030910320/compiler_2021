@@ -1,25 +1,30 @@
 /*
-Test Package: Codegen
-Author: Pikachu
-Time: 2020-02-02
-Input:
-=== input ===
-1
-=== end ===
-Output:
-=== output ===
-NO
-=== end ===
-ExitCode: 0
-InstLimit: -1
-Origin Package: Codeforces 4A #57460997
-*/
-int w;
-int main(){
-    w = getInt();
-    if ((w%2==0)&& (w>2))
-        print("YES");
-    else
-        print("NO");
-    return 0;
-}
+ Test Package: Codegen
+ Author: 14' Shichao Xu
+ Time: 2020-01-25
+ Input:
+ === input ===
+ === end ===
+ Output:
+ === output ===
+ 1024
+ === end ===
+ ExitCode: 0
+ InstLimit: -1
+ Origin Package: Codegen Pretest-533
+ */
+ int qpow(int a,int p,int mod) {
+     int t = 1;
+     int y = a;
+     while(p>0){
+     //bool flag=true&&true;
+         if((p&1) == 1)t=t*y % mod;
+         y=y*y % mod;
+         p=p / 2;
+     }
+     return t;
+ }
+ int main() {
+     println(toString(qpow(2,10,10000)));
+     return 0;
+ }
