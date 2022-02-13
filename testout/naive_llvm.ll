@@ -28,28 +28,29 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %a_addr = alloca i32*
+    %x_addr_0 = alloca i32
+    %y_addr = alloca i32
+    %x_addr = alloca i32
     %return_register_infunction_addr = alloca i32
-    %mul_bytes = mul i32 1, 4
-    %sum_bytes = add i32 %mul_bytes, 4
-    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
-    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
-    store i32 1, i32* %array_cast_i8_to_i32
-    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
-    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32*
-    store i32* %array_addr, i32** %a_addr
-    %a = load i32*, i32** %a_addr
-    %getelementptr_reg = getelementptr inbounds i32, i32* %a, i32 0
-    %load_result = load i32, i32* %getelementptr_reg
-    store i32 10, i32* %getelementptr_reg
-    %a_0 = load i32*, i32** %a_addr
-    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %a_0, i32 0
-    %load_result_0 = load i32, i32* %getelementptr_reg_0
-    %add = add i32 %load_result_0, 20
-    store i32 %add, i32* %return_register_infunction_addr
+    store i32 10, i32* %x_addr
+    %x = load i32, i32* %x_addr
+    store i32 %x, i32* %y_addr
+    %x_0 = load i32, i32* %x_addr
+    %eq = icmp eq i32 %x_0, 10
+    br i1 %eq, label %single_then_basicblock, label %if_withoutelse_end_basicblock
+
+single_then_basicblock:                                      ; preds = entrance_block0 
+    store i32 20, i32* %x_addr_0
+    %x_1 = load i32, i32* %x_addr_0
+    store i32 %x_1, i32* %y_addr
+    br label %if_withoutelse_end_basicblock
+
+if_withoutelse_end_basicblock:                               ; preds = single_then_basicblock entrance_block0 
+    %y = load i32, i32* %y_addr
+    store i32 %y, i32* %return_register_infunction_addr
     br label %return_block0
 
-return_block0:                                               ; preds = entrance_block0 
+return_block0:                                               ; preds = if_withoutelse_end_basicblock 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

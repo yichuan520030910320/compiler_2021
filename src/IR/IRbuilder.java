@@ -377,7 +377,7 @@ public class IRbuilder implements ASTvisitor {
             // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
-                   if (!(it.lhs instanceof IdExp_ASTnode) || current_ir_scope.find_id_to_reg(it.index) == null)it.lhs.accept(this);
+                   if ((!(it.lhs instanceof IdExp_ASTnode) )|| current_ir_scope.find_id_to_reg(it.lhs.index) == null)it.lhs.accept(this);
                     //it.lhs.accept(this);
                     it.rhs.accept(this);
                     current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, lvalue_judge(it.lhs)));

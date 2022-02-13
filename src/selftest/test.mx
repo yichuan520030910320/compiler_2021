@@ -8,12 +8,16 @@ Input:
 Output:
 === output ===
 === end ===
-ExitCode: 30
+ExitCode: 20
 InstLimit: -1
-Origin Package: Codegen Pretest-583
+Origin Package: Codegen Pretest-572
 */
 int main() {
-    int[] a = new int[1];
-    a[0] = 10;
-    return a[0] + 20;
+    int x = 10;
+    int y = x;
+    if (x == 10) {
+        int x = 20;
+        y = x;
+    }
+    return y;
 }
