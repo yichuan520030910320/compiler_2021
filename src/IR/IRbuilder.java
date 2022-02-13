@@ -333,11 +333,12 @@ public class IRbuilder implements ASTvisitor {
     @Override
     public void visit(BinaryExp_ASTnode it) {
         if (!(it.op == Binary_Enum.AND || it.op == Binary_Enum.OR)) {
-            it.lhs.accept(this);
-            it.rhs.accept(this);
+
             //todo string binary
             //todo array assign
             if (it.lhs.type.typename.equals("string") && it.rhs.type.typename.equals("string")) {
+                it.lhs.accept(this);
+                it.rhs.accept(this);
                 switch (it.op) {
                     case EQUAL -> {
                         //lhs just can be id
@@ -376,11 +377,20 @@ public class IRbuilder implements ASTvisitor {
             // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
+                   if ((it.lhs instanceof IdExp_ASTnode&&current_ir_scope.find_id_to_reg(it.index)==null)||it.lhs instanceof IdExp_ASTnode)it.lhs.accept(this);
+                    //it.lhs.accept(this);
+                    it.rhs.accept(this);
                     current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, lvalue_judge(it.lhs)));
                     it.ir_operand = it.rhs.ir_operand;
                 }
-                case ADD, SUB, MOD, DIV, MUL, LEFT_SHIFT, RIGHT_SHIFT, Bitwise_and, Bitwise_xor, Bitwise_or -> set_binary_op(it.op, it);
+                case ADD, SUB, MOD, DIV, MUL, LEFT_SHIFT, RIGHT_SHIFT, Bitwise_and, Bitwise_xor, Bitwise_or -> {
+                    it.lhs.accept(this);
+                    it.rhs.accept(this);
+                    set_binary_op(it.op, it);
+                }
                 case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
+                    it.lhs.accept(this);
+                    it.rhs.accept(this);
                     Object op = type_trans.enum_trans(it.op);
                     Register tmpreg = new Register(new IntegerType(IntegerSubType.i1), op.toString());
                     current_function.renaming_add(tmpreg);
