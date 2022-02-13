@@ -217,10 +217,11 @@ public class Instructin_select implements IRvisitor {
             case eq, ne -> {
                 if (!(rs2 == null)) {
                     cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, xor_result, null, rd));
-                }else {
-                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type,rd,null,rd));
+                } else {
+                    cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rd, null, rd));
                 }
-            }case sge, sle -> {
+            }
+            case sge, sle -> {
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Cmp(cmp_type, rs1, rs2, rd));
                 cur_basicblock.add_tail_instru(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.xori, rd, null, rd, new Immediate(1)));
             }

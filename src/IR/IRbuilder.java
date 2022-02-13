@@ -476,7 +476,11 @@ public class IRbuilder implements ASTvisitor {
 
         //cope with such as getdim():only function name and parament
         if (it.funcname instanceof IdExp_ASTnode) {
-
+            if (it.funcname.index.equals("print") || it.funcname.index.equals("println")) {
+                opt_print(it.paralist.get(0), it.funcname.index.equals("print"));
+                it.ir_operand = null;
+                return;
+            }
             ///get function detail and irfunction
             Fundecl_ASTnode function = null;
             IRfunction irfunction = null;
@@ -504,6 +508,8 @@ public class IRbuilder implements ASTvisitor {
                     para_list_.add(it.paralist.get(i).ir_operand);
                 }
             }
+
+
             //add call instruction
             Register callreg;
             if (!(function.returntype instanceof Voidtype_ASTnode)) {
@@ -518,7 +524,7 @@ public class IRbuilder implements ASTvisitor {
             ((MemberExp_ASTnode) it.funcname).classcall.accept(this);
 
             //first we cope with two special function call
-            if (((MemberExp_ASTnode) it.funcname).classcall.type instanceof Arraytype_ASTnode&&((MemberExp_ASTnode) it.funcname).member.equals("size")) {
+            if (((MemberExp_ASTnode) it.funcname).classcall.type instanceof Arraytype_ASTnode && ((MemberExp_ASTnode) it.funcname).member.equals("size")) {
                 array_size(it);
                 return;
             }
@@ -549,6 +555,39 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new CallInstruction(current_basicblock, callreg, para_list_, irfunction));
             it.ir_operand = callreg;
         }
+    }
+
+
+    /*
+     * optimize print
+     * print(A + B + C) -> print(A), print(B), print(C)
+     * print(toString(A)) -> printInt(A)
+     */
+    void opt_print(Expr_ASTnode expr, Boolean if_print) {
+        if (expr instanceof BinaryExp_ASTnode) {
+            opt_print(((BinaryExp_ASTnode) expr).lhs, true);
+            opt_print(((BinaryExp_ASTnode) expr).rhs, if_print);
+        } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
+            ((FunctioncallExp_ASTnode) expr).paralist.get(0).accept(this);
+            ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+            para_list_.add(((FunctioncallExp_ASTnode) expr).paralist.get(0).ir_operand);
+            IRfunction irfunction = null;
+            String print_ot_println = if_print ? "printInt" : "printlnInt";
+            irfunction = module_in_irbuilder.Module_Function_Map.get(print_ot_println);
+            current_basicblock.instruction_add(new CallInstruction(current_basicblock, null, para_list_, irfunction));
+        } else {
+            //normal operation and recursion
+            //print (a) println(a)
+            expr.accept(this);
+            ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+            para_list_.add(expr.ir_operand);
+            IRfunction irfunction = null;
+            String print_ot_println = if_print ? "print" : "println";
+            irfunction = module_in_irbuilder.Module_Function_Map.get(print_ot_println);
+            current_basicblock.instruction_add(new CallInstruction(current_basicblock, null, para_list_, irfunction));
+        }
+
+
     }
 
     @Override
