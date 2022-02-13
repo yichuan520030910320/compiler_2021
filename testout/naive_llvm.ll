@@ -3,14 +3,7 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-@a2b = dso_local global i8* null
-@a2q = dso_local global i8* null
-@co = dso_local global i8* null
 
-@const_string2 = private unnamed_addr constant [2 x i8] c"\5C\00", align 1
-@const_string0 = private unnamed_addr constant [2 x i8] c";\00", align 1
-@const_string3 = private unnamed_addr constant [2 x i8] c"%\00", align 1
-@const_string1 = private unnamed_addr constant [2 x i8] c"\22\00", align 1
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
 declare i1 @_str_le(i8* %lhs,i8* %rhs)
@@ -35,18 +28,25 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 define dso_local i32 @main() {
 entrance_block0:                                             
     call void @GLOBAL__sub_I_main_mx()
-    %i_addr = alloca i32
+    %a_addr = alloca i32*
     %return_register_infunction_addr = alloca i32
-    store i32 0, i32* %i_addr
-    %const_string_pointer = getelementptr inbounds [2 x i8], [2 x i8]* @const_string3, i32 0, i32 0
-    call void @print(i8* %const_string_pointer)
-    %a2q = load i8*, i8** @a2q
-    call void @print(i8* %a2q)
-    %const_string_pointer_0 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string3, i32 0, i32 0
-    call void @print(i8* %const_string_pointer_0)
-    %a2q_0 = load i8*, i8** @a2q
-    call void @println(i8* %a2q_0)
-    store i32 0, i32* %return_register_infunction_addr
+    %mul_bytes = mul i32 1, 4
+    %sum_bytes = add i32 %mul_bytes, 4
+    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
+    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
+    store i32 1, i32* %array_cast_i8_to_i32
+    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32*
+    store i32* %array_addr, i32** %a_addr
+    %a = load i32*, i32** %a_addr
+    %getelementptr_reg = getelementptr inbounds i32, i32* %a, i32 0
+    %load_result = load i32, i32* %getelementptr_reg
+    store i32 10, i32* %getelementptr_reg
+    %a_0 = load i32*, i32** %a_addr
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %a_0, i32 0
+    %load_result_0 = load i32, i32* %getelementptr_reg_0
+    %add = add i32 %load_result_0, 20
+    store i32 %add, i32* %return_register_infunction_addr
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
@@ -55,12 +55,6 @@ return_block0:                                               ; preds = entrance_
 }
 define dso_local void @GLOBAL__sub_I_main_mx() {
 entrance_block0:                                             
-    %const_string_pointer = getelementptr inbounds [2 x i8], [2 x i8]* @const_string0, i32 0, i32 0
-    store i8* %const_string_pointer, i8** @co
-    %const_string_pointer_0 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string1, i32 0, i32 0
-    store i8* %const_string_pointer_0, i8** @a2q
-    %const_string_pointer_1 = getelementptr inbounds [2 x i8], [2 x i8]* @const_string2, i32 0, i32 0
-    store i8* %const_string_pointer_1, i8** @a2b
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
