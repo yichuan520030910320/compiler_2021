@@ -567,7 +567,7 @@ public class IRbuilder implements ASTvisitor {
         if (expr instanceof BinaryExp_ASTnode) {
             opt_print(((BinaryExp_ASTnode) expr).lhs, true);
             opt_print(((BinaryExp_ASTnode) expr).rhs, if_print);
-        } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
+        } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index!=null&&((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
             ((FunctioncallExp_ASTnode) expr).paralist.get(0).accept(this);
             ArrayList<BaseOperand> para_list_ = new ArrayList<>();
             para_list_.add(((FunctioncallExp_ASTnode) expr).paralist.get(0).ir_operand);
