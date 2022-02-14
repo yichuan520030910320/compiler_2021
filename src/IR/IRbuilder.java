@@ -544,11 +544,15 @@ public class IRbuilder implements ASTvisitor {
 
         //cope with such as getdim():only function name and parament
         if (it.funcname instanceof IdExp_ASTnode) {
-            if (it.funcname.index.equals("print") || it.funcname.index.equals("println")) {
-                opt_print(it.paralist.get(0), it.funcname.index.equals("print"));
-                it.ir_operand = null;
-                return;
-            }
+
+
+//            if (it.funcname.index.equals("print") || it.funcname.index.equals("println")) {
+//                opt_print(it.paralist.get(0), it.funcname.index.equals("print"));
+//                it.ir_operand = null;
+//                return;
+//            }
+
+
             ///get function detail and irfunction
             Fundecl_ASTnode function = null;
             IRfunction irfunction = null;
