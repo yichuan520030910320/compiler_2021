@@ -35,23 +35,23 @@ public class AST_to_IR_trans {
     }
     public Object enum_trans(Object op){
         if (op== Binary_Enum.ADD) return Enum_Binary_IRInstruction.add;
-        if (op== Binary_Enum.SUB) return Enum_Binary_IRInstruction.sub;
-        if (op== Binary_Enum.MUL) return Enum_Binary_IRInstruction.mul;
-        if (op== Binary_Enum.DIV) return Enum_Binary_IRInstruction.sdiv;
-        if (op== Binary_Enum.MOD) return Enum_Binary_IRInstruction.srem;
-        if (op== Binary_Enum.Bitwise_xor) return Enum_Binary_IRInstruction.xor;
-        if (op== Binary_Enum.Bitwise_or) return Enum_Binary_IRInstruction.or;
-        if (op== Binary_Enum.Bitwise_and) return Enum_Binary_IRInstruction.and;
-        if (op== Binary_Enum.RIGHT_SHIFT) return Enum_Binary_IRInstruction.ashr;
-        if (op== Binary_Enum.LEFT_SHIFT) return Enum_Binary_IRInstruction.shl;
-        if (op== Single_Enum.SELFPLUS) return Enum_Binary_IRInstruction.add;
-        if (op== Single_Enum.SELFSUB) return Enum_Binary_IRInstruction.sub;
-        if (op== Binary_Enum.EQUALEQUAL) return Enum_Compare_IRInstruction.eq;
-        if (op== Binary_Enum.NOT_EQUAL) return Enum_Compare_IRInstruction.ne;
-        if (op== Binary_Enum.GREATEREQUAL) return Enum_Compare_IRInstruction.sge;
-        if (op== Binary_Enum.GREATER) return Enum_Compare_IRInstruction.sgt;
-        if (op== Binary_Enum.LESSEREQUAL) return Enum_Compare_IRInstruction.sle;
-        if (op== Binary_Enum.LESSER) return Enum_Compare_IRInstruction.slt;
+        else if (op== Binary_Enum.SUB) return Enum_Binary_IRInstruction.sub;
+        else if (op== Binary_Enum.MUL) return Enum_Binary_IRInstruction.mul;
+        else if (op== Binary_Enum.DIV) return Enum_Binary_IRInstruction.sdiv;
+        else if (op== Binary_Enum.MOD) return Enum_Binary_IRInstruction.srem;
+        else if (op== Binary_Enum.Bitwise_xor) return Enum_Binary_IRInstruction.xor;
+        else if (op== Binary_Enum.Bitwise_or) return Enum_Binary_IRInstruction.or;
+        else if (op== Binary_Enum.Bitwise_and) return Enum_Binary_IRInstruction.and;
+        else if (op== Binary_Enum.RIGHT_SHIFT) return Enum_Binary_IRInstruction.ashr;
+        else if (op== Binary_Enum.LEFT_SHIFT) return Enum_Binary_IRInstruction.shl;
+        else if (op== Single_Enum.SELFPLUS) return Enum_Binary_IRInstruction.add;
+        else if (op== Single_Enum.SELFSUB) return Enum_Binary_IRInstruction.sub;
+        else if (op== Binary_Enum.EQUALEQUAL) return Enum_Compare_IRInstruction.eq;
+        else if (op== Binary_Enum.NOT_EQUAL) return Enum_Compare_IRInstruction.ne;
+        else if (op== Binary_Enum.GREATEREQUAL) return Enum_Compare_IRInstruction.sge;
+        else if (op== Binary_Enum.GREATER) return Enum_Compare_IRInstruction.sgt;
+        else if (op== Binary_Enum.LESSEREQUAL) return Enum_Compare_IRInstruction.sle;
+        else if (op== Binary_Enum.LESSER) return Enum_Compare_IRInstruction.slt;
         return null;
 
 

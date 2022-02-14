@@ -39,6 +39,8 @@ public class IRbuilder implements ASTvisitor {
     //record pointer to class
     private Classdecl_ASTnode current_class_detail = null;
 
+    private boolean if_need_init_function = false;
+
 
     public IRbuilder(globalscope semantic_globalscope_) {
 
@@ -46,6 +48,7 @@ public class IRbuilder implements ASTvisitor {
         semantic_globalscope = semantic_globalscope_;
         current_ir_scope = new IR_scope(null);
         type_trans = new AST_to_IR_trans(module_in_irbuilder);
+
 
         //add build_in
         IRfunction builtinfunction;
@@ -294,23 +297,30 @@ public class IRbuilder implements ASTvisitor {
             }
         }
 
-        ///add init function
-        ArrayList<Parament> tmp = new ArrayList<>();
-        FunctionType global_init = new FunctionType(new VoidType(), tmp);
-        IRfunction GLOBAL__sub_I_main_mx = new IRfunction(global_init, "GLOBAL__sub_I_main_mx", false);
-        module_in_irbuilder.Module_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
-        module_in_irbuilder.Internal_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
-        //set the state
-        current_function = GLOBAL__sub_I_main_mx;
-        current_basicblock = GLOBAL__sub_I_main_mx.entry_block;
+
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Valdeclstat_ASTnode) {
-                it.list.get(i).accept(this);
+                if_need_init_function = true;
             }
         }
-        current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
-        GLOBAL__sub_I_main_mx.block_list.add(GLOBAL__sub_I_main_mx.return_block);
 
+        if (if_need_init_function) {///add init function
+            ArrayList<Parament> tmp = new ArrayList<>();
+            FunctionType global_init = new FunctionType(new VoidType(), tmp);
+            IRfunction GLOBAL__sub_I_main_mx = new IRfunction(global_init, "GLOBAL__sub_I_main_mx", false);
+            module_in_irbuilder.Module_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
+            module_in_irbuilder.Internal_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
+            //set the state
+            current_function = GLOBAL__sub_I_main_mx;
+            current_basicblock = GLOBAL__sub_I_main_mx.entry_block;
+            for (int i = 0; i < it.list.size(); i++) {
+                if (it.list.get(i) instanceof Valdeclstat_ASTnode) {
+                    it.list.get(i).accept(this);
+                }
+            }
+            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, current_function.return_block, null));
+            GLOBAL__sub_I_main_mx.block_list.add(GLOBAL__sub_I_main_mx.return_block);
+        }
 
         current_function = null;
         current_basicblock = null;
@@ -374,10 +384,49 @@ public class IRbuilder implements ASTvisitor {
                 return;
             }
 
+            if (it.lhs.ir_operand instanceof ConstOperand_Integer && it.rhs.ir_operand instanceof ConstOperand_Integer && (!it.op.equals(Binary_Enum.EQUAL))) {
+                // cope with int&&bool
+                Binary_Enum op = it.op;
+                if (op == Binary_Enum.ADD)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value + ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.SUB)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value - ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.MUL)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value * ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.DIV)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value / ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.MOD)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value % ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.Bitwise_xor)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value ^ ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.Bitwise_or)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value | ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.Bitwise_and)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value & ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.RIGHT_SHIFT)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value >> ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.LEFT_SHIFT)
+                    it.ir_operand = new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), ((ConstOperand_Integer) it.lhs.ir_operand).value << ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.EQUALEQUAL)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value == ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.NOT_EQUAL)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value != ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.GREATEREQUAL)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value >= ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.GREATER)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value > ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.LESSEREQUAL)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value <= ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                else if (op == Binary_Enum.LESSER)
+                    it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Integer) it.lhs.ir_operand).value < ((ConstOperand_Integer) it.rhs.ir_operand).value);
+                return;
+            }
+
             // cope with int&&bool
             switch (it.op) {
                 case EQUAL -> {
-                   if ((!(it.lhs instanceof IdExp_ASTnode) )|| current_ir_scope.find_id_to_reg(it.lhs.index) == null)it.lhs.accept(this);
+                    if ((!(it.lhs instanceof IdExp_ASTnode)) || current_ir_scope.find_id_to_reg(it.lhs.index) == null)
+                        it.lhs.accept(this);
                     //it.lhs.accept(this);
                     it.rhs.accept(this);
                     current_basicblock.instruction_add(new StoreInstruction(current_basicblock, it.rhs.ir_operand, lvalue_judge(it.lhs)));
@@ -400,6 +449,15 @@ public class IRbuilder implements ASTvisitor {
                 default -> throw new IllegalStateException("Unexpected value: " + it.op);
             }
         } else {
+            if (it.lhs.ir_operand instanceof ConstOperand_Bool && it.rhs.ir_operand instanceof ConstOperand_Bool) {
+                switch (it.op) {
+                    case OR -> it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Bool) it.lhs.ir_operand).bool_value || ((ConstOperand_Bool) it.rhs.ir_operand).bool_value);
+                    case AND -> it.ir_operand = new ConstOperand_Bool(new IntegerType(IntegerSubType.i1), ((ConstOperand_Bool) it.lhs.ir_operand).bool_value && ((ConstOperand_Bool) it.rhs.ir_operand).bool_value);
+                }
+                return;
+            }
+
+
             it.lhs.accept(this);
             shortpath(it, it.op);
         }
@@ -577,7 +635,7 @@ public class IRbuilder implements ASTvisitor {
         if (expr instanceof BinaryExp_ASTnode) {
             opt_print(((BinaryExp_ASTnode) expr).lhs, true);
             opt_print(((BinaryExp_ASTnode) expr).rhs, if_print);
-        } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index!=null&&((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
+        } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index != null && ((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
             ((FunctioncallExp_ASTnode) expr).paralist.get(0).accept(this);
             ArrayList<BaseOperand> para_list_ = new ArrayList<>();
             para_list_.add(((FunctioncallExp_ASTnode) expr).paralist.get(0).ir_operand);
@@ -834,7 +892,7 @@ public class IRbuilder implements ASTvisitor {
         if (!current_basicblock.check_taiL_br())
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, Function.return_block, null));
         Function.block_list.add(Function.return_block);
-        if (it.functionname.equals("main")) {
+        if (it.functionname.equals("main") && if_need_init_function) {
             current_function.entry_block.link_in_basicblock.addFirst(new CallInstruction(current_function.entry_block, null, null, module_in_irbuilder.Module_Function_Map.get("GLOBAL__sub_I_main_mx")));
         }
         current_ir_scope = current_ir_scope.parent_scope;

@@ -49,7 +49,6 @@ main:
     sw	ra,16(sp)
     sw	s0,12(sp)
     addi	s0,sp,20
-    call	GLOBAL__sub_I_main_mx
     li	a0,2
     li	a1,10
     li	a2,10000
@@ -63,22 +62,6 @@ main:
     addi	sp,sp,20
     ret
 # end function : main
-
-    .globl GLOBAL__sub_I_main_mx					# start function : GLOBAL__sub_I_main_mx
-    .p2align	2
-GLOBAL__sub_I_main_mx:
-.LBB_GLOBAL__sub_I_main_mx_entrance_block0:
-    addi	sp,sp,-20
-    sw	ra,16(sp)
-    sw	s0,12(sp)
-    addi	s0,sp,20
-    j	.LBB_GLOBAL__sub_I_main_mx_return_block0
-.LBB_GLOBAL__sub_I_main_mx_return_block0:
-    lw	s0,12(sp)
-    lw	ra,16(sp)
-    addi	sp,sp,20
-    ret
-# end function : GLOBAL__sub_I_main_mx
 
 
 	.section	.sdata
