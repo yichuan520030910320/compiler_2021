@@ -4,7 +4,6 @@ import AST.ASTvisitor;
 import AST.EXPRnode.Expr_ASTnode;
 import Utils.position;
 
-import java.util.ArrayList;
 
 public class Whilestat_ASTnode extends Stat_ASTnode{
     public Expr_ASTnode condition;

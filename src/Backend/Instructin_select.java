@@ -20,8 +20,8 @@ import RISCV.Operand.Register.Virtual_Register;
 import Utils.error.IRbuilderError;
 import Utils.error.InstSelectError;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class Instructin_select implements IRvisitor {
@@ -34,7 +34,7 @@ public class Instructin_select implements IRvisitor {
     public HashMap<BaseOperand, Base_RISCV_Register> IRreg_to_ASMreg = new HashMap<>();
     Physical_Register ra, sp, s0, a0;
 
-    public ArrayList<Virtual_Register> callee_saved_virtual_reg = new ArrayList<>();
+    public LinkedList<Virtual_Register> callee_saved_virtual_reg = new LinkedList<>();
 
     private int memregcnt = 0;
 

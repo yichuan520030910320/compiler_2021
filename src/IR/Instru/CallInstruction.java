@@ -6,14 +6,15 @@ import IR.IRvisitor;
 import IR.Operand.BaseOperand;
 import IR.Operand.Register;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+
 //%call.0 = call i32 @test_function(i32 %b.0) or call void @gan() or     %call.0 = call i32 @test_function(i32 %b.0, i32 %a.0)
 public class CallInstruction extends BaseInstru {
     public Register call_result;
-    public ArrayList<BaseOperand> paralist;
+    public LinkedList<BaseOperand> paralist;
     public IRfunction call_fuction;
 
-    public CallInstruction(IRbasicblock iRbasicblock, Register call_result_, ArrayList<BaseOperand> paralist_, IRfunction call_fuction_) {
+    public CallInstruction(IRbasicblock iRbasicblock, Register call_result_, LinkedList<BaseOperand> paralist_, IRfunction call_fuction_) {
         super(iRbasicblock);
         call_result = call_result_;
         paralist = paralist_;

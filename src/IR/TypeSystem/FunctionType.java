@@ -3,12 +3,12 @@ package IR.TypeSystem;
 import IR.Operand.BaseOperand;
 import IR.Operand.Parament;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class FunctionType extends Typesystem{
     public Typesystem returntype;
-    public ArrayList<Parament> parament_list;
-    public FunctionType(Typesystem returntype_,ArrayList<Parament> parament_list_){
+    public LinkedList<Parament> parament_list;
+    public FunctionType(Typesystem returntype_,LinkedList<Parament> parament_list_){
         returntype=returntype_;
         parament_list=parament_list_;
     }

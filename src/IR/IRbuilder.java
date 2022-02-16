@@ -18,7 +18,7 @@ import IR.Utils.IR_scope;
 import Utils.error.IRbuilderError;
 import Utils.globalscope;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Stack;
 
 public class IRbuilder implements ASTvisitor {
@@ -52,11 +52,11 @@ public class IRbuilder implements ASTvisitor {
 
         //add build_in
         IRfunction builtinfunction;
-        ArrayList<Parament> builtin_para;
+        LinkedList<Parament> builtin_para;
         FunctionType builtin_functiontype;
 
         //void print(string str);
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str_0"));
         builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "print", true);
@@ -64,7 +64,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("print", builtinfunction);
 
         //void println(string str);
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str_0"));
         builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "println", true);
@@ -72,7 +72,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("println", builtinfunction);
 
         //void printInt(int n);
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "n_0"));
         builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "printInt", true);
@@ -80,7 +80,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("printInt", builtinfunction);
 
         //void printlnInt(int n);
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "n_0"));
         builtin_functiontype = new FunctionType(new VoidType(), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "printlnInt", true);
@@ -88,21 +88,21 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("printlnInt", builtinfunction);
 
         //string getString();
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "getString", true);
         module_in_irbuilder.Module_Function_Map.put("getString", builtinfunction);
         module_in_irbuilder.External_Function_Map.put("getString", builtinfunction);
 
         //int getInt();
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "getInt", true);
         module_in_irbuilder.Module_Function_Map.put("getInt", builtinfunction);
         module_in_irbuilder.External_Function_Map.put("getInt", builtinfunction);
 
         //string toString(int i);
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "i_0"));
         builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "toString", true);
@@ -110,7 +110,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("toString", builtinfunction);
 
         //int _str_ord(const char* str,int pos)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "pos"));
         builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
@@ -127,7 +127,7 @@ public class IRbuilder implements ASTvisitor {
         add_str_built_in_cmp("_str_ge");
 
         //const char*_str_concatenate(const char* lhs,const char* rhs)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "lhs"));
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "rhs"));
         builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
@@ -136,7 +136,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("_str_concatenate", builtinfunction);
 
         //char * _f_malloc(int n)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament((new IntegerType(IntegerSubType.i32)), "n"));
         builtin_functiontype = new FunctionType(new PointerType(new IntegerType(IntegerSubType.i8)), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "_f_malloc", true);
@@ -144,7 +144,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("_f_malloc", builtinfunction);
 
         //int _str_length(const char* str)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
         builtin_functiontype = new FunctionType(new IntegerType(IntegerSubType.i32), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "_str_length", true);
@@ -152,7 +152,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("_str_length", builtinfunction);
 
         //const char* _str_substring(const char* str,int left,int right)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "left"));
         builtin_para.add(new Parament(new IntegerType(IntegerSubType.i32), "right"));
@@ -162,7 +162,7 @@ public class IRbuilder implements ASTvisitor {
         module_in_irbuilder.External_Function_Map.put("_str_substring", builtinfunction);
 
         //int _str_parseInt(const char* str)
-        builtin_para = new ArrayList<>();
+        builtin_para = new LinkedList<>();
         builtin_para.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "str"));
         builtin_functiontype = new FunctionType((new IntegerType(IntegerSubType.i32)), builtin_para);
         builtinfunction = new IRfunction(builtin_functiontype, "_str_parseInt", true);
@@ -210,20 +210,20 @@ public class IRbuilder implements ASTvisitor {
         ///collect class name
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Classdecl_ASTnode) {
-                ArrayList<Typesystem> para = new ArrayList<>();
+                LinkedList<Typesystem> para = new LinkedList<>();
                 StructType tmp = new StructType(("class." + ((Classdecl_ASTnode) it.list.get(i)).classname), para);
                 module_in_irbuilder.Module_Struct_Map.put(((Classdecl_ASTnode) it.list.get(i)).classname, tmp);
             }
         }
         IRfunction collect_function;
-        ArrayList<Parament> collect_function_para;
+        LinkedList<Parament> collect_function_para;
         FunctionType collect_function_type;
         ///collect the class inner function
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Classdecl_ASTnode) {
                 Classdecl_ASTnode nowclass = (Classdecl_ASTnode) it.list.get(i);
                 StructType classtype = module_in_irbuilder.Module_Struct_Map.get(nowclass.classname);
-                ArrayList<Typesystem> para = classtype.parament_list;
+                LinkedList<Typesystem> para = classtype.parament_list;
                 int typenumcnt = 0;
                 for (int j = 0; j < nowclass.valdecllist.size(); j++) {
                     for (int k = 0; k < nowclass.valdecllist.get(j).vardecllist.size(); k++) {
@@ -243,7 +243,7 @@ public class IRbuilder implements ASTvisitor {
                 for (int j = 0; j < nowclass.constructerlist.size(); j++) {
                     Constructdecl_ASTnode constru = nowclass.constructerlist.get(j);
                     //add function paraments
-                    collect_function_para = new ArrayList<>();
+                    collect_function_para = new LinkedList<>();
                     Parament this_class = new Parament(new PointerType(module_in_irbuilder.Module_Struct_Map.get(nowclass.classname)), "this");
                     collect_function_para.add(this_class);
                     collect_function_type = new FunctionType(new VoidType(), collect_function_para);
@@ -255,7 +255,7 @@ public class IRbuilder implements ASTvisitor {
                 for (int j = 0; j < nowclass.functionlist.size(); j++) {
                     Fundecl_ASTnode functiondecl = nowclass.functionlist.get(j);
                     //add function paraments
-                    collect_function_para = new ArrayList<>();
+                    collect_function_para = new LinkedList<>();
                     Parament this_class = new Parament(new PointerType(module_in_irbuilder.Module_Struct_Map.get(nowclass.classname)), "this");
                     collect_function_para.add(this_class);
                     if (functiondecl.paralist_infuction != null) {
@@ -282,7 +282,7 @@ public class IRbuilder implements ASTvisitor {
                 //build the type translator
                 AST_to_IR_trans type_translator = new AST_to_IR_trans(module_in_irbuilder);
                 //add function paramentlist
-                collect_function_para = new ArrayList<>();
+                collect_function_para = new LinkedList<>();
                 if (functiondecl.paralist_infuction != null) {
                     for (int j = 0; j < functiondecl.paralist_infuction.paralist.size(); j++) {
                         collect_function_para.add(new Parament(type_translator.asttype_to_irtype(functiondecl.paralist_infuction.paralist.get(j).type), functiondecl.paralist_infuction.paralist.get(j).name + "_para"));
@@ -301,11 +301,12 @@ public class IRbuilder implements ASTvisitor {
         for (int i = 0; i < it.list.size(); i++) {
             if (it.list.get(i) instanceof Valdeclstat_ASTnode) {
                 if_need_init_function = true;
+                break;
             }
         }
 
         if (if_need_init_function) {///add init function
-            ArrayList<Parament> tmp = new ArrayList<>();
+            LinkedList<Parament> tmp = new LinkedList<>();
             FunctionType global_init = new FunctionType(new VoidType(), tmp);
             IRfunction GLOBAL__sub_I_main_mx = new IRfunction(global_init, "GLOBAL__sub_I_main_mx", false);
             module_in_irbuilder.Module_Function_Map.put(GLOBAL__sub_I_main_mx.functionname, GLOBAL__sub_I_main_mx);
@@ -357,8 +358,8 @@ public class IRbuilder implements ASTvisitor {
                         it.ir_operand = it.rhs.ir_operand;
                     }
                     case ADD -> {
-                        ArrayList<BaseOperand> para_list_;
-                        para_list_ = new ArrayList<>();
+                        LinkedList<BaseOperand> para_list_;
+                        para_list_ = new LinkedList<>();
                         para_list_.add(it.lhs.ir_operand);
                         para_list_.add(it.rhs.ir_operand);
                         IRfunction tmpcunction = module_in_irbuilder.Module_Function_Map.get("_str_concatenate");
@@ -368,8 +369,9 @@ public class IRbuilder implements ASTvisitor {
                         it.ir_operand = stringadd;
                     }
                     case EQUALEQUAL, NOT_EQUAL, GREATEREQUAL, LESSER, LESSEREQUAL, GREATER -> {
-                        ArrayList<BaseOperand> para_list_;
-                        para_list_ = new ArrayList<>();
+                        LinkedList<BaseOperand> para_list_;
+                        para_list_ = new LinkedList<>();
+                        
                         para_list_.add(it.lhs.ir_operand);
                         para_list_.add(it.rhs.ir_operand);
                         String funcname = string_cmp_return(it.op);
@@ -525,7 +527,7 @@ public class IRbuilder implements ASTvisitor {
         Global_variable global_string = module_in_irbuilder.add_global_string(it.index);
         Register tmp_const_str = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "const_string_pointer");
         current_function.renaming_add(tmp_const_str);
-        ArrayList<BaseOperand> tmp_get_element_ptr_list = new ArrayList<>();
+        LinkedList<BaseOperand> tmp_get_element_ptr_list = new LinkedList<>();
         tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         tmp_get_element_ptr_list.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, tmp_const_str, global_string, tmp_get_element_ptr_list));
@@ -537,20 +539,20 @@ public class IRbuilder implements ASTvisitor {
         it.ir_operand = new ConstOperand_Null(new VoidType());
     }
 
-    //public CallInstruction(IRbasicblock iRbasicblock, Register call_result_, ArrayList<BaseOperand> paralist_, IRfunction call_fuction_)
+    //public CallInstruction(IRbasicblock iRbasicblock, Register call_result_, LinkedList<BaseOperand> paralist_, IRfunction call_fuction_)
     @Override
     public void visit(FunctioncallExp_ASTnode it) {
-        ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+        LinkedList<BaseOperand> para_list_ = new LinkedList<>();
 
         //cope with such as getdim():only function name and parament
         if (it.funcname instanceof IdExp_ASTnode) {
 
 
-//            if (it.funcname.index.equals("print") || it.funcname.index.equals("println")) {
-//                opt_print(it.paralist.get(0), it.funcname.index.equals("print"));
-//                it.ir_operand = null;
-//                return;
-//            }
+            if (it.funcname.index.equals("print") || it.funcname.index.equals("println")) {
+                opt_print(it.paralist.get(0), it.funcname.index.equals("print"));
+                it.ir_operand = null;
+                return;
+            }
 
 
             ///get function detail and irfunction
@@ -641,7 +643,7 @@ public class IRbuilder implements ASTvisitor {
             opt_print(((BinaryExp_ASTnode) expr).rhs, if_print);
         } else if (expr instanceof FunctioncallExp_ASTnode && ((FunctioncallExp_ASTnode) expr).funcname.index != null && ((FunctioncallExp_ASTnode) expr).funcname.index.equals("toString")) {
             ((FunctioncallExp_ASTnode) expr).paralist.get(0).accept(this);
-            ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+            LinkedList<BaseOperand> para_list_ = new LinkedList<>();
             para_list_.add(((FunctioncallExp_ASTnode) expr).paralist.get(0).ir_operand);
             IRfunction irfunction = null;
             String print_ot_println = if_print ? "printInt" : "printlnInt";
@@ -651,7 +653,7 @@ public class IRbuilder implements ASTvisitor {
             //normal operation and recursion
             //print (a) println(a)
             expr.accept(this);
-            ArrayList<BaseOperand> para_list_ = new ArrayList<>();
+            LinkedList<BaseOperand> para_list_ = new LinkedList<>();
             para_list_.add(expr.ir_operand);
             IRfunction irfunction = null;
             String print_ot_println = if_print ? "print" : "println";
@@ -694,7 +696,7 @@ public class IRbuilder implements ASTvisitor {
                 if (flag) break;
             }
 
-            ArrayList<BaseOperand> para_gep = new ArrayList<>();
+            LinkedList<BaseOperand> para_gep = new LinkedList<>();
             para_gep.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
             para_gep.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
             Register gep_in_id = new Register(new PointerType(member_type), current_class_detail.classname + "." + it.index + "_gep_in_id");
@@ -724,7 +726,7 @@ public class IRbuilder implements ASTvisitor {
         if (it.dim > 0) {
             //array
             Typesystem node_type = type_trans.asttype_to_irtype(((Arraytype_ASTnode) it.type).arraytype);
-            ArrayList<BaseOperand> new_list = new ArrayList<>();
+            LinkedList<BaseOperand> new_list = new LinkedList<>();
             for (int i = 0; i < it.newlist.size(); i++) {
                 it.newlist.get(i).accept(this);
                 new_list.add(it.newlist.get(i).ir_operand);
@@ -740,7 +742,7 @@ public class IRbuilder implements ASTvisitor {
             StructType classtype = module_in_irbuilder.Module_Struct_Map.get(it.type.typename);
             Register class_malloc = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "class_malloc");
             current_function.renaming_add(class_malloc);
-            ArrayList<BaseOperand> call_para = new ArrayList<>();
+            LinkedList<BaseOperand> call_para = new LinkedList<>();
             call_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), classtype.byte_num()));
             current_basicblock.instruction_add(new CallInstruction(current_basicblock, class_malloc, call_para, module_in_irbuilder.External_Function_Map.get("_f_malloc")));
 
@@ -755,7 +757,7 @@ public class IRbuilder implements ASTvisitor {
             if (constructernum != 0) {
                 //because the constructer name is the same as the class name
                 IRfunction constructer = module_in_irbuilder.Module_Function_Map.get(it.type.typename + "." + it.type.typename);
-                ArrayList<BaseOperand> call_paralist = new ArrayList<>();
+                LinkedList<BaseOperand> call_paralist = new LinkedList<>();
                 call_paralist.add(class_ptr);
                 current_basicblock.instruction_add(new CallInstruction(current_basicblock, null, call_paralist, constructer));
             }
@@ -785,7 +787,7 @@ public class IRbuilder implements ASTvisitor {
         Register class_mem_gep_reg = new Register(new PointerType(member_type), "class_mem_gep_reg");
         current_function.renaming_add(class_mem_gep_reg);
         //gep
-        ArrayList<BaseOperand> getelementptr_para = new ArrayList<>();
+        LinkedList<BaseOperand> getelementptr_para = new LinkedList<>();
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 0));
         getelementptr_para.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), cnt));
         GetElementPtrInstruction geptmp = new GetElementPtrInstruction(current_basicblock, class_mem_gep_reg, it.classcall.ir_operand, getelementptr_para);
@@ -1183,7 +1185,7 @@ public class IRbuilder implements ASTvisitor {
         // get the ptr offset
         Register getelementptr_reg = new Register(it.arr.ir_operand.type, "getelementptr_reg");
         current_function.renaming_add(getelementptr_reg);
-        ArrayList<BaseOperand> getelemrmtptr_para_offset = new ArrayList<>();
+        LinkedList<BaseOperand> getelemrmtptr_para_offset = new LinkedList<>();
         getelemrmtptr_para_offset.add(it.index.ir_operand);
         current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, getelementptr_reg, it.arr.ir_operand, getelemrmtptr_para_offset));
 
@@ -1238,7 +1240,7 @@ public class IRbuilder implements ASTvisitor {
     }
 
     private void add_str_built_in_cmp(String cmp_name) {
-        ArrayList<Parament> builtin_para_ = new ArrayList<>();
+        LinkedList<Parament> builtin_para_ = new LinkedList<>();
         builtin_para_.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "lhs"));
         builtin_para_.add(new Parament(new PointerType(new IntegerType(IntegerSubType.i8)), "rhs"));
         FunctionType builtin_functiontype_ = new FunctionType(new IntegerType(IntegerSubType.i1), builtin_para_);
@@ -1271,7 +1273,7 @@ public class IRbuilder implements ASTvisitor {
         }
     }
 
-    private Register mollca_array(int loop_dim, ArrayList<BaseOperand> new_list_, Typesystem return_type) {
+    private Register mollca_array(int loop_dim, LinkedList<BaseOperand> new_list_, Typesystem return_type) {
         //inspired by lrh use a reg to record the current pointer and it can be optimized by using the call phi
         //naive only one dim
         Typesystem malloca_size = ((PointerType) return_type).get_low_dim_type();
@@ -1284,7 +1286,7 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new BinaryInstruction(current_basicblock, sum_bytes, mul_bytes, new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 4), Enum_Binary_IRInstruction.add));
 
         //call malloca
-        ArrayList<BaseOperand> fun_para = new ArrayList<>();
+        LinkedList<BaseOperand> fun_para = new LinkedList<>();
         fun_para.add(sum_bytes);
         IRfunction call_func = module_in_irbuilder.External_Function_Map.get("_f_malloc");
         Register malloca = new Register(new PointerType(new IntegerType(IntegerSubType.i8)), "malloca");
@@ -1300,7 +1302,7 @@ public class IRbuilder implements ASTvisitor {
         current_basicblock.instruction_add(new StoreInstruction(current_basicblock, new_list_.get(loop_dim), array_cast_i8_to_i32));
 
         //set array begin
-        ArrayList<BaseOperand> get_ele_ptr_offset = new ArrayList<>();
+        LinkedList<BaseOperand> get_ele_ptr_offset = new LinkedList<>();
         get_ele_ptr_offset.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
         Register array_tmp_begin_i32 = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "array_tmp_begin_i32");
         current_function.renaming_add(array_tmp_begin_i32);
@@ -1350,7 +1352,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, addr_cmp_result, new_loop_body, new_end));
 
             current_basicblock = new_loop_body;
-            ArrayList<BaseOperand> para_gep = new ArrayList<>();
+            LinkedList<BaseOperand> para_gep = new LinkedList<>();
             para_gep.add(load_tmp_current_pointer);
             Register geparrayaddr = new Register(return_type, "geparrayaddr");
             current_function.renaming_add(geparrayaddr);
@@ -1373,7 +1375,7 @@ public class IRbuilder implements ASTvisitor {
             current_basicblock = new_end;
 
 
-//            ArrayList<BaseOperand> get_ele_ptr_tail_offset = new ArrayList<>();
+//            LinkedList<BaseOperand> get_ele_ptr_tail_offset = new LinkedList<>();
 //            get_ele_ptr_tail_offset.add(new_list_.get(loop_dim));
 //            Register array_tail_addr = new Register(return_type, "array_tail_addr");
 //            current_function.renaming_add(array_tail_addr);
@@ -1424,7 +1426,7 @@ public class IRbuilder implements ASTvisitor {
 //            current_basicblock.instruction_add(new StoreInstruction(current_basicblock, array_addr_head, load_tmp_current_pointer));
 //
 //            //set the next array pointer
-//            ArrayList<BaseOperand> get_ele_ptr_offset2 = new ArrayList<>();
+//            LinkedList<BaseOperand> get_ele_ptr_offset2 = new LinkedList<>();
 //            get_ele_ptr_offset2.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), 1));
 //            Register nxt_pointer = new Register(return_type, "nxt_pointer");
 //            current_function.renaming_add(nxt_pointer);
@@ -1494,7 +1496,7 @@ public class IRbuilder implements ASTvisitor {
 
         Register gep_size = new Register(new PointerType(new IntegerType(IntegerSubType.i32)), "gep_size");
         current_function.renaming_add(gep_size);
-        ArrayList<BaseOperand> geppara = new ArrayList<>();
+        LinkedList<BaseOperand> geppara = new LinkedList<>();
         geppara.add(new ConstOperand_Integer(new IntegerType(IntegerSubType.i32), -1));
         current_basicblock.instruction_add(new GetElementPtrInstruction(current_basicblock, gep_size, bitcast_i32, geppara));
 

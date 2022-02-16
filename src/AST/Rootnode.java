@@ -2,14 +2,14 @@ package AST;
 
 import Utils.position;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Rootnode extends ASTnode{
-    public ArrayList<ASTnode> list;
+    public LinkedList<ASTnode> list;
 
     public Rootnode(position pos) {
         super(pos);
-        list=new ArrayList<ASTnode>();
+        list=new LinkedList<>();
     }
     @Override
     public void accept(ASTvisitor visitor) {

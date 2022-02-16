@@ -11,7 +11,6 @@ import IR.Operand.Register;
 import IR.TypeSystem.PointerType;
 import IR.TypeSystem.Typesystem;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;

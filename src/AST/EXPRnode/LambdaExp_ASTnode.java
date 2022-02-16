@@ -10,18 +10,18 @@ import AST.TYPEnode.Type_ASTnode;
 import AST.VALDECLnode.Paralist_ASTnode;
 import Utils.position;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class LambdaExp_ASTnode extends Expr_ASTnode {//如果函数调用列表没有参数，则paralist为大小为0 用size来判断
     public Type_ASTnode typeinlambda;
     public Paralist_ASTnode lambda_parslist;
     public Suite_ASTnode suite;
-    public ArrayList<Expr_ASTnode> paralist;
+    public LinkedList<Expr_ASTnode> paralist;
 
     public LambdaExp_ASTnode(position pos,  Type_ASTnode lambdareturn_type_,
                              Paralist_ASTnode lambdaparslist_,
                              Suite_ASTnode suite_,
-                             ArrayList<Expr_ASTnode> paralist_) {
+                             LinkedList<Expr_ASTnode> paralist_) {
         super(pos,null,null);
         typeinlambda=lambdareturn_type_;
         lambda_parslist=lambdaparslist_;

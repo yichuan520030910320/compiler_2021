@@ -5,22 +5,22 @@ import AST.STATnode.Valdeclstat_ASTnode;
 import Utils.Scope;
 import Utils.position;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Classdecl_ASTnode extends Declare_ASTnode {
     public String classname;
-    public ArrayList<Fundecl_ASTnode> functionlist;
-    public ArrayList<Valdeclstat_ASTnode> valdecllist;
-    public ArrayList<Constructdecl_ASTnode> constructerlist;// many constructer maybe
+    public LinkedList<Fundecl_ASTnode> functionlist;
+    public LinkedList<Valdeclstat_ASTnode> valdecllist;
+    public LinkedList<Constructdecl_ASTnode> constructerlist;// many constructer maybe
     public Scope classscope;
 
     //for codegen
-    public ArrayList<Integer> prefix_sum_bytenum_in_ast=new ArrayList<>();
+    public LinkedList<Integer> prefix_sum_bytenum_in_ast=new LinkedList<>();
 
 
-    public Classdecl_ASTnode(position pos, String classname_, ArrayList<Fundecl_ASTnode> functionlist_,
-                             ArrayList<Valdeclstat_ASTnode> valdecllist_,
-                             ArrayList<Constructdecl_ASTnode> constructerlist_) {
+    public Classdecl_ASTnode(position pos, String classname_, LinkedList<Fundecl_ASTnode> functionlist_,
+                             LinkedList<Valdeclstat_ASTnode> valdecllist_,
+                             LinkedList<Constructdecl_ASTnode> constructerlist_) {
         super(pos);
         classname = classname_;
         functionlist = functionlist_;

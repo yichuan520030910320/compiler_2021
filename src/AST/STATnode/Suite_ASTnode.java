@@ -3,11 +3,11 @@ package AST.STATnode;
 import AST.ASTvisitor;
 import Utils.position;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Suite_ASTnode extends Stat_ASTnode{
-    public ArrayList<Stat_ASTnode> statlist;
-    public Suite_ASTnode(position pos,ArrayList<Stat_ASTnode> statlist_) {
+    public LinkedList<Stat_ASTnode> statlist;
+    public Suite_ASTnode(position pos,LinkedList<Stat_ASTnode> statlist_) {
         super(pos);
         statlist=statlist_;
     }

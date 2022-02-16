@@ -2,14 +2,14 @@ package IR.TypeSystem;
 
 import IR.Operand.BaseOperand;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class StructType extends Typesystem {
     public String classname;
-    public ArrayList<Typesystem> parament_list;
-    public ArrayList<Integer> prefix_sum_bytenum=new ArrayList<>();
+    public LinkedList<Typesystem> parament_list;
+    public LinkedList<Integer> prefix_sum_bytenum=new LinkedList<>();
 
-    public StructType(String classname_,ArrayList<Typesystem> parament_list_){
+    public StructType(String classname_,LinkedList<Typesystem> parament_list_){
         classname=classname_;
         parament_list=parament_list_;
     }

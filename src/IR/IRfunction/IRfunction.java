@@ -5,7 +5,6 @@ import IR.IRvisitor;
 import IR.Instru.AllocateInstruction;
 import IR.Instru.LoadInstruction;
 import IR.Instru.RetInstruction;
-import IR.Instru.StoreInstruction;
 import IR.Operand.BaseOperand;
 import IR.Operand.BaseUser;
 import IR.Operand.Register;
@@ -13,13 +12,12 @@ import IR.TypeSystem.FunctionType;
 import IR.TypeSystem.PointerType;
 import IR.TypeSystem.VoidType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.HashMap;
 
 public class IRfunction extends BaseUser {
     public FunctionType function_type;
-    public ArrayList<BaseOperand> paramentlist = new ArrayList<>();
+    public LinkedList<BaseOperand> paramentlist = new LinkedList<>();
     public String functionname;
     public IRbasicblock entry_block;
     public IRbasicblock return_block;

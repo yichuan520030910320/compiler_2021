@@ -17,7 +17,8 @@ import Utils.globalscope;
 import Utils.position;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.LinkedList;
 
 public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public globalscope Gscope;
@@ -99,7 +100,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitNewarray(MxParser.NewarrayContext ctx) {//the num of [] is dim
-        ArrayList<Expr_ASTnode> list = new ArrayList<>();
+        LinkedList<Expr_ASTnode> list = new LinkedList<>();
         for (int i = 0; i < ctx.expression().size(); i++) {
             list.add((Expr_ASTnode) visit(ctx.expression().get(i)));
         }
@@ -220,7 +221,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitExpr_function(MxParser.Expr_functionContext ctx) {
-        ArrayList<Expr_ASTnode> exprlist = new ArrayList<>();
+        LinkedList<Expr_ASTnode> exprlist = new LinkedList<>();
         Expr_ASTnode exp1 = (Expr_ASTnode) visit(ctx.expression());
         if (ctx.expressionlist() == null) {
             return new FunctioncallExp_ASTnode(new position(ctx.getStart()), null, ctx.getText(), exp1, null);
@@ -237,7 +238,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     public ASTnode visitExpr_lambda(MxParser.Expr_lambdaContext ctx) {
         Paralist_ASTnode paralist = ctx.lambdapara == null ? null : (Paralist_ASTnode) visit(ctx.parameterlist());
         Suite_ASTnode suite = (Suite_ASTnode) visit(ctx.suite());
-        ArrayList<Expr_ASTnode> funcalllist = new ArrayList<>();
+        LinkedList<Expr_ASTnode> funcalllist = new LinkedList<>();
         if (ctx.lambdaexprelist != null) {
             for (int i = 0; i < ctx.lambdaexprelist.expression().size(); i++) {
                 funcalllist.add((Expr_ASTnode) visit(ctx.expressionlist().expression().get(i)));
@@ -259,7 +260,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     @Override
     public ASTnode visitVardeclarlist(MxParser.VardeclarlistContext ctx) {
         Type_ASTnode type = (Type_ASTnode) visit(ctx.type());
-        ArrayList<Singlevaluedecl_ASTnode> vardellist = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> vardellist = new LinkedList<>();
         for (int i = 0; i < ctx.vardeclar().size(); i++) {
             Singlevaluedecl_ASTnode tmpexpr = (Singlevaluedecl_ASTnode) visit(ctx.vardeclar().get(i));
             tmpexpr.type = type;
@@ -275,7 +276,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitParameterlist(MxParser.ParameterlistContext ctx) {
-        ArrayList<Singlevaluedecl_ASTnode> paralist = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> paralist = new LinkedList<>();
         for (int i = 0; i < ctx.Identifier().size(); i++) {
             Type_ASTnode tmptype = (Type_ASTnode) visit(ctx.type(i));
             Singlevaluedecl_ASTnode tempsingle = new Singlevaluedecl_ASTnode(new position(ctx.getStart()), tmptype, ctx.Identifier().get(i).getText(), null);
@@ -286,7 +287,7 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
 
     @Override
     public ASTnode visitSuite(MxParser.SuiteContext ctx) {
-        ArrayList<Stat_ASTnode> stats = new ArrayList<>();
+        LinkedList<Stat_ASTnode> stats = new LinkedList<>();
         for (int i = 0; i < ctx.statement().size(); i++) {
             if (ctx.statement().get(i).getText().equals(";"))continue;;
 
@@ -381,9 +382,9 @@ public class ASTbuilder extends MxBaseVisitor<ASTnode> {
     @Override
     public ASTnode visitClassdef(MxParser.ClassdefContext ctx) {
         String classname = ctx.calssname.getText();
-        ArrayList<Constructdecl_ASTnode> constructlist = new ArrayList<>();
-        ArrayList<Fundecl_ASTnode> funlist = new ArrayList<>();
-        ArrayList<Valdeclstat_ASTnode> valdecl = new ArrayList<>();
+        LinkedList<Constructdecl_ASTnode> constructlist = new LinkedList<>();
+        LinkedList<Fundecl_ASTnode> funlist = new LinkedList<>();
+        LinkedList<Valdeclstat_ASTnode> valdecl = new LinkedList<>();
         for (int i = 0; i < ctx.constructdeclar().size(); i++) {
             constructlist.add((Constructdecl_ASTnode) visit(ctx.constructdeclar(i)));
         }

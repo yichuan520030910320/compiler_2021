@@ -6,19 +6,19 @@ import IR.Operand.BaseOperand;
 import IR.Operand.Register;
 import IR.TypeSystem.PointerType;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class GetElementPtrInstruction extends BaseInstru {
     public Register result_register;
     // source ptr can be global var
     public BaseOperand source_ptr;
-    public ArrayList<BaseOperand> index_offset;
+    public LinkedList<BaseOperand> index_offset;
 
     //for codegen
-    public ArrayList<Integer> prefix_sum_bytenum=new ArrayList<>();
+    public LinkedList<Integer> prefix_sum_bytenum=new LinkedList<>();
 
 //the result reg must be point type
-    public GetElementPtrInstruction(IRbasicblock iRbasicblock, Register result_register_, BaseOperand source_ptr_, ArrayList<BaseOperand> index_offset_) {
+    public GetElementPtrInstruction(IRbasicblock iRbasicblock, Register result_register_, BaseOperand source_ptr_, LinkedList<BaseOperand> index_offset_) {
         super(iRbasicblock);
 
         result_register = result_register_;

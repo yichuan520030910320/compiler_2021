@@ -1,6 +1,5 @@
 package Optimize;
 
-import IR.Operand.BaseOperand;
 import RISCV.ASM_Basicblock.ASM_Basicblock;
 import RISCV.ASM_Function.ASM_Function;
 import RISCV.ASM_Module.ASM_Module;
@@ -320,7 +319,7 @@ public class Graph_Coloring {
     private void AssignColors() {
         while (!selectStack.isEmpty()) {
             Base_RISCV_Register n = selectStack.pop();
-            ArrayList<Physical_Register> okColors = new ArrayList<>(asm_module.okColors);
+            LinkedList<Physical_Register> okColors = new LinkedList<>(asm_module.okColors);
             //delete the already colored  color
             for (Base_RISCV_Register w : adjList.get(n)) {
                 HashSet<Base_RISCV_Register> union = new HashSet<>(coloredNodes);

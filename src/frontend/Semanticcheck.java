@@ -14,7 +14,7 @@ import Utils.*;
 import Utils.error.SemanticError;
 
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Semanticcheck implements ASTvisitor {
     public globalscope Globalscope;
@@ -88,28 +88,28 @@ public class Semanticcheck implements ASTvisitor {
 
 
         //内联函数和函数处理定义
-        ArrayList<Singlevaluedecl_ASTnode> list0 = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> list0 = new LinkedList<>();
         list0.add(new Singlevaluedecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "str", null));
         Paralist_ASTnode para0 = new Paralist_ASTnode(null, list0);
         Fundecl_ASTnode fundecl0 = new Fundecl_ASTnode(null, new Voidtype_ASTnode(null, null), "print", para0, null, true);
         Globalscope.funcmap.put("print", fundecl0);
 
 
-        ArrayList<Singlevaluedecl_ASTnode> list = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> list = new LinkedList<>();
         list.add(new Singlevaluedecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "str", null));
         Paralist_ASTnode para = new Paralist_ASTnode(null, list);
         Fundecl_ASTnode fundecl = new Fundecl_ASTnode(null, new Voidtype_ASTnode(null, null), "println", para, null, true);
         Globalscope.funcmap.put("println", fundecl);
 
 
-        ArrayList<Singlevaluedecl_ASTnode> list1 = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> list1 = new LinkedList<>();
         list1.add(new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "n", null));
         Paralist_ASTnode para1 = new Paralist_ASTnode(null, list1);
         Fundecl_ASTnode fundecl1 = new Fundecl_ASTnode(null, new Voidtype_ASTnode(null, null), "printInt", para1, null, true);
         Globalscope.funcmap.put("printInt", fundecl1);
 
 
-        ArrayList<Singlevaluedecl_ASTnode> list2 = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> list2 = new LinkedList<>();
         list2.add(new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "n", null));
         Paralist_ASTnode para2 = new Paralist_ASTnode(null, list2);
         Fundecl_ASTnode fundecl2 = new Fundecl_ASTnode(null, new Voidtype_ASTnode(null, null), "printlnInt", para2, null, true);
@@ -122,7 +122,7 @@ public class Semanticcheck implements ASTvisitor {
         Fundecl_ASTnode fundecl4 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "getInt", null, null, false);
         Globalscope.funcmap.put("getInt", fundecl4);
 
-        ArrayList<Singlevaluedecl_ASTnode> list5 = new ArrayList<>();
+        LinkedList<Singlevaluedecl_ASTnode> list5 = new LinkedList<>();
         list5.add(new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "i", null));
         Paralist_ASTnode para5 = new Paralist_ASTnode(null, list5);
         Fundecl_ASTnode fundecl5 = new Fundecl_ASTnode(null, new Stringtype_ASTnode(null, "string"), "toString", para5, null, false);
@@ -188,7 +188,7 @@ public class Semanticcheck implements ASTvisitor {
             Fundecl_ASTnode stringfundecl = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "length", null, null, false);
             stringdecl.classscope.funcmap.put("length", stringfundecl);
 
-            ArrayList<Singlevaluedecl_ASTnode> stringlist1 = new ArrayList<>();
+            LinkedList<Singlevaluedecl_ASTnode> stringlist1 = new LinkedList<>();
             Singlevaluedecl_ASTnode stringsingle11 = new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "left", null);
             Singlevaluedecl_ASTnode stringsingle12 = new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "right", null);
             stringlist1.add(stringsingle11);
@@ -200,7 +200,7 @@ public class Semanticcheck implements ASTvisitor {
             Fundecl_ASTnode stringfundecl2 = new Fundecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "parseInt", null, null, false);
             stringdecl.classscope.funcmap.put("parseInt", stringfundecl2);
 
-            ArrayList<Singlevaluedecl_ASTnode> stringlist3 = new ArrayList<>();
+            LinkedList<Singlevaluedecl_ASTnode> stringlist3 = new LinkedList<>();
             Singlevaluedecl_ASTnode stringsingle3 = new Singlevaluedecl_ASTnode(null, new Inttype_ASTnode(null, "int"), "pos", null);
             stringlist3.add(stringsingle3);
             Paralist_ASTnode stringpara3 = new Paralist_ASTnode(null, stringlist3);

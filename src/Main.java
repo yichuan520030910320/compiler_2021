@@ -33,12 +33,15 @@ public class Main {
         //chose the read option
         boolean localjudge = false;
         boolean local_test_ir = false;
+        boolean inlinux=false;
         String name;
         InputStream input = null;
         boolean onlysemnatic = false;
         boolean opt = false;
         if (localjudge && (!local_test_ir)) {
-            name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+            if (!inlinux)name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";
+            else name = "/mnt/c/Users/18303/IdeaProjects/Mx/src/selftest/test.mx";
+
             input = new FileInputStream(name);
         } else {
             name = "online_judge";
@@ -78,6 +81,7 @@ public class Main {
             //ir builder
             IRbuilder irbuilder = new IRbuilder(gScope);
             ASTRoot.accept(irbuilder);
+            if (!local_test_ir) System.out.println("-------------irbuild finish-------------");
 
             if (localjudge) {//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
@@ -93,6 +97,10 @@ public class Main {
             if ((!(AllocateInstruction.alloca_cnt > 270)) || opt) {
                 Mem2Reg mem2Reg = new Mem2Reg(irbuilder.module_in_irbuilder);
             }
+
+
+            if (!local_test_ir) System.out.println("-------------opt finish-------------");
+
 //            if (localjudge){//print naive llvm
 //                IRprinter llvm_naive = new IRprinter("testout/naive_llvm_after_mem2reg.ll", name);
 //                if (local_test_ir==true)llvm_naive.stdout=true;
@@ -100,6 +108,8 @@ public class Main {
 //            }
             //instrunction select
             Instructin_select instructin_select = new Instructin_select(irbuilder.module_in_irbuilder);
+
+            if (!local_test_ir) System.out.println("-------------inst select finish-------------");
 
 
             ASMprinter asMprinter_to_ravel1 = new ASMprinter(irbuilder.module_in_irbuilder, instructin_select.cur_module);
@@ -111,15 +121,24 @@ public class Main {
             //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
             Graph_Coloring graph_coloring = new Graph_Coloring(instructin_select.cur_module);
 
+            if (!local_test_ir) System.out.println("-------------graph coloring finish-------------");
+
+
             //backend optimizen
             Peephole peephole_ = new Peephole(instructin_select.cur_module);
 
 
+            if (!local_test_ir) System.out.println("-------------asm opt finish-------------");
+
+
+
             //asm printer
             ASMprinter asMprinter_to_ravel = new ASMprinter(irbuilder.module_in_irbuilder, instructin_select.cur_module);
-            if (localjudge)
-                asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
-            else asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("output.s"));
+            if (localjudge) {
+                if (!inlinux)   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
+                else   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("/mnt/c/Users/18303/IdeaProjects/Mx/ravel/test.s"));
+
+            }else asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();
         } catch (Error er) {
             System.err.println(er.toString());
