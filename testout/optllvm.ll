@@ -27,11 +27,30 @@ declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
 define dso_local i32 @main() {
 entrance_block0:                                             
-    %yep_addr = alloca i1
+    %a_addr = alloca i32*
     %return_register_infunction_addr = alloca i32
-    call void @printlnInt(i32 1)
-    store i1 true, i1* %yep_addr
-    call void @printlnInt(i32 3)
+    %mul_bytes = mul i32 1, 4
+    %sum_bytes = add i32 %mul_bytes, 4
+    %malloca = call i8* @_f_malloc(i32 %sum_bytes)
+    %array_cast_i8_to_i32 = bitcast i8* %malloca to i32*
+    store i32 1, i32* %array_cast_i8_to_i32
+    %array_tmp_begin_i32 = getelementptr inbounds i32, i32* %array_cast_i8_to_i32, i32 1
+    %array_addr = bitcast i32* %array_tmp_begin_i32 to i32*
+    store i32* %array_addr, i32** %a_addr
+    %a = load i32*, i32** %a_addr
+    %getelementptr_reg = getelementptr inbounds i32, i32* %a, i32 0
+    %load_result = load i32, i32* %getelementptr_reg
+    store i32 10, i32* %getelementptr_reg
+    %a_0 = load i32*, i32** %a_addr
+    %getelementptr_reg_0 = getelementptr inbounds i32, i32* %a_0, i32 0
+    %load_result_0 = load i32, i32* %getelementptr_reg_0
+    %add = add i32 %load_result_0, 20
+    call void @printlnInt(i32 %add)
+    %a_1 = load i32*, i32** %a_addr
+    %getelementptr_reg_1 = getelementptr inbounds i32, i32* %a_1, i32 0
+    %load_result_1 = load i32, i32* %getelementptr_reg_1
+    %add_0 = add i32 %load_result_1, 20
+    store i32 %add_0, i32* %return_register_infunction_addr
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
 }

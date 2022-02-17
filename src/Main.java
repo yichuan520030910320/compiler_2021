@@ -129,8 +129,8 @@ public class Main {
 //                asMprinter_to_ravel1.run_print();
 //            }
             //reg allocate
-            HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
-            //Graph_Coloring graph_coloring = new Graph_Coloring(instructin_select.cur_module);
+            //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            Graph_Coloring graph_coloring = new Graph_Coloring(instructin_select.cur_module);
 
             if (!local_test_ir) System.out.println("-------------graph coloring finish-------------");
 
