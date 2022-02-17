@@ -937,18 +937,7 @@ public class IRbuilder implements ASTvisitor {
         IRbasicblock while_condition = create_block("while_condition");
         IRbasicblock while_body = create_block("while_body");
         IRbasicblock while_end_merge = create_block("while_end_merge");
-        //add relation
-        current_basicblock.nxt_basic_block.add(while_condition);
 
-        while_condition.nxt_basic_block.add(while_body);
-        while_condition.nxt_basic_block.add(while_end_merge);
-        while_condition.pre_basicblock.add(current_basicblock);
-        while_condition.pre_basicblock.add(while_body);
-
-        while_body.nxt_basic_block.add(while_condition);
-        while_body.pre_basicblock.add(while_condition);
-
-        while_end_merge.pre_basicblock.add(current_basicblock);
 
         //maintain the continue break stack
         continue_basicblock_stack.push(while_condition);
@@ -996,16 +985,7 @@ public class IRbuilder implements ASTvisitor {
             IRbasicblock else_basicblock = create_block("else_basicblock");
             IRbasicblock if_end_basicblock = create_block("if_end_basicblock");
 
-            // add for basicblock relationship
-            current_basicblock.nxt_basic_block.add(then_basicblock);
-            then_basicblock.pre_basicblock.add(current_basicblock);
-            then_basicblock.nxt_basic_block.add(if_end_basicblock);
-            if_end_basicblock.pre_basicblock.add(then_basicblock);
 
-            current_basicblock.nxt_basic_block.add(else_basicblock);
-            else_basicblock.pre_basicblock.add(current_basicblock);
-            else_basicblock.nxt_basic_block.add(if_end_basicblock);
-            if_end_basicblock.pre_basicblock.add(else_basicblock);
 
             //add current br instruction
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, else_basicblock));
@@ -1027,13 +1007,6 @@ public class IRbuilder implements ASTvisitor {
             IRbasicblock then_basicblock = create_block("single_then_basicblock");
             IRbasicblock if_end_basicblock = create_block("if_withoutelse_end_basicblock");
 
-            // add for basicblock relationship
-            current_basicblock.nxt_basic_block.add(then_basicblock);
-            current_basicblock.nxt_basic_block.add(if_end_basicblock);
-            then_basicblock.pre_basicblock.add(current_basicblock);
-            then_basicblock.nxt_basic_block.add(if_end_basicblock);
-            if_end_basicblock.pre_basicblock.add(then_basicblock);
-            if_end_basicblock.pre_basicblock.add(current_basicblock);
 
             //add current br instruction
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, it.condition.ir_operand, then_basicblock, if_end_basicblock));
@@ -1061,21 +1034,7 @@ public class IRbuilder implements ASTvisitor {
         IRbasicblock for_step = it.incr != null ? create_block("for_step") : null;
         IRbasicblock for_body = create_block("for_body");
         IRbasicblock for_end_merge = create_block("for_end_merge");
-        //relation
-        if (condition_for != null) current_basicblock.nxt_basic_block.add(condition_for);
-        if (condition_for != null) {
-            condition_for.nxt_basic_block.add(for_end_merge);
-            condition_for.nxt_basic_block.add(for_body);
-            condition_for.pre_basicblock.add(current_basicblock);
-            if (for_step != null) condition_for.pre_basicblock.add(for_step);
-        }
-        if (condition_for != null) for_end_merge.pre_basicblock.add(condition_for);
-        if (for_step != null) for_body.nxt_basic_block.add(for_step);
-        if (condition_for != null) for_body.pre_basicblock.add(condition_for);
-        if (for_step != null) {
-            if (condition_for != null) for_step.nxt_basic_block.add(condition_for);
-            for_step.pre_basicblock.add(for_body);
-        }
+
 
 //I simply make four decision
         if (for_step != null && condition_for != null) {
@@ -1102,9 +1061,7 @@ public class IRbuilder implements ASTvisitor {
 
 
         } else if (for_step == null && condition_for != null) {
-            //extra relation
-            for_body.nxt_basic_block.add(condition_for);
-            condition_for.pre_basicblock.add(for_body);
+
 
             break_basicblock_stack.push(for_end_merge);
             continue_basicblock_stack.push(condition_for);
@@ -1124,8 +1081,6 @@ public class IRbuilder implements ASTvisitor {
             break_basicblock_stack.pop();
 
         } else if (for_step != null) {
-            for_step.nxt_basic_block.add(for_body);
-            for_body.pre_basicblock.add(for_step);
 
             continue_basicblock_stack.push(for_step);
             break_basicblock_stack.push(for_end_merge);
@@ -1143,8 +1098,6 @@ public class IRbuilder implements ASTvisitor {
             it.incr.accept(this);
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, for_body, null));
         } else {
-            for_body.pre_basicblock.add(for_body);
-            for_body.nxt_basic_block.add(for_body);
 
             continue_basicblock_stack.push(for_body);
             break_basicblock_stack.push(for_end_merge);
@@ -1328,16 +1281,6 @@ public class IRbuilder implements ASTvisitor {
             IRbasicblock new_loop_body = create_block("new_loop_body");
             IRbasicblock new_end = create_block("new_end");
 
-            //add relation
-            current_basicblock.nxt_basic_block.add(new_condition);
-            new_condition.pre_basicblock.add(new_loop_body);
-            new_condition.pre_basicblock.add(current_basicblock);
-            new_condition.nxt_basic_block.add(new_loop_body);
-            new_condition.nxt_basic_block.add(new_end);
-            new_end.pre_basicblock.add(new_condition);
-            new_loop_body.pre_basicblock.add(new_condition);
-            new_loop_body.nxt_basic_block.add(new_condition);
-
             current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
 
             current_basicblock = new_condition;
@@ -1395,15 +1338,7 @@ public class IRbuilder implements ASTvisitor {
 //            IRbasicblock new_loop_body = create_block("new_loop_body");
 //            IRbasicblock new_end = create_block("new_end");
 //
-//            //add relation
-//            current_basicblock.nxt_basic_block.add(new_condition);
-//            new_condition.pre_basicblock.add(new_loop_body);
-//            new_condition.pre_basicblock.add(current_basicblock);
-//            new_condition.nxt_basic_block.add(new_loop_body);
-//            new_condition.nxt_basic_block.add(new_end);
-//            new_end.pre_basicblock.add(new_condition);
-//            new_loop_body.pre_basicblock.add(new_condition);
-//            new_loop_body.nxt_basic_block.add(new_condition);
+
 //
 //            current_basicblock.instruction_add(new BrInstruction(current_basicblock, null, new_condition, null));
 //
@@ -1455,13 +1390,6 @@ public class IRbuilder implements ASTvisitor {
         //cope with Short circuit
         IRbasicblock short_circuit_and_end = create_block("short_circuit_" + op.name() + "_end_" + it.op);
         IRbasicblock short_circuit_and_branch = create_block("short_circuit_" + op.name() + "_branch_" + it.op);
-        //relation
-        current_basicblock.nxt_basic_block.add(short_circuit_and_end);
-        current_basicblock.nxt_basic_block.add(short_circuit_and_branch);
-        short_circuit_and_end.pre_basicblock.add(current_basicblock);
-        short_circuit_and_end.pre_basicblock.add(short_circuit_and_branch);
-        short_circuit_and_branch.nxt_basic_block.add(short_circuit_and_end);
-        short_circuit_and_branch.pre_basicblock.add(current_basicblock);
         //pointer
         Register result_reg = new Register(new PointerType(new IntegerType(IntegerSubType.i1)), it.op.toString() + "_addr");
         current_function.renaming_add(result_reg);

@@ -14,7 +14,6 @@ public class BrInstruction extends BaseInstru {
         cond=cond_;
         true_block=true_block_;
         false_block=false_block_;
-
         //add the relation
         if (cond!=null){
             if (cond instanceof Register) cond.Add_be_used(this);

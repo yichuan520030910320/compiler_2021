@@ -94,6 +94,9 @@ public class Graph_Coloring {
             } else break;
         }
 
+
+
+
         for (int i = 0; i < asm_function.asm_basicblock_in_function.size(); i++) {
             ASM_Basicblock asm_basicblock = asm_function.asm_basicblock_in_function.get(i);
             LinkedList<Base_RISCV_Instruction> base_riscv_instructions = new LinkedList<>();

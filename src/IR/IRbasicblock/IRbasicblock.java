@@ -63,6 +63,12 @@ public class IRbasicblock extends BaseUser {//可以记录其中的instru 使用
         link_in_basicblock.add(it);
     }
 
+    public void Addprebasicblock(IRbasicblock iRbasicblock){
+        pre_basicblock.add(iRbasicblock);
+    }
+    public void Addnxtbasicblock(IRbasicblock iRbasicblock){
+        nxt_basic_block.add(iRbasicblock);
+    }
     public boolean check_taiL_br() {
         if (link_in_basicblock.size() == 0) return false;
         return link_in_basicblock.getLast() instanceof BrInstruction;
