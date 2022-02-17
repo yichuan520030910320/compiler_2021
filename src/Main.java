@@ -31,7 +31,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge = false;
+        boolean localjudge =false;
         boolean local_test_ir = false;
         boolean inlinux=false;
         String name;
@@ -83,7 +83,7 @@ public class Main {
             ASTRoot.accept(irbuilder);
             if (!local_test_ir) System.out.println("-------------irbuild finish-------------");
 
-            if (localjudge) {//print naive llvm
+            if (localjudge&&(!local_test_ir)) {//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
                 if (local_test_ir == true) llvm_naive.stdout = true;
                 llvm_naive.visit(irbuilder.module_in_irbuilder);
@@ -92,6 +92,17 @@ public class Main {
             //begin opt
             CFG_optimizen cfg_optimizen = new CFG_optimizen(irbuilder.module_in_irbuilder);
             cfg_optimizen.run();
+            if (localjudge&&(local_test_ir)) {//print naive llvm
+                IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
+                if (local_test_ir == true) llvm_naive.stdout = true;
+                llvm_naive.visit(irbuilder.module_in_irbuilder);
+            }
+
+            if (localjudge&&(!local_test_ir)) {//print naive llvm
+                IRprinter llvm_naive = new IRprinter("testout/optllvm.ll", name);
+                if (local_test_ir == true) llvm_naive.stdout = true;
+                llvm_naive.visit(irbuilder.module_in_irbuilder);
+            }
 
 
             if ((!(AllocateInstruction.alloca_cnt > 270)) || opt) {
@@ -118,8 +129,8 @@ public class Main {
 //                asMprinter_to_ravel1.run_print();
 //            }
             //reg allocate
-            //HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
-            Graph_Coloring graph_coloring = new Graph_Coloring(instructin_select.cur_module);
+            HorribleStackAlllocate horribleStackAlllocate=new HorribleStackAlllocate(instructin_select.cur_module);
+            //Graph_Coloring graph_coloring = new Graph_Coloring(instructin_select.cur_module);
 
             if (!local_test_ir) System.out.println("-------------graph coloring finish-------------");
 

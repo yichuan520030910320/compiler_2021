@@ -12,6 +12,8 @@ import IR.TypeSystem.FunctionType;
 import IR.TypeSystem.PointerType;
 import IR.TypeSystem.VoidType;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.HashMap;
 
@@ -29,6 +31,10 @@ public class IRfunction extends BaseUser {
     //renaming map just for llvm
     public HashMap<String, Integer> reg_map = new HashMap<>();
     public HashMap<String, Integer> basicblock_map = new HashMap<>();
+
+    //for cfg
+    public LinkedList<IRbasicblock> iRbasicblocks_DFS_Order;
+    public HashSet<IRbasicblock> visited_iRbasicblocks;
 
     public IRfunction(FunctionType function_type_, String functionname_, boolean is_builtin_) {
         function_type = function_type_;
@@ -85,6 +91,26 @@ public class IRfunction extends BaseUser {
         }
         name_para.append(")");
         return name_para.toString();
+    }
+
+    public LinkedList<IRbasicblock> get_DFS_Block_list() {
+        visited_iRbasicblocks = new HashSet<>();
+        iRbasicblocks_DFS_Order = new LinkedList<>();
+        entry_block.dfs_father = null;
+        dfs_basicblock(entry_block);
+        return iRbasicblocks_DFS_Order;
+
+    }
+
+    private void dfs_basicblock(IRbasicblock iRbasicblock) {
+        visited_iRbasicblocks.add(iRbasicblock);
+        iRbasicblocks_DFS_Order.add(iRbasicblock);
+        for (IRbasicblock iRbasicblock1 : iRbasicblock.nxt_basic_block) {
+            if (!visited_iRbasicblocks.contains(iRbasicblock1)) {
+                iRbasicblock1.dfs_father = iRbasicblock;
+                dfs_basicblock(iRbasicblock1);
+            }
+        }
     }
 
     public void accept(IRvisitor visitor) {

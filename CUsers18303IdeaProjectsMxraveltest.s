@@ -4,40 +4,182 @@
     .p2align	2
 qpow:
 .LBB_qpow_entrance_block0:
-    addi	sp,sp,-20
-    sw	ra,16(sp)
-    sw	s0,12(sp)
-    addi	s0,sp,20
-    mv	t0,a0
-    li	a0,1
+    addi	sp,sp,-186
+    sw	ra,182(sp)
+    sw	s0,178(sp)
+    addi	s0,sp,186
+    mv	t5,s0
+    sw	t5,-12(s0)
+    mv	t5,s1
+    sw	t5,-16(s0)
+    mv	t5,s2
+    sw	t5,-20(s0)
+    mv	t5,s3
+    sw	t5,-24(s0)
+    mv	t5,s4
+    sw	t5,-28(s0)
+    mv	t5,s5
+    sw	t5,-32(s0)
+    mv	t5,s6
+    sw	t5,-36(s0)
+    mv	t5,s7
+    sw	t5,-40(s0)
+    mv	t5,s8
+    sw	t5,-44(s0)
+    mv	t5,s9
+    sw	t5,-48(s0)
+    mv	t5,s10
+    sw	t5,-52(s0)
+    mv	t5,s11
+    sw	t5,-56(s0)
+    mv	t5,a0
+    sw	t5,-60(s0)
+    mv	t5,a1
+    sw	t5,-64(s0)
+    mv	t5,a2
+    sw	t5,-68(s0)
+    lw	t3,-60(s0)
+    mv	t5,t3
+    sw	t5,-72(s0)
+    lw	t3,-64(s0)
+    mv	t5,t3
+    sw	t5,-76(s0)
+    lw	t3,-68(s0)
+    mv	t5,t3
+    sw	t5,-80(s0)
+    li	t5,1
+    sw	t5,-84(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-88(s0)
+    lw	t3,-72(s0)
+    mv	t5,t3
+    sw	t5,-92(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-96(s0)
     j	.LBB_qpow_while_condition
 .LBB_qpow_while_condition:
-    sgt	t1,a1,zero
-    beqz	t1,	.LBB_qpow_while_end_merge
+    lw	t3,-76(s0)
+    mv	t5,t3
+    sw	t5,-100(s0)
+    mv	t3,t5
+    sgt	t5,t3,zero
+    sb	t5,-101(s0)
+    mv	t3,t5
+    beqz	t3,	.LBB_qpow_while_end_merge
     j	.LBB_qpow_while_body
 .LBB_qpow_while_body:
-    andi	t1,a1,1
-    xori	t1,t1,1
-    seqz	t1,t1
-    beqz	t1,	.LBB_qpow_if_withoutelse_end_basicblock
+    lw	t3,-76(s0)
+    mv	t5,t3
+    sw	t5,-105(s0)
+    mv	t3,t5
+    andi	t5,t3,1
+    sw	t5,-109(s0)
+    mv	t3,t5
+    xori	t5,t3,1
+    sb	t5,-110(s0)
+    mv	t3,t5
+    seqz	t5,t3
+    sb	t5,-110(s0)
+    mv	t3,t5
+    beqz	t3,	.LBB_qpow_if_withoutelse_end_basicblock
     j	.LBB_qpow_single_then_basicblock
 .LBB_qpow_while_end_merge:
-    j	.LBB_qpow_return_block0
+    lw	t3,-88(s0)
+    mv	t5,t3
+    sw	t5,-114(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-118(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-122(s0)
+    lw	t3,-12(s0)
+    mv	s0,t3
+    lw	t3,-16(s0)
+    mv	s1,t3
+    lw	t3,-20(s0)
+    mv	s2,t3
+    lw	t3,-24(s0)
+    mv	s3,t3
+    lw	t3,-28(s0)
+    mv	s4,t3
+    lw	t3,-32(s0)
+    mv	s5,t3
+    lw	t3,-36(s0)
+    mv	s6,t3
+    lw	t3,-40(s0)
+    mv	s7,t3
+    lw	t3,-44(s0)
+    mv	s8,t3
+    lw	t3,-48(s0)
+    mv	s9,t3
+    lw	t3,-52(s0)
+    mv	s10,t3
+    lw	t3,-56(s0)
+    mv	s11,t3
+    lw	t3,-122(s0)
+    mv	a0,t3
 .LBB_qpow_single_then_basicblock:
-    mul	t1,a0,t0
-    rem	a0,t1,a2
+    lw	t3,-88(s0)
+    mv	t5,t3
+    sw	t5,-126(s0)
+    lw	t3,-96(s0)
+    mv	t5,t3
+    sw	t5,-130(s0)
+    lw	t3,-126(s0)
+    lw	t4,-130(s0)
+    mul	t5,t3,t4
+    sw	t5,-134(s0)
+    lw	t3,-80(s0)
+    mv	t5,t3
+    sw	t5,-138(s0)
+    lw	t3,-134(s0)
+    lw	t4,-138(s0)
+    rem	t5,t3,t4
+    sw	t5,-142(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-88(s0)
     j	.LBB_qpow_if_withoutelse_end_basicblock
 .LBB_qpow_if_withoutelse_end_basicblock:
-    mv	t1,t0
-    mul	t0,t0,t1
-    rem	t0,t0,a2
-    li	t1,2
-    div	a1,a1,t1
+    lw	t3,-96(s0)
+    mv	t5,t3
+    sw	t5,-146(s0)
+    lw	t3,-96(s0)
+    mv	t5,t3
+    sw	t5,-150(s0)
+    lw	t3,-146(s0)
+    lw	t4,-150(s0)
+    mul	t5,t3,t4
+    sw	t5,-154(s0)
+    lw	t3,-80(s0)
+    mv	t5,t3
+    sw	t5,-158(s0)
+    lw	t3,-154(s0)
+    lw	t4,-158(s0)
+    rem	t5,t3,t4
+    sw	t5,-162(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-96(s0)
+    lw	t3,-76(s0)
+    mv	t5,t3
+    sw	t5,-166(s0)
+    li	t5,2
+    sw	t5,-170(s0)
+    lw	t3,-166(s0)
+    lw	t4,-170(s0)
+    div	t5,t3,t4
+    sw	t5,-174(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-76(s0)
     j	.LBB_qpow_while_condition
-.LBB_qpow_return_block0:
-    lw	s0,12(sp)
-    lw	ra,16(sp)
-    addi	sp,sp,20
+    lw	s0,178(sp)
+    lw	ra,182(sp)
+    addi	sp,sp,186
     ret
 # end function : qpow
 
@@ -45,22 +187,83 @@ qpow:
     .p2align	2
 main:
 .LBB_main_entrance_block0:
-    addi	sp,sp,-20
-    sw	ra,16(sp)
-    sw	s0,12(sp)
-    addi	s0,sp,20
-    li	a0,2
-    li	a1,10
-    li	a2,10000
+    addi	sp,sp,-92
+    sw	ra,88(sp)
+    sw	s0,84(sp)
+    addi	s0,sp,92
+    mv	t5,s0
+    sw	t5,-12(s0)
+    mv	t5,s1
+    sw	t5,-16(s0)
+    mv	t5,s2
+    sw	t5,-20(s0)
+    mv	t5,s3
+    sw	t5,-24(s0)
+    mv	t5,s4
+    sw	t5,-28(s0)
+    mv	t5,s5
+    sw	t5,-32(s0)
+    mv	t5,s6
+    sw	t5,-36(s0)
+    mv	t5,s7
+    sw	t5,-40(s0)
+    mv	t5,s8
+    sw	t5,-44(s0)
+    mv	t5,s9
+    sw	t5,-48(s0)
+    mv	t5,s10
+    sw	t5,-52(s0)
+    mv	t5,s11
+    sw	t5,-56(s0)
+    li	t5,2
+    sw	t5,-60(s0)
+    mv	t3,t5
+    mv	a0,t3
+    li	t5,10
+    sw	t5,-64(s0)
+    mv	t3,t5
+    mv	a1,t3
+    li	t5,10000
+    sw	t5,-68(s0)
+    mv	t3,t5
+    mv	a2,t3
     call	qpow
+    mv	t5,a0
+    sw	t5,-72(s0)
+    mv	t3,t5
+    mv	a0,t3
     call	printlnInt
-    mv	a0,zero
-    j	.LBB_main_return_block0
-.LBB_main_return_block0:
-    lw	s0,12(sp)
-    lw	ra,16(sp)
-    addi	sp,sp,20
-    ret
+    mv	t5,zero
+    sw	t5,-76(s0)
+    mv	t3,t5
+    mv	t5,t3
+    sw	t5,-80(s0)
+    lw	t3,-12(s0)
+    mv	s0,t3
+    lw	t3,-16(s0)
+    mv	s1,t3
+    lw	t3,-20(s0)
+    mv	s2,t3
+    lw	t3,-24(s0)
+    mv	s3,t3
+    lw	t3,-28(s0)
+    mv	s4,t3
+    lw	t3,-32(s0)
+    mv	s5,t3
+    lw	t3,-36(s0)
+    mv	s6,t3
+    lw	t3,-40(s0)
+    mv	s7,t3
+    lw	t3,-44(s0)
+    mv	s8,t3
+    lw	t3,-48(s0)
+    mv	s9,t3
+    lw	t3,-52(s0)
+    mv	s10,t3
+    lw	t3,-56(s0)
+    mv	s11,t3
+    lw	t3,-80(s0)
+    mv	a0,t3
 # end function : main
 
 
