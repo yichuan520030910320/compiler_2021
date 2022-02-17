@@ -43,6 +43,7 @@ public class ASM_Function {
         for (int i = 0; i < iRfunction.block_list.size(); i++) {
             IRbasicblock tmpbb = iRfunction.block_list.get(i);
             ASM_Basicblock asm_basicblock=asm_basicblock_in_function.get(i);
+            if (tmpbb==iRfunction.return_block)tail_basicblock=asm_basicblock;
             for (IRbasicblock nxt_basic_block:tmpbb.nxt_basic_block)asm_basicblock.nxt_basicblock.add(iRbasicblockASM_basicblockHashMap.get(nxt_basic_block));
             for (IRbasicblock pre_basic_block:tmpbb.pre_basicblock)asm_basicblock.pre_basicblock.add(iRbasicblockASM_basicblockHashMap.get(pre_basic_block));
         }

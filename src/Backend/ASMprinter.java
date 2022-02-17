@@ -98,7 +98,7 @@ public class ASMprinter implements ASMVisitor {
                     asm_basicblock.Riscv_instruction_in_block.addFirst(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.addi, sp, null, sp, new Immediate(-(stack_offset + 12))));
                 }
             }
-            if (i == it.asm_basicblock_in_function.size() - 1) {
+            if (asm_basicblock==it.tail_basicblock) {
                 if (!checkrange(stack_offset)) {
                     asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Li(s2, new Immediate((stack_offset + 4))));
                     asm_basicblock.Riscv_instruction_in_block.add(new RISCV_Instruction_Binary(RISCV_Instruction_Binary.RISCVBinarytype.add, s2, sp, s2, null));
