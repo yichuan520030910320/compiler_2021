@@ -13,6 +13,10 @@ public class RISCV_Instruction_Load extends Base_RISCV_Instruction{
     public String global_data_name=null;
     public RISCV_Instruction_Load(int load_bytes,Base_RISCV_Register rs1_,Base_RISCV_Register rd_,Immediate imm_) {
         super(rs1_,null,rd_,imm_);
+        if (imm_!=null&&imm_.imm_val==-16){
+
+            System.out.println("debug .... here");
+        }
         if (load_bytes==1)load_type=Load_Type.lb;
         else if (load_bytes==2)load_type=Load_Type.lh;
         else load_type=Load_Type.lw;

@@ -105,6 +105,7 @@ public class CFG_optimizen extends IR_Pass {
                         if (nxtbasicblock != iRbasicblock) throw new IRbuilderError("cfgbuild error", null);
                         iRbasicblock1.link_in_basicblock.removeLast();
                         iRbasicblock1.link_in_basicblock.addAll(iRbasicblock.link_in_basicblock);
+
                         iRbasicblock1.nxt_basic_block = new HashSet<>(iRbasicblock.nxt_basic_block);
                         for (IRbasicblock iRbasicblocknxt:iRbasicblock.nxt_basic_block){
                             iRbasicblocknxt.pre_basicblock.remove(iRbasicblock);

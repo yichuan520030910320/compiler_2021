@@ -324,7 +324,8 @@ public class Graph_Coloring {
             Base_RISCV_Register n = selectStack.pop();
             LinkedList<Physical_Register> okColors = new LinkedList<>(asm_module.okColors);
             //delete the already colored  color
-            for (Base_RISCV_Register w : adjList.get(n)) {
+            HashSet<Base_RISCV_Register>adjset=adjList.get(n);
+            for (Base_RISCV_Register w : adjset) {
                 HashSet<Base_RISCV_Register> union = new HashSet<>(coloredNodes);
                 union.addAll(precolored);
                 if (union.contains(GetAlias(w)))

@@ -31,7 +31,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =false;
+        boolean localjudge =true;
         boolean local_test_ir = false;
         boolean inlinux=false;
         String name;
@@ -91,7 +91,7 @@ public class Main {
 
             //begin opt
             CFG_optimizen cfg_optimizen = new CFG_optimizen(irbuilder.module_in_irbuilder);
-            //cfg_optimizen.run();
+            cfg_optimizen.run();
 
             if (localjudge&&(local_test_ir)) {//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);
@@ -149,7 +149,6 @@ public class Main {
             if (localjudge) {
                 if (!inlinux)   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
                 else   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("/mnt/c/Users/18303/IdeaProjects/Mx/ravel/test.s"));
-
             }else asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("output.s"));
             asMprinter_to_ravel.run_print();
         } catch (Error er) {
