@@ -1,30 +1,3 @@
-**An naive compiler for the Java_c like language**
-
-## log
-
-you can see my log in file log :)
-
-## process
-
-- [x] 1.g4
-- [x] 2.The `error` class is a trivial self-implemented error type. The `YxErrorListener` is defined 
-- [x] 3.Design The AST
-- [x] 4.AST Builder  a visitor on the parse tree
-- [x] 5.Scope Every scope records variables defined in it.
-- [x] 6.Semantic 
-- [x] 7.Brief introduction to type
-- [x] 8.（IR(Intermediate Representation)）
-- [x] 9.IR builder 
-- [x] 10.IR printer(传给全局)
-- [x] 11.Instruction selection
-- [x] 12.Register Allocation
-
-## detailed
-
-**有空的时候把图片修一下！！**
-
-
-
 continue to be updated
 
 **<font color='red'>编译器：自己写一个编译器。越早开始越占便宜</font>**
@@ -741,7 +714,6 @@ define dso_local i64 @index_first() #0{
 }
 
 ```
-
 2.
 
 ```
@@ -774,6 +746,7 @@ new 作为一个loop出现
 
 
 ```
+
 int main() {
 int i=0;
 {
@@ -802,6 +775,7 @@ c库的头文件
 - [x] make the following init
 
 ```
+
 
 @k = dso_local global i32 4, align 4
 @p = dso_local global i32 0, align 4
@@ -849,7 +823,6 @@ printlnInt(p);
 bingo
 
 总结todo
-
 - [ ] 控制流 for 循环 if 等变化
 - [x] 函数调用 
 - [ ] 处理复杂return情况
@@ -1016,6 +989,7 @@ int i;
 - [x] todo the next point
 
 ```
+
 int A = 1;
 int B = 1;
 int C = 1;
@@ -1043,6 +1017,7 @@ char * 和string 都是i8*
 - [ ] class 
 
 ```
+
 int main() {
     int []a=new int[5];
     int i=0;
@@ -2522,6 +2497,7 @@ Step 4: "Rename". **Replace uses** of load instruction. Remove alloca, load and 
 
 ```
 
+
 int main()
 {
    int a=1;
@@ -2712,6 +2688,7 @@ int main()
 ```
 
 ```
+
 // input: 1 2 3 4
 
 int a=9;
@@ -3120,6 +3097,7 @@ int main() {
 新的错误数据点
 
 ```
+
 int gcd(int x, int y, int j0 , int j1 , int j2 , int j3 , int j4 , int j5 , int j6 , int j7 , int j8 , int j9 , int j10 , int j11 , int j12 , int j13 , int j14 , int j15 , int j16 , int j17 , int j18 , int j19 , int j20 , int j21 , int j22 , int j23 , int j24 , int j25 , int j26 , int j27 , int j28 , int j29) {
   return y;
 }
@@ -3138,6 +3116,7 @@ int main() {
 这个数据点还有价值 问题就是这个循环的次数很多要进行很多戏rewrite
 
 ```
+
 int gcd(int x, int y, int j0 , int j1 , int j2 , int j3 , int j4 , int j5 , int j6 , int j7 , int j8 , int j9 , int j10 , int j11 , int j12 , int j13 , int j14 , int j15 , int j16 , int j17 , int j18 , int j19 , int j20 , int j21 , int j22 , int j23 , int j24 , int j25  ) {
     return (j0 +j1 +j2 +j3 +j4 +j5 +j6 +j7 +j8 +j9 +j10 +j11 +j12 +j13 +j14 +j15 +j16 +j17 +j18 +j19 +j20 +j21 +j22 +j23 +j24 +j25  ) ;
  }
@@ -5390,12 +5369,11 @@ int main() {
 2.13优化print
 
 /*
-
    * optimize print
-     * 
-     * print(A + B + C) -> print(A), print(B), print(C)
-     * print(toString(A)) -> printInt(A)
-       */
+        * 
+        * print(A + B + C) -> print(A), print(B), print(C)
+        * print(toString(A)) -> printInt(A)
+          */
 
 ![image-20220213155041559](C:\Users\18303\AppData\Roaming\Typora\typora-user-images\image-20220213155041559.png)
 
