@@ -1,9 +1,7 @@
 import Backend.ASMprinter;
-import Backend.HorribleStackAlllocate;
 import Backend.Instructin_select;
 import BackendOptimizen.Peephole;
 import IR.IRbuilder;
-import IR.IRmodule.IRmodule;
 import IR.IRprinter;
 import IR.Instru.AllocateInstruction;
 import MidEndOptimizen.CFG_optimizen;
@@ -27,11 +25,11 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Objects;
 
-public class Main {
+public class Compiler {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =true;
+        boolean localjudge =false;
         boolean local_test_ir = false;
         boolean inlinux=false;
         String name;
