@@ -34,7 +34,7 @@ public class Compiler {
         boolean inlinux=false;
         String name;
         InputStream input = null;
-        boolean onlysemnatic = true;
+        boolean onlysemnatic = false;
         boolean opt = false;
         if (localjudge && (!local_test_ir)) {
             if (!inlinux)name = "C:\\Users\\18303\\IdeaProjects\\Mx\\src\\selftest\\test.mx";

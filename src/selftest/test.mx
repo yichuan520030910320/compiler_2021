@@ -1,27 +1,13 @@
-/*
-Test Package: Codegen
-Author: Pikachu
-Time: 2020-02-03
-Input:
-=== input ===
-8 1
-10 9 8 7 7 7 5 5
-=== end ===
-Output:
-=== output ===
-1
-=== end ===
-ExitCode: 0
-InstLimit: -1
-Origin Package: Codeforces 158A #62259103
-*/
-int[] a = new int[50];
-int m;
-int k;
-int i;
-int main()
-{
+int m=9;
+int p=1+1;
 
-printInt(1);
-//printf("%d",i);
-}
+ int main()
+{ int a=1;
+bool mmm=true;
+ if (a==1){
+
+ int c=2;}else{
+
+
+ int d=3;}
+ }
