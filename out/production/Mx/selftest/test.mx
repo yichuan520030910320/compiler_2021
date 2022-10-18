@@ -1,13 +1,26 @@
-int m=9;
-int p=1+1;
-
- int main()
-{ int a=1;
-bool mmm=true;
- if (a==1){
-
- int c=2;}else{
-
-
- int d=3;}
- }
+/*
+Test Package: Sema_Local_Preview
+Test Target: Classes
+Author: 15' Yueyang Xianzang
+Time: 2019-10-20
+Verdict: Fail
+Comment: The variable A and class A is dumplicated.
+Origin Package: Semantic Extended
+*/
+class A
+{
+    A func()
+    {
+        A a=this;
+        a=null;
+        return this;
+    }
+    int a;
+};
+int main()
+{
+    A A;
+    A.func();
+    A.func();
+    return 0;
+}

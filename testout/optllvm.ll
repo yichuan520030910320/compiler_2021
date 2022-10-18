@@ -3,8 +3,7 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-@p = dso_local global i32 0
-@m = dso_local global i32 0
+%class.A = type { i32 }
 
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
@@ -27,36 +26,29 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
+define dso_local %class.A* @A.func(%class.A* %this) {
+entrance_block0:                                             
+    %a_addr = alloca %class.A*
+    %this_addr_0 = alloca %class.A*
+    %return_register_infunction_addr = alloca %class.A*
+    store %class.A* %this, %class.A** %this_addr_0
+    %thisexpr_reg = load %class.A*, %class.A** %this_addr_0
+    store %class.A* %thisexpr_reg, %class.A** %a_addr
+    store %class.A* null, %class.A** %a_addr
+    %thisexpr_reg_0 = load %class.A*, %class.A** %this_addr_0
+    store %class.A* %thisexpr_reg_0, %class.A** %return_register_infunction_addr
+    %returnval = load %class.A*, %class.A** %return_register_infunction_addr
+    ret %class.A* %returnval
+}
 define dso_local i32 @main() {
 entrance_block0:                                             
-    call void @GLOBAL__sub_I_main_mx()
-    %d_addr = alloca i32
-    %c_addr = alloca i32
-    %mmm_addr = alloca i1
-    %a_addr = alloca i32
+    %A_addr = alloca %class.A*
     %return_register_infunction_addr = alloca i32
-    store i32 1, i32* %a_addr
-    store i1 true, i1* %mmm_addr
-    %a = load i32, i32* %a_addr
-    %eq = icmp eq i32 %a, 1
-    br i1 %eq, label %then_basicblock, label %else_basicblock
-
-then_basicblock:                                             ; preds = entrance_block0 
-    store i32 2, i32* %c_addr
-    br label %if_end_basicblock
-
-else_basicblock:                                             ; preds = entrance_block0 
-    store i32 3, i32* %d_addr
-    br label %if_end_basicblock
-
-if_end_basicblock:                                           ; preds = then_basicblock else_basicblock 
+    %A = load %class.A*, %class.A** %A_addr
+    %call_A_func = call %class.A* @A.func(%class.A* %A)
+    %A_0 = load %class.A*, %class.A** %A_addr
+    %call_A_func_0 = call %class.A* @A.func(%class.A* %A_0)
+    store i32 0, i32* %return_register_infunction_addr
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
-}
-define dso_local void @GLOBAL__sub_I_main_mx() {
-entrance_block0:                                             
-    store i32 9, i32* @m
-    %add = add i32 1, 1
-    store i32 %add, i32* @p
-    ret void
 }

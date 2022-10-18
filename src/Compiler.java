@@ -10,6 +10,7 @@ import Optimize.Graph_Coloring;
 import Parser.MxErrorListener;
 import Parser.MxLexer;
 import Parser.MxParser;
+import Utils.Builtin_Printer;
 import Utils.error.Error;
 import Utils.globalscope;
 import frontend.ASTbuilder;
@@ -147,7 +148,10 @@ public class Compiler {
             if (localjudge) {
                 if (!inlinux)   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("C:\\Users\\18303\\IdeaProjects\\Mx\\ravel\\test.s"));
                 else   asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("/mnt/c/Users/18303/IdeaProjects/Mx/ravel/test.s"));
-            }else asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("output.s"));
+            }else {
+                asMprinter_to_ravel.file_print = new PrintWriter(new FileOutputStream("output.s"));
+                Builtin_Printer builtin_printer = new Builtin_Printer("builtin.s");
+            }
             asMprinter_to_ravel.run_print();
         } catch (Error er) {
             System.err.println(er.toString());
