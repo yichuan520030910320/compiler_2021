@@ -30,7 +30,7 @@ public class Compiler {
     public static void main(String[] args) throws Exception {
 
         //chose the read option
-        boolean localjudge =false;
+        boolean localjudge =true;
         boolean local_test_ir = false;
         boolean inlinux=false;
         String name;
@@ -89,8 +89,8 @@ public class Compiler {
             }
 
             //begin opt
-            CFG_optimizen cfg_optimizen = new CFG_optimizen(irbuilder.module_in_irbuilder);
-            cfg_optimizen.run();
+//            CFG_optimizen cfg_optimizen = new CFG_optimizen(irbuilder.module_in_irbuilder);
+//            cfg_optimizen.run();
 
             if (localjudge&&(local_test_ir)) {//print naive llvm
                 IRprinter llvm_naive = new IRprinter("testout/naive_llvm.ll", name);

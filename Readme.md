@@ -19,6 +19,18 @@ you can see my log in file log :)
 - [x] 11.Instruction selection
 - [x] 12.Register Allocation
 
+Traditional compilers are usually divided into three parts: the front-end, optimizer, and back-end. During the compilation process, the front-end is responsible for lexical and syntactic analysis, converting source code into an abstract syntax tree; the optimizer, based on the front-end, optimizes the obtained intermediate code to make the code more efficient; the back-end converts the already optimized intermediate code into machine code for specific platforms.
+
+**Basic execution stages:**
+
+1. Build your compiler: The process of using a system compiler to compile your compiler code to build your compiler.
+2. Compile target code: Use the built compiler to compile the Mx* language. If the compilation is correct, output the target assembly code; otherwise, the compiler should exit with a non-zero return value.
+3. Execute target code: The process of running your code using a simulator.
+
+program - function and class definition - statement - expression - primary
+
+
+
 ## detailed
 
 **有空的时候把图片修一下！！**

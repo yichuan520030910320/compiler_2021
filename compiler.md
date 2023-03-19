@@ -6369,3 +6369,5 @@ step = new int[N][];
 ## 五.java
 
 linkedhashmap 可以维护一个有序的hash表 比直接的hashmap多了有序性
+
+[https://github.com/Evian-Zhang/llvm-ir-tutorial/blob/master/LLVM]: 

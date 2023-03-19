@@ -3,7 +3,7 @@ source_filename = "C:\Users\18303\IdeaProjects\Mx\src\selftest\test.mx"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-%class.A = type { i32 }
+%class.point = type { i32, i32, i32 }
 
 
 declare i1 @_str_ne(i8* %lhs,i8* %rhs)
@@ -26,35 +26,54 @@ declare i32 @_str_parseInt(i8* %str)
 declare i1 @_str_eq(i8* %lhs,i8* %rhs)
 declare i1 @_str_gt(i8* %lhs,i8* %rhs)
 
-define dso_local %class.A* @A.func(%class.A* %this) {
-entrance_block0:                                             
-    %a_addr = alloca %class.A*
-    %this_addr_0 = alloca %class.A*
-    %return_register_infunction_addr = alloca %class.A*
-    store %class.A* %this, %class.A** %this_addr_0
-    %thisexpr_reg = load %class.A*, %class.A** %this_addr_0
-    store %class.A* %thisexpr_reg, %class.A** %a_addr
-    store %class.A* null, %class.A** %a_addr
-    %thisexpr_reg_0 = load %class.A*, %class.A** %this_addr_0
-    store %class.A* %thisexpr_reg_0, %class.A** %return_register_infunction_addr
-    br label %return_block0
-
-return_block0:                                               ; preds = entrance_block0 
-    %returnval = load %class.A*, %class.A** %return_register_infunction_addr
-    ret %class.A* %returnval
-}
 define dso_local i32 @main() {
 entrance_block0:                                             
-    %A_addr = alloca %class.A*
+    %d_addr = alloca %class.point*
+    %c_addr = alloca %class.point*
+    %b_addr = alloca %class.point*
+    %a_addr = alloca %class.point*
     %return_register_infunction_addr = alloca i32
-    %A = load %class.A*, %class.A** %A_addr
-    %call_A_func = call %class.A* @A.func(%class.A* %A)
-    %A_0 = load %class.A*, %class.A** %A_addr
-    %call_A_func_0 = call %class.A* @A.func(%class.A* %A_0)
+    %class_malloc = call i8* @_f_malloc(i32 12)
+    %class_ptr = bitcast i8* %class_malloc to %class.point*
+    call void @point.point(%class.point* %class_ptr)
+    store %class.point* %class_ptr, %class.point** %a_addr
+    %class_malloc_0 = call i8* @_f_malloc(i32 12)
+    %class_ptr_0 = bitcast i8* %class_malloc_0 to %class.point*
+    call void @point.point(%class.point* %class_ptr_0)
+    store %class.point* %class_ptr_0, %class.point** %b_addr
+    %class_malloc_1 = call i8* @_f_malloc(i32 12)
+    %class_ptr_1 = bitcast i8* %class_malloc_1 to %class.point*
+    call void @point.point(%class.point* %class_ptr_1)
+    store %class.point* %class_ptr_1, %class.point** %c_addr
+    %class_malloc_2 = call i8* @_f_malloc(i32 12)
+    %class_ptr_2 = bitcast i8* %class_malloc_2 to %class.point*
+    call void @point.point(%class.point* %class_ptr_2)
+    store %class.point* %class_ptr_2, %class.point** %d_addr
     store i32 0, i32* %return_register_infunction_addr
     br label %return_block0
 
 return_block0:                                               ; preds = entrance_block0 
     %returnval = load i32, i32* %return_register_infunction_addr
     ret i32 %returnval
+}
+define dso_local void @point.point(%class.point* %this) {
+entrance_block0:                                             
+    %this_addr_0 = alloca %class.point*
+    store %class.point* %this, %class.point** %this_addr_0
+    %this_reg = load %class.point*, %class.point** %this_addr_0
+    %point.x_gep_in_id = getelementptr inbounds %class.point, %class.point* %this_reg, i32 0, i32 0
+    %point.x_load_reg = load i32, i32* %point.x_gep_in_id
+    store i32 0, i32* %point.x_gep_in_id
+    %this_reg_0 = load %class.point*, %class.point** %this_addr_0
+    %point.y_gep_in_id = getelementptr inbounds %class.point, %class.point* %this_reg_0, i32 0, i32 1
+    %point.y_load_reg = load i32, i32* %point.y_gep_in_id
+    store i32 0, i32* %point.y_gep_in_id
+    %this_reg_1 = load %class.point*, %class.point** %this_addr_0
+    %point.z_gep_in_id = getelementptr inbounds %class.point, %class.point* %this_reg_1, i32 0, i32 2
+    %point.z_load_reg = load i32, i32* %point.z_gep_in_id
+    store i32 0, i32* %point.z_gep_in_id
+    br label %return_block0
+
+return_block0:                                               ; preds = entrance_block0 
+    ret void
 }
